@@ -18,19 +18,76 @@
 
 package me.bokov.prog3.ui;
 
-import javax.annotation.PostConstruct;
+import me.bokov.prog3.util.I18N;
+
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import javax.swing.*;
+import java.awt.*;
 
 @ApplicationScoped
 public class ApplicationUIBean {
 
+    private static final String WINDOW_TITLE_KEY = "window.title";
+    private static final Dimension WINDOW_MIN_SIZE = new Dimension(400, 300);
+    private static final Dimension WINDOW_PREF_SIZE = new Dimension(1024, 768);
+
+    private boolean initialized = false;
     private JFrame applicationFrame;
 
-    @PostConstruct
-    public void postConstruct () {
+    @Inject
+    private I18N i18n;
+
+    @Inject
+    private WelcomeUIBean welcomeUIBean;
+
+    private void createApplicationFrame() {
 
         applicationFrame = new JFrame();
+
+        applicationFrame.setTitle(i18n.getText(WINDOW_TITLE_KEY));
+
+        applicationFrame.setMinimumSize(WINDOW_MIN_SIZE);
+        applicationFrame.setPreferredSize(WINDOW_PREF_SIZE);
+
+        applicationFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        applicationFrame.setResizable(true);
+
+    }
+
+    public void initialize() {
+
+        if (!initialized) {
+
+            createApplicationFrame();
+
+            welcomeUIBean.initialize();
+            welcomeUIBean.activate();
+
+            applicationFrame.setVisible(true);
+
+            initialized = true;
+
+        } else {
+
+            throw new IllegalStateException("Already initialized!");
+
+        }
+
+    }
+
+    public JFrame getApplicationFrame() {
+        return applicationFrame;
+    }
+
+    public void changeContent(JPanel content) {
+
+        SwingUtilities.invokeLater(
+                () -> {
+                    applicationFrame.setContentPane(content);
+                    applicationFrame.invalidate();
+                }
+        );
 
     }
 

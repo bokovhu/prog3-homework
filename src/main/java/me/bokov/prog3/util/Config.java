@@ -18,7 +18,6 @@
 
 package me.bokov.prog3.util;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import java.io.File;
 import java.io.FileReader;
@@ -32,19 +31,19 @@ public class Config {
 
     private Locale userLocale;
 
-    public void resetToDefaults () {
+    public void resetToDefaults() {
 
         userLocale = new Locale("en");
 
     }
 
-    private void parseProperties (Properties properties) {
+    private void parseProperties(Properties properties) {
 
         userLocale = new Locale(properties.getProperty("user-locale"));
 
     }
 
-    private Properties toProperties () {
+    private Properties toProperties() {
 
         Properties properties = new Properties();
 
@@ -54,7 +53,7 @@ public class Config {
 
     }
 
-    public void load () {
+    public void load() {
 
         File userHomeDirectory = new File(System.getProperty("user.home"));
         File appConfigDirectory = new File(userHomeDirectory, ".chatter");
@@ -94,7 +93,7 @@ public class Config {
 
     }
 
-    public void save () {
+    public void save() {
 
         File userHomeDirectory = new File(System.getProperty("user.home"));
         File appConfigDirectory = new File(userHomeDirectory, ".chatter");
@@ -121,7 +120,4 @@ public class Config {
         return userLocale;
     }
 
-    public void setUserLocale(Locale userLocale) {
-        this.userLocale = userLocale;
-    }
 }

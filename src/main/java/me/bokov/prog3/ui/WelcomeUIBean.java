@@ -16,43 +16,35 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.bokov.prog3.util;
+package me.bokov.prog3.ui;
 
 import javax.enterprise.context.ApplicationScoped;
-import java.text.MessageFormat;
-import java.util.Locale;
-import java.util.ResourceBundle;
+import javax.swing.*;
 
 @ApplicationScoped
-public class I18N {
+public class WelcomeUIBean extends ScreenBase {
 
-    private static final String RESOURCE_BUNDLE_BASENAME = "me.bokov.prog3.i18n.ui";
+    private JButton connectToServerButton;
+    private JButton startNewServerButton;
 
-    private ResourceBundle resourceBundle;
+    public void initialize() {
 
-    public void load(Locale locale) {
+        panel = new JPanel();
 
-        resourceBundle = ResourceBundle.getBundle(RESOURCE_BUNDLE_BASENAME, locale);
+        panel.add(new JLabel(i18n.getText("welcome.title")));
 
-    }
+        connectToServerButton = new JButton(i18n.getText("welcome.connect-to-server"));
+        startNewServerButton = new JButton(i18n.getText("welcome.start-new-server"));
 
-    public String getText(String key, Object... args) {
+        panel.add(connectToServerButton);
+        panel.add(startNewServerButton);
 
-        if (resourceBundle.containsKey(key)) {
-
-            String format = resourceBundle.getString(key);
-
-            if (args != null && args.length > 0) {
-                return MessageFormat.format(format, args);
-            }
-
-            return format;
-
-        } else {
-
-            return "???" + key + "???";
-
-        }
+        connectToServerButton.addActionListener(
+                e -> JOptionPane.showMessageDialog(null, "Connect to server clicked!")
+        );
+        startNewServerButton.addActionListener(
+                e -> JOptionPane.showMessageDialog(null, "Start new server clicked!")
+        );
 
     }
 

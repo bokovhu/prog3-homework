@@ -18,7 +18,10 @@
 
 package me.bokov.prog3;
 
+import me.bokov.prog3.ui.ApplicationUIBean;
+import me.bokov.prog3.ui.ErrorUIBean;
 import me.bokov.prog3.util.Config;
+import me.bokov.prog3.util.I18N;
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
 
@@ -31,22 +34,37 @@ public class Application {
 
     private static Application INSTANCE = null;
 
-    private void initialize () {
+    private void initialize() {
 
         weld = new Weld();
         weldContainer = weld.initialize();
 
-        // Load config
-        CDI.current().select(Config.class).get().load();
+        try {
+
+            // Load config
+            CDI.current().select(Config.class).get().load();
+
+            // Load i18n
+            CDI.current().select(I18N.class).get().load(CDI.current().select(Config.class).get().getUserLocale());
+
+            // Create UI
+            CDI.current().select(ApplicationUIBean.class).get().initialize();
+
+        } catch (Throwable th) {
+
+            CDI.current().select(ErrorUIBean.class).get()
+                    .showThrowable(th);
+
+        }
 
     }
 
-    static void createInstance () {
+    static void createInstance() {
         INSTANCE = new Application();
         INSTANCE.initialize();
     }
 
-    public static Application getInstance () {
+    public static Application getInstance() {
         return INSTANCE;
     }
 

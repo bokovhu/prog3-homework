@@ -16,18 +16,32 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.bokov.prog3;
+package me.bokov.prog3.ui;
 
-public class Main {
+import me.bokov.prog3.util.Config;
+import me.bokov.prog3.util.I18N;
 
-    /**
-     * Entrypoint for the application
-     *
-     * @param args the command-line arguments
-     */
-    public static void main(String[] args) {
+import javax.inject.Inject;
+import javax.swing.*;
 
-        Application.createInstance();
+public abstract class ScreenBase {
+
+    @Inject
+    protected ApplicationUIBean applicationUIBean;
+
+    @Inject
+    protected I18N i18n;
+
+    @Inject
+    protected Config config;
+
+    protected JPanel panel = null;
+
+    public abstract void initialize();
+
+    public void activate() {
+
+        applicationUIBean.changeContent(panel);
 
     }
 
