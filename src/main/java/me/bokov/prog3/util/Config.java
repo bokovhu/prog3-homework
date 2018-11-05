@@ -29,17 +29,23 @@ import java.util.Properties;
 @ApplicationScoped
 public class Config {
 
+    private boolean appConfigDirectoryInitialized = false;
+    private File appConfigDirectory;
+
     private Locale userLocale;
+    private String lastDatabaseMigration;
 
     public void resetToDefaults() {
 
         userLocale = new Locale("en");
+        lastDatabaseMigration = null;
 
     }
 
     private void parseProperties(Properties properties) {
 
         userLocale = new Locale(properties.getProperty("user-locale"));
+        lastDatabaseMigration = properties.getProperty("last-database-migration");
 
     }
 
@@ -48,38 +54,54 @@ public class Config {
         Properties properties = new Properties();
 
         properties.setProperty("user-locale", userLocale.getLanguage());
+        properties.setProperty("last-database-migration", lastDatabaseMigration);
 
         return properties;
 
     }
 
-    public void load() {
+    private void ensureAppConfigDirectory () {
 
-        File userHomeDirectory = new File(System.getProperty("user.home"));
-        File appConfigDirectory = new File(userHomeDirectory, ".chatter");
+        if (!appConfigDirectoryInitialized) {
 
-        if (appConfigDirectory.exists()) {
+            File userHomeDirectory = new File(System.getProperty("user.home"));
+            appConfigDirectory = new File(userHomeDirectory, ".chatter");
 
-            File configFile = new File(appConfigDirectory, "config.properties");
+            if (!appConfigDirectory.exists()) {
 
-            if (configFile.exists()) {
-
-                Properties properties = new Properties();
-
-                try (FileReader fr = new FileReader(configFile)) {
-
-                    properties.load(fr);
-                    parseProperties(properties);
-
-                } catch (IOException e) {
-
-                    e.printStackTrace();
-
-                    resetToDefaults();
-
+                if (!appConfigDirectory.mkdir()) {
+                    throw new IllegalStateException("Cannot create application configuration directory!");
                 }
 
-            } else {
+            }
+
+            appConfigDirectoryInitialized = true;
+
+        }
+
+    }
+
+    public File getAppConfigDirectory () {
+        ensureAppConfigDirectory();
+        return appConfigDirectory;
+    }
+
+    public void load() {
+
+        File configFile = new File(getAppConfigDirectory(), "config.properties");
+
+        if (configFile.exists()) {
+
+            Properties properties = new Properties();
+
+            try (FileReader fr = new FileReader(configFile)) {
+
+                properties.load(fr);
+                parseProperties(properties);
+
+            } catch (IOException e) {
+
+                e.printStackTrace();
 
                 resetToDefaults();
 
@@ -95,16 +117,7 @@ public class Config {
 
     public void save() {
 
-        File userHomeDirectory = new File(System.getProperty("user.home"));
-        File appConfigDirectory = new File(userHomeDirectory, ".chatter");
-
-        if (!appConfigDirectory.exists()) {
-            if (!appConfigDirectory.mkdirs()) {
-                throw new IllegalStateException("Could not create configuration directory '" + appConfigDirectory.getAbsolutePath() + "'");
-            }
-        }
-
-        File configFile = new File(appConfigDirectory, "config.properties");
+        File configFile = new File(getAppConfigDirectory(), "config.properties");
 
         Properties properties = toProperties();
 
@@ -118,6 +131,14 @@ public class Config {
 
     public Locale getUserLocale() {
         return userLocale;
+    }
+
+    public String getLastDatabaseMigration() {
+        return lastDatabaseMigration;
+    }
+
+    public void setLastDatabaseMigration(String lastDatabaseMigration) {
+        this.lastDatabaseMigration = lastDatabaseMigration;
     }
 
 }
