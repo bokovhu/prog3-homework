@@ -18,7 +18,11 @@
 
 package me.bokov.prog3.ui;
 
+import me.bokov.prog3.common.net.ChatManager;
+import me.bokov.prog3.server.ServerConfig;
+
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import javax.swing.*;
 
 @ApplicationScoped
@@ -26,6 +30,12 @@ public class WelcomeUIBean extends ScreenBase {
 
     private JButton connectToServerButton;
     private JButton startNewServerButton;
+
+    @Inject
+    private ChatManager chatManager;
+
+    @Inject
+    private ServerAdministrationUIBean serverAdministrationUIBean;
 
     public void initialize() {
 
@@ -43,7 +53,47 @@ public class WelcomeUIBean extends ScreenBase {
                 e -> JOptionPane.showMessageDialog(null, "Connect to server clicked!")
         );
         startNewServerButton.addActionListener(
-                e -> JOptionPane.showMessageDialog(null, "Start new server clicked!")
+                e -> {
+
+                    JFormattedTextField serverPortTextField = new JFormattedTextField(Integer.valueOf(14672));
+                    serverPortTextField.setColumns(5);
+
+                    JCheckBox passwordEnabledCheckBox = new JCheckBox("Password enabled", false);
+                    JPasswordField serverPasswordField = new JPasswordField("", 24);
+                    passwordEnabledCheckBox.addChangeListener(
+                            changeEvent -> {
+                                if (passwordEnabledCheckBox.isSelected()) serverPasswordField.setEnabled(true);
+                                else serverPasswordField.setEnabled(false);
+                            }
+                    );
+
+                    int startNewServerResult = JOptionPane.showConfirmDialog(
+                            null,
+                            new Object[] {
+                                    "Server port: ", serverPortTextField,
+                                    passwordEnabledCheckBox,
+                                    "Server password: ", serverPasswordField
+                            },
+                            "Start new server",
+                            JOptionPane.OK_CANCEL_OPTION
+                    );
+
+                    if (startNewServerResult == JOptionPane.OK_OPTION) {
+
+                        ServerConfig serverConfig = new ServerConfig();
+
+                        serverConfig.setPassword(new String(serverPasswordField.getPassword()));
+                        serverConfig.setPasswordEnabled(passwordEnabledCheckBox.isSelected());
+                        serverConfig.setPort(((Number) serverPortTextField.getValue()).intValue());
+
+                        chatManager.startNewServer(serverConfig);
+
+                    }
+
+                    serverAdministrationUIBean.initialize();
+                    serverAdministrationUIBean.activate();
+
+                }
         );
 
     }

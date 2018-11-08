@@ -86,6 +86,8 @@ public class ApplicationUIBean {
                 () -> {
                     applicationFrame.setContentPane(content);
                     applicationFrame.invalidate();
+                    applicationFrame.revalidate();
+                    applicationFrame.repaint();
                 }
         );
 
