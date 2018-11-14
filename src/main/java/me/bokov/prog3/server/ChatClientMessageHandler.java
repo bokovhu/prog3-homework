@@ -18,9 +18,11 @@
 
 package me.bokov.prog3.server;
 
+import javax.json.JsonValue;
+
 @FunctionalInterface
 public interface ChatClientMessageHandler {
 
-    void handleMessage (ChatClient client, String rawMessage);
+    void handleMessage(ChatClient client, String messageId, String command, JsonValue data);
 
 }

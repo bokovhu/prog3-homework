@@ -63,6 +63,12 @@ public class ChatServer {
 
     }
 
+    public void removeClient (ChatClient client) {
+
+        connectedClients.remove(client);
+
+    }
+
     public void start () {
 
         setUpServerSocket();
@@ -72,23 +78,6 @@ public class ChatServer {
         );
         clientConnectionListenerThread.setName(CLIENT_CONNECTION_LISTENER_THREAD_NAME);
         clientConnectionListenerThread.start();
-
-        new Thread(
-                () -> {
-
-                    while (true) {
-
-                        broadcastRawMessage("Hello there!");
-                        try {
-                            Thread.sleep(1000L);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-
-                    }
-
-                }
-        ).start();
 
     }
 

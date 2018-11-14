@@ -16,14 +16,36 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.bokov.prog3.net.command;
+package me.bokov.prog3.server.handler;
 
-import javax.json.JsonValue;
+import me.bokov.prog3.net.command.client.HelloCommand;
+import me.bokov.prog3.server.ChatClientMessageHandler;
+import me.bokov.prog3.server.ClientMessageHandlerBean;
 
-public interface Response {
+import javax.enterprise.context.ApplicationScoped;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
-    String getMessageId ();
-    int getCode();
-    JsonValue getData();
+@ApplicationScoped
+public class HelloMessageHandlerBean implements ClientMessageHandlerBean {
+
+    @Override
+    public Set<String> getHandledCommands() {
+        return new HashSet<>(
+                Arrays.asList("HELLO")
+        );
+    }
+
+    @Override
+    public ChatClientMessageHandler getMessageHandler() {
+
+        return (client, messageId, command, data) -> {
+
+            client.sendRawMessage(messageId + " " + HelloCommand.SUCCESS);
+
+        };
+
+    }
 
 }

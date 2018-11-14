@@ -20,6 +20,9 @@ package me.bokov.prog3.server;
 
 import me.bokov.prog3.server.net.ChatClientService;
 
+import javax.enterprise.inject.spi.CDI;
+import javax.json.Json;
+import javax.json.JsonValue;
 import java.io.*;
 import java.net.Socket;
 import java.util.HashMap;
@@ -39,29 +42,41 @@ public class ChatClient {
     private Thread inputReaderThread;
     private Thread outputWriterThread;
 
-    private Map <String, ChatClientMessageHandler> chatClientMessageHandlerMap = new HashMap<>();
+    private Map<String, ChatClientMessageHandler> chatClientMessageHandlerMap = new HashMap<>();
     private ChatClientMessageHandler invalidMessageHandler = null;
 
-    private BlockingDeque <String> outgoingRawMessageQueue = new LinkedBlockingDeque<>(64);
+    private BlockingDeque<String> outgoingRawMessageQueue = new LinkedBlockingDeque<>(64);
 
     public ChatClient(ChatServer chatServer, Socket clientSocket) {
         this.chatServer = chatServer;
         this.clientSocket = clientSocket;
     }
 
-    public ChatClientService getClientService () {
+    public ChatClientService getClientService() {
         throw new UnsupportedOperationException("Not yet implemented!");
     }
 
     private void initializeMessageHandlers() {
 
-        invalidMessageHandler = (c, m) -> {
-            System.out.println("Invalid message received: " + m);
+        invalidMessageHandler = (cl, mi, cm, da) -> {
+            System.out.println("Invalid message received: " + mi + ", command: " + cm);
         };
+
+        CDI.current().select(ClientMessageHandlerBean.class)
+                .forEach(
+                        clientMessageHandlerBean -> {
+
+                            clientMessageHandlerBean.getHandledCommands()
+                                    .forEach(
+                                            s -> chatClientMessageHandlerMap.put(s, clientMessageHandlerBean.getMessageHandler())
+                                    );
+
+                        }
+                );
 
     }
 
-    private void startInputReader () {
+    private void startInputReader() {
 
         inputReaderThread = new Thread(
                 new InputReaderTask(this)
@@ -71,7 +86,7 @@ public class ChatClient {
 
     }
 
-    private void startOutputWriter () {
+    private void startOutputWriter() {
 
         outputWriterThread = new Thread(
                 new OutputWriterTask(this)
@@ -81,13 +96,13 @@ public class ChatClient {
 
     }
 
-    public void sendRawMessage (String rawMessage) {
+    public void sendRawMessage(String rawMessage) {
 
         outgoingRawMessageQueue.addLast(rawMessage);
 
     }
 
-    public void start () {
+    public void start() {
 
         try {
 
@@ -108,7 +123,7 @@ public class ChatClient {
 
     }
 
-    public void stop () {
+    public void stop() {
 
         try {
             inputReaderThread.interrupt();
@@ -121,6 +136,26 @@ public class ChatClient {
         } catch (Exception exc) {
             exc.printStackTrace();
         }
+
+        try {
+            clientInputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            clientOutputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            clientSocket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        chatServer.removeClient(this);
 
     }
 
@@ -142,7 +177,10 @@ public class ChatClient {
                 bufferedReader = new BufferedReader(new InputStreamReader(this.chatClient.clientInputStream));
 
             } catch (Exception exc) {
+
+                chatClient.stop();
                 throw new IllegalStateException(exc);
+
             }
 
             while (true) {
@@ -151,22 +189,37 @@ public class ChatClient {
 
                     String messageLine = bufferedReader.readLine();
 
-                    String [] splittedMessage = messageLine.split(" ", 2);
+                    String[] splittedMessage = messageLine.split(" ", 3);
 
-                    String command = splittedMessage [0];
+                    String messageId = null;
+                    String command = null;
+                    JsonValue data = null;
+
+                    if (splittedMessage.length == 2) {
+                        messageId = splittedMessage[0];
+                        command = splittedMessage[1];
+                    } else if (splittedMessage.length == 3) {
+                        messageId = splittedMessage[0];
+                        command = splittedMessage[1];
+
+                        data = Json.createReader(new StringReader(splittedMessage[2])).readValue();
+                    } else {
+                        throw new IllegalArgumentException("Invalid message from client: " + messageLine);
+                    }
 
                     if (chatClient.chatClientMessageHandlerMap.containsKey(command)) {
 
-                        chatClient.chatClientMessageHandlerMap.get(command).handleMessage(chatClient, messageLine);
+                        chatClient.chatClientMessageHandlerMap.get(command).handleMessage(chatClient, messageId, command, data);
 
                     } else {
 
-                        chatClient.invalidMessageHandler.handleMessage(chatClient, messageLine);
+                        chatClient.invalidMessageHandler.handleMessage(chatClient, messageId, command, data);
 
                     }
 
                 } catch (Exception exc) {
 
+                    chatClient.stop();
                     throw new IllegalStateException(exc);
 
                 }
@@ -198,6 +251,7 @@ public class ChatClient {
 
             } catch (Exception exc) {
 
+                chatClient.stop();
                 throw new IllegalStateException(exc);
 
             }
@@ -213,6 +267,7 @@ public class ChatClient {
 
                 } catch (Exception exc) {
 
+                    chatClient.stop();
                     throw new IllegalStateException(exc);
 
                 }

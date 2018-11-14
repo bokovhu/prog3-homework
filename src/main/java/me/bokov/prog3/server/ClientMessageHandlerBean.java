@@ -16,14 +16,13 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.bokov.prog3.net.command;
+package me.bokov.prog3.server;
 
-import javax.json.JsonValue;
+import java.util.Set;
 
-public interface Response {
+public interface ClientMessageHandlerBean {
 
-    String getMessageId ();
-    int getCode();
-    JsonValue getData();
+    Set<String> getHandledCommands ();
+    ChatClientMessageHandler getMessageHandler ();
 
 }
