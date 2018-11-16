@@ -1,10 +1,3 @@
 language: java
-before_script:
-  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-  - chmod +x ./cc-test-reporter
-  - ./cc-test-reporter before-build
 install: true
 script: mvn clean install
-after_script:
-  - "JACOCO_SOURCE_PATH=command-api/src/main/java:application/src/main/java ./cc-test-reporter format-coverage coverage-aggregator/target/site/jacoco-aggregate/jacoco.xml --input-type jacoco"
-  - ./cc-test-reporter upload-coverage
