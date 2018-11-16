@@ -55,18 +55,4 @@
 
     </properties>
 
-    <build>
-
-        <plugins>
-
-            <plugin>
-                <groupId>org.eluder.coveralls</groupId>
-                <artifactId>coveralls-maven-plugin</artifactId>
-                <version>${version.plugin.coveralls}</version>
-            </plugin>
-
-        </plugins>
-
-    </build>
-
 </project>

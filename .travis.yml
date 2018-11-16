@@ -1,4 +1,6 @@
 language: java
 install: true
 script:
-  - mvn clean install coveralls:report -DrepoToken=$COVERALLS_REPO_TOKEN
+  # In 2018, it seems like there is absolutely no way to publish my damn test
+  # coverage results ......
+  - mvn clean install
