@@ -1,7 +1,4 @@
 language: java
-env:
-  global:
-    - CC_TEST_REPORTER_ID=20e3ba0cd43bac3f1b1e1314a940d5a5776b9e7b9f82d77768f8e6d76245da05
 before_script:
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
   - chmod +x ./cc-test-reporter
