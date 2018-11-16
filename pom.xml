@@ -39,6 +39,7 @@
 
         <!-- External plugin version numbers -->
         <version.plugin.jacoco>0.8.2</version.plugin.jacoco>
+        <version.plugin.coveralls>4.3.0</version.plugin.coveralls>
 
         <!-- Application dependency version numbers -->
         <version.commons-lang3>3.8.1</version.commons-lang3>
@@ -53,5 +54,19 @@
         <version.test.junit>4.12</version.test.junit>
 
     </properties>
+
+    <build>
+
+        <plugins>
+
+            <plugin>
+                <groupId>org.eluder.coveralls</groupId>
+                <artifactId>coveralls-maven-plugin</artifactId>
+                <version>${version.plugin.coveralls}</version>
+            </plugin>
+
+        </plugins>
+
+    </build>
 
 </project>
