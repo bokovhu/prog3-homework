@@ -18,7 +18,10 @@
 
 package me.bokov.prog3.util;
 
+import org.slf4j.Logger;
+
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -26,11 +29,16 @@ import java.util.ResourceBundle;
 @ApplicationScoped
 public class I18N {
 
+    @Inject
+    private Logger logger;
+
     private static final String RESOURCE_BUNDLE_BASENAME = "me.bokov.prog3.i18n.ui";
 
     private ResourceBundle resourceBundle;
 
     public void load(Locale locale) {
+
+        logger.info("Loading language in language {} from resource bundle {}", locale.getLanguage(), RESOURCE_BUNDLE_BASENAME);
 
         resourceBundle = ResourceBundle.getBundle(RESOURCE_BUNDLE_BASENAME, locale);
 

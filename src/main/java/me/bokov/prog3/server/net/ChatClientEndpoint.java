@@ -16,14 +16,19 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.bokov.prog3.net.command;
+package me.bokov.prog3.server.net;
 
-import javax.json.JsonValue;
+import me.bokov.prog3.net.Endpoint;
+import me.bokov.prog3.net.command.server.NewInvitationCommand;
+import me.bokov.prog3.net.command.server.NewMessageCommand;
+import me.bokov.prog3.net.command.server.RoomDeletedCommand;
+import me.bokov.prog3.net.command.server.YouAreBannedCommand;
 
-public interface Response {
+public interface ChatClientEndpoint extends Endpoint {
 
-    String getMessageId ();
-    int getCode();
-    JsonValue getData();
+    YouAreBannedCommand youAreBanned ();
+    RoomDeletedCommand roomDeleted ();
+    NewMessageCommand newMessage ();
+    NewInvitationCommand newInvitation ();
 
 }

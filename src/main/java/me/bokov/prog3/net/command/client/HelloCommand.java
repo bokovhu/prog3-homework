@@ -19,7 +19,7 @@
 package me.bokov.prog3.net.command.client;
 
 import me.bokov.prog3.net.command.Command;
-import me.bokov.prog3.net.command.Response;
+import me.bokov.prog3.net.response.Response;
 
 public interface HelloCommand extends Command <Response> {
 

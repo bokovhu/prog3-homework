@@ -18,14 +18,12 @@
 
 package me.bokov.prog3.client.net;
 
+import me.bokov.prog3.net.Endpoint;
 import me.bokov.prog3.net.command.client.CreateRoomCommand;
 import me.bokov.prog3.net.command.client.HelloCommand;
 import me.bokov.prog3.net.command.client.LoginCommand;
 
-public interface ChatServerService {
-
-    void close ();
-    ServerConnectionInformation getConnectionInformation ();
+public interface ChatServerEndpoint extends Endpoint {
 
     HelloCommand hello ();
     LoginCommand login ();

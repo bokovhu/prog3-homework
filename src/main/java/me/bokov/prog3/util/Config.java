@@ -18,7 +18,10 @@
 
 package me.bokov.prog3.util;
 
+import org.slf4j.Logger;
+
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -28,6 +31,9 @@ import java.util.Properties;
 
 @ApplicationScoped
 public class Config {
+
+    @Inject
+    private Logger logger;
 
     private boolean appConfigDirectoryInitialized = false;
     private File appConfigDirectory;
@@ -88,9 +94,13 @@ public class Config {
 
     public void load() {
 
+        logger.info("Loading configuration from file system");
+
         File configFile = new File(getAppConfigDirectory(), "config.properties");
 
         if (configFile.exists()) {
+
+            logger.info("Config file exists");
 
             Properties properties = new Properties();
 
@@ -109,6 +119,8 @@ public class Config {
 
         } else {
 
+            logger.info("Config file does not exist, resetting to defaults");
+
             resetToDefaults();
 
         }
@@ -116,6 +128,8 @@ public class Config {
     }
 
     public void save() {
+
+        logger.info("Saving configuration to file system");
 
         File configFile = new File(getAppConfigDirectory(), "config.properties");
 

@@ -18,7 +18,10 @@
 
 package me.bokov.prog3.server;
 
-import me.bokov.prog3.server.net.ClientConnectionInformation;
+import me.bokov.prog3.net.ConnectionInformation;
+import me.bokov.prog3.net.ConnectionInformationImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -28,6 +31,8 @@ import java.util.List;
 
 public class ChatServer {
 
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+
     private static final String CLIENT_CONNECTION_LISTENER_THREAD_NAME = "SERVER - Client Connection Listener Thread";
 
     private final ServerConfig serverConfig;
@@ -36,7 +41,7 @@ public class ChatServer {
 
     private Thread clientConnectionListenerThread;
 
-    private List <ChatClient> connectedClients = Collections.synchronizedList(new ArrayList<>());
+    private final List <ChatClient> connectedClients = Collections.synchronizedList(new ArrayList<>());
 
     public ChatServer(ServerConfig serverConfig) {
         this.serverConfig = serverConfig;
@@ -65,11 +70,15 @@ public class ChatServer {
 
     public void removeClient (ChatClient client) {
 
-        connectedClients.remove(client);
+        synchronized (connectedClients) {
+            connectedClients.remove(client);
+        }
 
     }
 
     public void start () {
+
+        logger.info("Starting server");
 
         setUpServerSocket();
 
@@ -79,9 +88,13 @@ public class ChatServer {
         clientConnectionListenerThread.setName(CLIENT_CONNECTION_LISTENER_THREAD_NAME);
         clientConnectionListenerThread.start();
 
+        logger.info("Server started successfully");
+
     }
 
     class ClientConnectionListenerTask implements Runnable {
+
+        private final Logger logger = LoggerFactory.getLogger(getClass());
 
         private final ChatServer chatServer;
 
@@ -92,18 +105,22 @@ public class ChatServer {
         @Override
         public void run() {
 
+            logger.info("Starting to listen for client connections");
+
             while (true) {
 
                 try {
 
                     Socket newClientConnectionSocket = chatServer.serverSocket.accept();
 
-                    ClientConnectionInformation connectionInformation = new ClientConnectionInformation();
+                    ConnectionInformation connectionInformation = new ConnectionInformationImpl(
+                            newClientConnectionSocket.getLocalPort(),
+                            newClientConnectionSocket.getPort(),
+                            newClientConnectionSocket.getLocalAddress().toString(),
+                            newClientConnectionSocket.getInetAddress().toString()
+                    );
 
-                    connectionInformation.setIpAddress(newClientConnectionSocket.getInetAddress().getHostAddress());
-                    connectionInformation.setRemotePort(newClientConnectionSocket.getPort());
-
-                    System.out.println("New connection from '" + connectionInformation.getIpAddress() + "':" + connectionInformation.getRemotePort());
+                    logger.info("New connection from {}:{}", connectionInformation.getRemoteAddress(), connectionInformation.getRemotePort());
 
                     synchronized (chatServer.connectedClients) {
 
@@ -115,6 +132,8 @@ public class ChatServer {
 
                 } catch (Exception exc) {
 
+                    logger.error("Error during listening for client connections", exc);
+
                     throw new IllegalStateException(exc);
 
                 }
@@ -125,4 +144,7 @@ public class ChatServer {
 
     }
 
+    public ServerConfig getServerConfig() {
+        return serverConfig;
+    }
 }

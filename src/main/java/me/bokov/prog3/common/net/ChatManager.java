@@ -18,7 +18,7 @@
 
 package me.bokov.prog3.common.net;
 
-import me.bokov.prog3.client.net.ChatServerService;
+import me.bokov.prog3.client.net.ChatServerEndpoint;
 import me.bokov.prog3.server.ChatServer;
 import me.bokov.prog3.server.ServerConfig;
 
@@ -27,12 +27,12 @@ import javax.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 public class ChatManager {
 
-    private ChatServerService currentRemoteChatServerService = null;
+    private ChatServerEndpoint currentRemoteChatServerEndpoint = null;
     private ChatServer currentRunningServer = null;
 
-    public ChatServerService connectToServer (String hostname, Integer port) {
+    public ChatServerEndpoint connectToServer (String hostname, Integer port) {
 
-        if (currentRemoteChatServerService != null && currentRunningServer != null) {
+        if (currentRemoteChatServerEndpoint != null && currentRunningServer != null) {
             throw new IllegalStateException("Cannot connect to another server / start a new server in the same window!");
         }
 
@@ -42,7 +42,7 @@ public class ChatManager {
 
     public ChatServer startNewServer (ServerConfig serverConfig) {
 
-        if (currentRemoteChatServerService != null && currentRunningServer != null) {
+        if (currentRemoteChatServerEndpoint != null && currentRunningServer != null) {
             throw new IllegalStateException("Cannot connect to another server / start a new server in the same window!");
         }
 
@@ -52,8 +52,8 @@ public class ChatManager {
 
     }
 
-    public ChatServerService getCurrentRemoteChatServerService () {
-        return currentRemoteChatServerService;
+    public ChatServerEndpoint getCurrentRemoteChatServerEndpoint() {
+        return currentRemoteChatServerEndpoint;
     }
 
     public ChatServer getCurrentRunningServer () {

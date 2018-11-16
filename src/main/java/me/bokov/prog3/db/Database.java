@@ -19,6 +19,7 @@
 package me.bokov.prog3.db;
 
 import me.bokov.prog3.util.Config;
+import org.slf4j.Logger;
 import org.sql2o.Connection;
 import org.sql2o.Sql2o;
 
@@ -34,6 +35,9 @@ import java.util.List;
 @ApplicationScoped
 public class Database {
 
+    @Inject
+    private Logger logger;
+
     private static final String MIGRATIONS_BASENAME = "/me/bokov/prog3/sql/ddl/";
 
     private boolean initialized = false;
@@ -44,6 +48,8 @@ public class Database {
     private Sql2o sql2o;
 
     private void migrate() {
+
+        logger.info("Migrating database");
 
         List<String> migrationFileNames = new ArrayList<>();
 
@@ -66,9 +72,13 @@ public class Database {
 
         Collections.sort(migrationFileNames);
 
+        logger.info("Discovered the following migration files: {}", migrationFileNames);
+
         for (String migrationFileName : migrationFileNames) {
 
             if (config.getLastDatabaseMigration() == null || migrationFileName.compareTo(config.getLastDatabaseMigration()) > 0) {
+
+                logger.info("Running migration {}", migrationFileName);
 
                 String sql = "";
 
@@ -102,6 +112,8 @@ public class Database {
 
     public void init() {
 
+        logger.info("Initializing database");
+
         if (!initialized) {
 
             File databaseFile = new File(config.getAppConfigDirectory(), "chatter.db");
@@ -116,7 +128,11 @@ public class Database {
 
             initialized = true;
 
+            logger.info("Initialization successful");
+
         } else {
+
+            logger.warn("Database is already initialized!");
 
             throw new IllegalStateException("Already initialized!");
 

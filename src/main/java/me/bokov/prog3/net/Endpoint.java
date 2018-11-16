@@ -16,16 +16,11 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.bokov.prog3.net.command.server;
+package me.bokov.prog3.net;
 
-import me.bokov.prog3.net.command.Command;
-import me.bokov.prog3.net.response.Response;
+public interface Endpoint {
 
-import javax.json.JsonObject;
-
-public interface NewMessageCommand extends Command <Response> {
-
-    NewMessageCommand roomId (String roomId);
-    NewMessageCommand message (JsonObject message);
+    void close ();
+    ConnectionInformation getConnectionInformation ();
 
 }

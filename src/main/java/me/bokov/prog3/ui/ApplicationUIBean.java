@@ -19,6 +19,7 @@
 package me.bokov.prog3.ui;
 
 import me.bokov.prog3.util.I18N;
+import org.slf4j.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -27,6 +28,9 @@ import java.awt.*;
 
 @ApplicationScoped
 public class ApplicationUIBean {
+
+    @Inject
+    private Logger logger;
 
     private static final String WINDOW_TITLE_KEY = "window.title";
     private static final Dimension WINDOW_MIN_SIZE = new Dimension(400, 300);
@@ -57,6 +61,8 @@ public class ApplicationUIBean {
 
     public void initialize() {
 
+        logger.info("Initializing application GUI");
+
         if (!initialized) {
 
             createApplicationFrame();
@@ -68,7 +74,11 @@ public class ApplicationUIBean {
 
             initialized = true;
 
+            logger.info("Initialization successful");
+
         } else {
+
+            logger.warn("Application GUI is already initialized!");
 
             throw new IllegalStateException("Already initialized!");
 

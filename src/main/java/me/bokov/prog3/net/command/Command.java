@@ -18,6 +18,8 @@
 
 package me.bokov.prog3.net.command;
 
+import me.bokov.prog3.net.response.Response;
+
 public interface Command <R extends Response> {
 
     R execute () throws CommandException;

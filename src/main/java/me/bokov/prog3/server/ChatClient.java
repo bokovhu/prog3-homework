@@ -18,7 +18,9 @@
 
 package me.bokov.prog3.server;
 
-import me.bokov.prog3.server.net.ChatClientService;
+import me.bokov.prog3.server.net.ChatClientEndpoint;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.enterprise.inject.spi.CDI;
 import javax.json.Json;
@@ -27,11 +29,12 @@ import java.io.*;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 
 public class ChatClient {
+
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private final ChatServer chatServer;
     private final Socket clientSocket;
@@ -52,14 +55,14 @@ public class ChatClient {
         this.clientSocket = clientSocket;
     }
 
-    public ChatClientService getClientService() {
+    public ChatClientEndpoint getClientEndpoint() {
         throw new UnsupportedOperationException("Not yet implemented!");
     }
 
     private void initializeMessageHandlers() {
 
         invalidMessageHandler = (cl, mi, cm, da) -> {
-            System.out.println("Invalid message received: " + mi + ", command: " + cm);
+            logger.warn("Invalid message received: '{}', command: {}", mi, cm);
         };
 
         CDI.current().select(ClientMessageHandlerBean.class)
@@ -99,6 +102,23 @@ public class ChatClient {
     public void sendRawMessage(String rawMessage) {
 
         outgoingRawMessageQueue.addLast(rawMessage);
+
+    }
+
+    public void sendResponse (String messageId, int responseCode, JsonValue data) {
+
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(messageId).append(" ")
+                .append(responseCode);
+
+        if (data != null) {
+            StringWriter sw = new StringWriter();
+            Json.createWriter(sw).write(data);
+            sb.append(" ").append(sw.toString());
+        }
+
+        sendRawMessage(sb.toString());
 
     }
 
@@ -277,4 +297,7 @@ public class ChatClient {
         }
     }
 
+    public ChatServer getChatServer() {
+        return chatServer;
+    }
 }

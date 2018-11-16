@@ -16,21 +16,27 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.bokov.prog3.server.net;
+package me.bokov.prog3.cdi;
 
-import me.bokov.prog3.net.command.server.NewInvitationCommand;
-import me.bokov.prog3.net.command.server.NewMessageCommand;
-import me.bokov.prog3.net.command.server.RoomDeletedCommand;
-import me.bokov.prog3.net.command.server.YouAreBannedCommand;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public interface ChatClientService {
+import javax.enterprise.inject.Produces;
+import javax.enterprise.inject.spi.InjectionPoint;
 
-    void close ();
-    ClientConnectionInformation getConnectionInformation ();
+public class LoggerProducer {
 
-    YouAreBannedCommand youAreBanned ();
-    RoomDeletedCommand roomDeleted ();
-    NewMessageCommand newMessage ();
-    NewInvitationCommand newInvitation ();
+    @Produces
+    public Logger produceLogger (InjectionPoint injectionPoint) {
+
+        Class <?> clazz = null;
+
+        if (injectionPoint.getBean() != null) clazz = injectionPoint.getBean().getBeanClass();
+        else if (injectionPoint.getMember() != null) clazz = injectionPoint.getMember().getDeclaringClass();
+
+        if (clazz == null) return LoggerFactory.getLogger("UNKNOWN");
+        else return LoggerFactory.getLogger(clazz);
+
+    }
 
 }

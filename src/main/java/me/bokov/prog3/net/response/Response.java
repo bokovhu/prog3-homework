@@ -16,37 +16,14 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.bokov.prog3.server.net;
+package me.bokov.prog3.net.response;
 
-import java.io.Serializable;
+import javax.json.JsonValue;
 
-public class ClientConnectionInformation implements Serializable {
+public interface Response {
 
-    private String ipAddress;
-    private Integer remotePort;
-    private String macAddress;
+    String getMessageId ();
+    int getCode();
+    JsonValue getData();
 
-    public String getIpAddress() {
-        return ipAddress;
-    }
-
-    public void setIpAddress(String ipAddress) {
-        this.ipAddress = ipAddress;
-    }
-
-    public Integer getRemotePort() {
-        return remotePort;
-    }
-
-    public void setRemotePort(Integer remotePort) {
-        this.remotePort = remotePort;
-    }
-
-    public String getMacAddress() {
-        return macAddress;
-    }
-
-    public void setMacAddress(String macAddress) {
-        this.macAddress = macAddress;
-    }
 }

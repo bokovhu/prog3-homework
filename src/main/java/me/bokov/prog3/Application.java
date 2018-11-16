@@ -25,10 +25,14 @@ import me.bokov.prog3.util.Config;
 import me.bokov.prog3.util.I18N;
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.enterprise.inject.spi.CDI;
 
 public class Application {
+
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private Weld weld;
     private WeldContainer weldContainer;
@@ -36,6 +40,8 @@ public class Application {
     private static Application INSTANCE = null;
 
     private void initialize() {
+
+        logger.info("Application initialization started");
 
         weld = new Weld();
         weldContainer = weld.initialize();
@@ -56,10 +62,14 @@ public class Application {
 
         } catch (Throwable th) {
 
+            logger.error("Error during application initialization", th);
+
             CDI.current().select(ErrorUIBean.class).get()
                     .showThrowable(th);
 
         }
+
+        logger.info("Application initialization finished");
 
     }
 

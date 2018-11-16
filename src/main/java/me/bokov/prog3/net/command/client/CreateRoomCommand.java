@@ -18,7 +18,7 @@
 
 package me.bokov.prog3.net.command.client;
 
-import me.bokov.prog3.net.command.Response;
+import me.bokov.prog3.net.response.Response;
 
 public interface CreateRoomCommand extends ClientCommand <Response> {
 

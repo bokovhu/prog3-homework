@@ -40,6 +40,7 @@
         <version.weld>3.0.5.Final</version.weld>
         <version.sql2o>1.6.0</version.sql2o>
         <version.h2>1.4.197</version.h2>
+        <version.slf4j>1.7.25</version.slf4j>
 
         <!-- Test dependency version numbers -->
         <version.test.junit>4.12</version.test.junit>
@@ -182,6 +183,18 @@
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <version>${version.h2}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${version.slf4j}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>${version.slf4j}</version>
         </dependency>
 
         <!-- Test dependencies -->
