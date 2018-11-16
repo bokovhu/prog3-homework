@@ -28,42 +28,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>me.bokov.prog3</groupId>
-    <artifactId>prog3-homework-command-api</artifactId>
+    <artifactId>prog3-homework-coverage-aggregator</artifactId>
 
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
 
     <build>
 
         <plugins>
-
-            <plugin>
-
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>${version.maven.compiler}</version>
-
-                <configuration>
-
-                    <source>${java.source}</source>
-                    <target>${java.target}</target>
-                    <encoding>${java.encoding}</encoding>
-
-                </configuration>
-
-            </plugin>
-
-            <plugin>
-
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>${version.maven.jar}</version>
-
-            </plugin>
-
-            <plugin>
-
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>${version.maven.surefire}</version>
-
-            </plugin>
 
             <plugin>
 
@@ -75,10 +46,11 @@
 
                     <execution>
 
+                        <id>make-report</id>
+                        <phase>prepare-package</phase>
                         <goals>
-                            <goal>prepare-agent</goal>
+                            <goal>report-aggregate</goal>
                         </goals>
-                        <id>prepare-agent</id>
 
                     </execution>
 
@@ -93,28 +65,15 @@
     <dependencies>
 
         <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-collections4</artifactId>
-            <version>${version.commons-collections4}</version>
+            <groupId>me.bokov.prog3</groupId>
+            <artifactId>prog3-homework-command-api</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>${version.commons-lang3}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.glassfish</groupId>
-            <artifactId>javax.json</artifactId>
-            <version>${version.javax-json}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${version.test.junit}</version>
-            <scope>test</scope>
+            <groupId>me.bokov.prog3</groupId>
+            <artifactId>prog3-homework-application</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
     </dependencies>

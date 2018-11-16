@@ -6,4 +6,5 @@ before_script:
 install: true
 script: mvn clean install
 after_script:
-  - ./cc-test-reporter after-build -t jacoco --exit-code $TRAVIS_TEST_RESULT
+  - "JACOCO_SOURCE_PATH=command-api/src/main/java:application/src/main/java ./cc-test-reporter format-coverage coverage-aggregator/target/site/jacoco-aggregate/jacoco.xml --input-type jacoco"
+  - ./cc-test-reporter upload-coverage

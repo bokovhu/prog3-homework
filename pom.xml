@@ -11,6 +11,7 @@
     <modules>
         <module>command-api</module>
         <module>application</module>
+        <module>coverage-aggregator</module>
     </modules>
 
     <packaging>pom</packaging>
