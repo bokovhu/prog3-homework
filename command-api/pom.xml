@@ -58,6 +58,13 @@
 
             </plugin>
 
+            <plugin>
+
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${version.maven.surefire}</version>
+
+            </plugin>
+
         </plugins>
 
     </build>
@@ -80,6 +87,13 @@
             <groupId>org.glassfish</groupId>
             <artifactId>javax.json</artifactId>
             <version>${version.javax-json}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${version.test.junit}</version>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>

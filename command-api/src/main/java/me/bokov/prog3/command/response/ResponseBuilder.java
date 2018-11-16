@@ -43,7 +43,7 @@ public final class ResponseBuilder {
             throw new IllegalArgumentException("Raw message cannot be null!");
         }
 
-        String [] splitted = rawMessage.split(" ", 3);
+        String [] splitted = rawMessage.trim().split(" ", 3);
 
         if (splitted.length < 2) {
             throw new IllegalArgumentException("Malformed raw message!");
