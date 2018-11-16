@@ -58,32 +58,6 @@
 
             </plugin>
 
-            <!-- Double plugin declaration, because prepare-agent must run before test in surefire,
-            but report must run after test in surefire. The goal report is required, because that
-            produces the jacoco.xml file which can be used by CodeClimate -->
-
-            <plugin>
-
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>${version.plugin.jacoco}</version>
-
-                <executions>
-
-                    <execution>
-
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                        <id>prepare-agent</id>
-                        <phase>test-compile</phase>
-
-                    </execution>
-
-                </executions>
-
-            </plugin>
-
             <plugin>
 
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -101,8 +75,17 @@
 
                     <execution>
 
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                        <id>prepare-agent</id>
+
+                    </execution>
+
+                    <execution>
+
                         <id>make-report</id>
-                        <phase>test</phase>
+                        <phase>prepare-package</phase>
                         <goals>
                             <goal>report</goal>
                         </goals>
