@@ -114,8 +114,32 @@
 
             <plugin>
 
-                <artifactId>maven-site-plugin</artifactId>
-                <version>${version.maven.site}</version>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${version.plugin.jacoco}</version>
+
+                <executions>
+
+                    <execution>
+
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                        <id>prepare-agent</id>
+
+                    </execution>
+
+                    <execution>
+
+                        <id>make-report</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+
+                    </execution>
+
+                </executions>
 
             </plugin>
 
