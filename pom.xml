@@ -37,6 +37,7 @@
         <java.splash-screen-image>me/bokov/prog3/images/splash.png</java.splash-screen-image>
 
         <!-- External plugin version numbers -->
+        <version.plugin.jacoco>0.8.2</version.plugin.jacoco>
 
         <!-- Application dependency version numbers -->
         <version.commons-lang3>3.8.1</version.commons-lang3>
