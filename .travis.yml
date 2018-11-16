@@ -1,3 +1,4 @@
 language: java
 install: true
-script: mvn clean install coveralls:report -DrepoToken=$COVERALLS_REPO_TOKEN
+script:
+  - mvn clean install coveralls:report -DrepoToken=$COVERALLS_REPO_TOKEN
