@@ -24,8 +24,20 @@ import org.slf4j.LoggerFactory;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
 
+/**
+ * This class is a CDI producer class. It's single method is used by CDI to provide Logger implementations to CDI beans
+ * that use @Inject for a Logger field.
+ */
 public class LoggerProducer {
 
+    /**
+     * Produces a single Logger (SLF4J), and uses the injectionPoint's getBeanClass () if available, or the injected
+     * member's declaring class otherwise as the parameter for the LoggerFactory.getLogger () method call.
+     *
+     * If neither of these are available in the injectionPoint, a Logger with the name "UNKNOWN" is returned.
+     * @param injectionPoint the InjectionPoint
+     * @return the created Logger object
+     */
     @Produces
     public Logger produceLogger (InjectionPoint injectionPoint) {
 

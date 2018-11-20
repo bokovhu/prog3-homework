@@ -32,6 +32,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * This @ApplicationScoped CDI bean manages the database connection of the application.
+ *
+ * The database used in the app is an embedded H2 database, the database file is located in the
+ * {USER HOME}/.chatter/chatter.db file.
+ *
+ * When initialized, the bean also performs database migrations. These migrations are simple .SQL files, that are stored
+ * on the classpath. The order of the migrations is determined by the natural order of the name of the migration files.
+ */
 @ApplicationScoped
 public class Database {
 
@@ -47,6 +56,11 @@ public class Database {
 
     private Sql2o sql2o;
 
+    /**
+     * Performs the database migration via first scanning for migration SQL files on the classpath, then determining
+     * which migrations to run, and lastly it runs the SQL code found in migration files, and sets the last migration
+     * file name in the configuration after each successful migration.
+     */
     private void migrate() {
 
         logger.info("Migrating database");
@@ -110,6 +124,13 @@ public class Database {
 
     }
 
+    /**
+     * Initializes the database.
+     *
+     * If the database was already initialized, an IllegalStateException is thrown
+     *
+     * @throws IllegalStateException if the database was already initialized
+     */
     public void init() {
 
         logger.info("Initializing database");

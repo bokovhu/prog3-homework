@@ -30,6 +30,11 @@ import org.slf4j.LoggerFactory;
 
 import javax.enterprise.inject.spi.CDI;
 
+/**
+ * Handles initialization of the CDI container, as well as the core modules of the application, including the
+ * application configuration, internationalization (UI translations), database connection and the application's
+ * graphical user interface
+ */
 public class Application {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
@@ -39,6 +44,9 @@ public class Application {
 
     private static Application INSTANCE = null;
 
+    /**
+     * Initializes the core modules of the application
+     */
     private void initialize() {
 
         logger.info("Application initialization started");
@@ -73,19 +81,34 @@ public class Application {
 
     }
 
+    /**
+     * Creates the singleton instance
+     */
     static void createInstance() {
         INSTANCE = new Application();
         INSTANCE.initialize();
     }
 
+    /**
+     *
+     * @return the singleton instance
+     */
     public static Application getInstance() {
         return INSTANCE;
     }
 
+    /**
+     *
+     * @return the Weld SE instance
+     */
     public Weld getWeld() {
         return weld;
     }
 
+    /**
+     *
+     * @return the WELD SE CDI container
+     */
     public WeldContainer getWeldContainer() {
         return weldContainer;
     }
