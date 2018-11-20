@@ -21,6 +21,7 @@ package me.bokov.prog3.command.request;
 import org.junit.Test;
 
 import javax.json.Json;
+import javax.json.JsonObject;
 import javax.json.JsonString;
 import javax.json.JsonValue;
 import java.util.UUID;
@@ -126,6 +127,55 @@ public class RequestBuilderTest {
 
     }
 
+    @Test
+    public void test_requestFromMessage_whenCorrectStringIsProvided_thenShouldWork () {
 
+        Request request = RequestBuilder.requestFromMessage("message-1 HELLO");
+
+        assertEquals("message-1", request.getMessageId());
+        assertEquals("HELLO", request.getCommand());
+        assertNull(request.getData());
+
+        request = RequestBuilder.requestFromMessage("message-2 HI {\"name\":\"Test\"}");
+
+        assertEquals("message-2", request.getMessageId());
+        assertEquals("HI", request.getCommand());
+        assertNotNull(request.getData());
+
+        JsonValue jv = request.getData();
+        JsonObject jo = jv.asJsonObject();
+
+        assertEquals("Test", jo.getString("name"));
+
+    }
+
+    @Test
+    public void test_toString_whenNoDataIsProvided_thenMessageContainsNoData () {
+
+        Request request = RequestBuilder.create()
+                .messageId("message-1")
+                .command("HELLO")
+                .build();
+
+        String reqString = request.toString();
+
+        assertEquals("message-1 HELLO", reqString.trim());
+
+    }
+
+    @Test
+    public void test_toString_whenDataIsProvided_thenMessageContainsData () {
+
+        Request request = RequestBuilder.create()
+                .messageId("message-1")
+                .command("HELLO")
+                .data(Json.createValue(13.4))
+                .build();
+
+        String reqString = request.toString();
+
+        assertEquals("message-1 HELLO 13.4", reqString.trim());
+
+    }
 
 }
