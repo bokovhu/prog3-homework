@@ -21,14 +21,17 @@ package me.bokov.prog3.server.handler;
 import me.bokov.prog3.command.CommandHandler;
 import me.bokov.prog3.command.client.HelloCommand;
 import me.bokov.prog3.command.response.ResponseBuilder;
+import me.bokov.prog3.event.UserConnectedEvent;
 import me.bokov.prog3.server.ChatClientMessageHandlingContext;
 import me.bokov.prog3.server.ClientCommandHandlerBean;
 import me.bokov.prog3.server.dao.UserDao;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.json.JsonObject;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -37,6 +40,9 @@ public class HelloCommandHandlerBean implements ClientCommandHandlerBean {
 
     @Inject
     private UserDao userDao;
+
+    @Inject
+    private Event <UserConnectedEvent> userConnectedEvent;
 
     @Override
     public Set<String> getHandledCommands() {
@@ -80,7 +86,15 @@ public class HelloCommandHandlerBean implements ClientCommandHandlerBean {
                         .build();
             }
 
+            if (ctx.getChatClient().isSessionValueSet("username")) {
+                return ResponseBuilder.create()
+                        .messageId(req.getMessageId())
+                        .code(HelloCommand.ALREADY_SAID_HELLO)
+                        .build();
+            }
+
             userDao.ensureUser(username);
+            Long userId = userDao.getUserIdByUsername(username);
 
             if (ctx.getChatServer().getServerConfig().isPasswordEnabled()) {
                 return ResponseBuilder.create()
@@ -88,6 +102,17 @@ public class HelloCommandHandlerBean implements ClientCommandHandlerBean {
                         .code(HelloCommand.LOGIN_REQUIRED)
                         .build();
             } else {
+
+                userConnectedEvent.fire(
+                        new UserConnectedEvent(
+                                new Date(),
+                                "USER_CONNECTED",
+                                username,
+                                ctx.getChatClient().getClientEndpoint().getConnectionInformation(),
+                                userId
+                        )
+                );
+
                 return ResponseBuilder.create()
                         .messageId(req.getMessageId())
                         .code(HelloCommand.SUCCESS)

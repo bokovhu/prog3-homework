@@ -4,14 +4,14 @@ CREATE SEQUENCE id_seq
 
 CREATE TABLE chat_user (
     id         bigint                                               NOT NULL PRIMARY KEY,
-    username   varchar(255)                                         NOT NULL,
-    ban_state  ENUM ('NOT_BANNED', 'BANNED_BY_IP', 'BANNED_BY_USERNAME') NOT NULL DEFAULT 'NOT_BANNED',
+    username   varchar(255)                                         NOT NULL UNIQUE,
+    ban_state  varchar(63)                                          NOT NULL DEFAULT 'NOT_BANNED',
     banned_ip  varchar(255)                                         NULL
 );
 
 CREATE TABLE chat_room (
     id            bigint       NOT NULL PRIMARY KEY,
-    name          varchar(255) NOT NULL,
+    name          varchar(255) NOT NULL UNIQUE,
     owner_user_id bigint       NOT NULL,
 
     FOREIGN KEY (owner_user_id) REFERENCES chat_user (id)

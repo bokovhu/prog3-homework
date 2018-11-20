@@ -18,12 +18,21 @@
 
 package me.bokov.prog3.server.dao;
 
+import me.bokov.prog3.common.net.ChatManager;
 import me.bokov.prog3.db.Database;
+import me.bokov.prog3.event.UserBannedEvent;
+import me.bokov.prog3.event.UserUnbannedEvent;
 import org.slf4j.Logger;
 import org.sql2o.Connection;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
+import javax.json.Json;
+import javax.json.JsonObject;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class UserDao {
@@ -46,7 +55,25 @@ public class UserDao {
             "FROM chat_user " +
             "WHERE username = :username";
 
-    private static final String SQL_INSERT_USER = "INSERT INTO chat_user (id, username) VALUES (nextval ('id_seq'), :username)";
+    private static final String SQL_INSERT_USER = "INSERT INTO chat_user (id, username, ban_state) VALUES (nextval ('id_seq'), :username, 'NOT_BANNED')";
+
+    private static final String SQL_BAN_USER_BY_IP = "UPDATE chat_user " +
+            "SET ban_state = 'BANNED_BY_IP' " +
+            "WHERE id = :userId";
+
+    private static final String SQL_BAN_USER_BY_USERNAME = "UPDATE chat_user " +
+            "SET ban_state = 'BANNED_BY_USERNAME' " +
+            "WHERE id = :userId";
+
+    private static final String SQL_UNBAN_USER = "UPDATE chat_user " +
+            "SET ban_state = 'NOT_BANNED' " +
+            "WHERE id = :userId";
+
+    private static final String SQL_GET_ALL_USERS = "SELECT * FROM chat_user";
+
+    private static final String SQL_GET_USERNAME_BY_USER_ID = "SELECT username " +
+            "FROM chat_user " +
+            "WHERE id = :userId";
 
     @Inject
     private Logger logger;
@@ -54,7 +81,16 @@ public class UserDao {
     @Inject
     private Database database;
 
-    public void ensureUser (String username) {
+    @Inject
+    private ChatManager chatManager;
+
+    @Inject
+    private Event <UserBannedEvent> userBannedEvent;
+
+    @Inject
+    private Event <UserUnbannedEvent> userUnbannedEvent;
+
+    public void ensureUser(String username) {
 
         logger.debug("UserDao.ensureUser ({})", username);
 
@@ -76,7 +112,7 @@ public class UserDao {
 
     }
 
-    public Long getUserIdByUsername (String username) {
+    public Long getUserIdByUsername(String username) {
 
         logger.debug("UserDao.getUserIdByUsername ({})", username);
 
@@ -90,7 +126,7 @@ public class UserDao {
 
     }
 
-    public boolean isUserBanned (String ipAddress, String username) {
+    public boolean isUserBanned(String ipAddress, String username) {
 
         logger.debug("UserDao.isUserBanned ({}, {})", ipAddress, username);
 
@@ -111,6 +147,110 @@ public class UserDao {
         }
 
         return false;
+
+    }
+
+    public void banUserByIp(Long userId) {
+
+        try (Connection connection = database.getSql2o().open()) {
+
+            connection.createQuery(SQL_BAN_USER_BY_IP)
+                    .addParameter("userId", userId)
+                    .executeUpdate();
+
+            String username = getUsernameByUserId(userId);
+
+            chatManager.getCurrentRunningServer().disconnectClientByUsername(username);
+
+            userBannedEvent.fire(
+                    new UserBannedEvent(
+                            new Date(),
+                            "USER_BANNED",
+                            username,
+                            true,
+                            false
+                    )
+            );
+
+        }
+
+    }
+
+    public void banUserByUsername(Long userId) {
+
+        try (Connection connection = database.getSql2o().open()) {
+
+            connection.createQuery(SQL_BAN_USER_BY_USERNAME)
+                    .addParameter("userId", userId)
+                    .executeUpdate();
+
+            String username = getUsernameByUserId(userId);
+
+            chatManager.getCurrentRunningServer().disconnectClientByUsername(username);
+
+            userBannedEvent.fire(
+                    new UserBannedEvent(
+                            new Date(),
+                            "USER_BANNED",
+                            username,
+                            false,
+                            true
+                    )
+            );
+
+        }
+
+    }
+
+    public void unbanUser(Long userId) {
+
+        try (Connection connection = database.getSql2o().open()) {
+
+            connection.createQuery(SQL_UNBAN_USER)
+                    .addParameter("userId", userId)
+                    .executeUpdate();
+
+            userUnbannedEvent.fire(
+                    new UserUnbannedEvent(
+                            new Date(),
+                            "USER_UNBANNED",
+                            getUsernameByUserId(userId)
+                    )
+            );
+
+        }
+
+    }
+
+    public List<JsonObject> getAllUsers() {
+
+        try (Connection connection = database.getSql2o().open()) {
+
+            return
+                    connection.createQuery(SQL_GET_ALL_USERS)
+                            .executeAndFetchTable()
+                            .rows().stream()
+                            .map(
+                                    row -> Json.createObjectBuilder()
+                                            .add("username", row.getString("username"))
+                                            .add("banState", row.getString("ban_state"))
+                                            .add("id", row.getLong("id"))
+                                            .build()
+                            ).collect(Collectors.toList());
+
+        }
+
+    }
+
+    public String getUsernameByUserId (Long userId) {
+
+        try (Connection connection = database.getSql2o().open()) {
+
+            return connection.createQuery(SQL_GET_USERNAME_BY_USER_ID)
+                    .addParameter("userId", userId)
+                    .executeScalar(String.class);
+
+        }
 
     }
 

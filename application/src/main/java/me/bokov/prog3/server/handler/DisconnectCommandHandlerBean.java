@@ -19,16 +19,22 @@
 package me.bokov.prog3.server.handler;
 
 import me.bokov.prog3.command.CommandHandler;
+import me.bokov.prog3.event.UserDisconnectedEvent;
 import me.bokov.prog3.server.ChatClientMessageHandlingContext;
 import me.bokov.prog3.server.ClientCommandHandlerBean;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Event;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
 @ApplicationScoped
 public class DisconnectCommandHandlerBean implements ClientCommandHandlerBean {
+
+    private Event <UserDisconnectedEvent> userDisconnectedEvent;
+
     @Override
     public Set<String> getHandledCommands() {
         return new HashSet<>(
@@ -39,6 +45,14 @@ public class DisconnectCommandHandlerBean implements ClientCommandHandlerBean {
     @Override
     public CommandHandler <ChatClientMessageHandlingContext> getMessageHandler() {
         return (context, request) -> {
+
+            userDisconnectedEvent.fire(
+                    new UserDisconnectedEvent(
+                            new Date(),
+                            "USER_DISCONNECTED",
+                            context.getChatClient().getSessionValue("username").toString()
+                    )
+            );
 
             context.getChatClient().stop();
 

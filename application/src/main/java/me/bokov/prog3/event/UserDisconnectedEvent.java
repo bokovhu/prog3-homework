@@ -16,18 +16,20 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.bokov.prog3.command.client;
+package me.bokov.prog3.event;
 
-import me.bokov.prog3.command.Command;
-import me.bokov.prog3.command.response.Response;
+import java.util.Date;
 
-public interface HelloCommand extends Command <Response> {
+public class UserDisconnectedEvent extends BaseEvent {
 
-    int SUCCESS = 200;
-    int LOGIN_REQUIRED = 300;
-    int BANNED = 400;
-    int ALREADY_SAID_HELLO = 401;
+    private final String username;
 
-    HelloCommand username(String username);
+    public UserDisconnectedEvent(Date eventTimestamp, String eventType, String username) {
+        super(eventTimestamp, eventType);
+        this.username = username;
+    }
 
+    public String getUsername() {
+        return username;
+    }
 }

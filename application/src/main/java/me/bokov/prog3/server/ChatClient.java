@@ -18,8 +18,10 @@
 
 package me.bokov.prog3.server;
 
+import javafx.util.Pair;
 import me.bokov.prog3.command.CommandHandler;
 import me.bokov.prog3.command.endpoint.ChatClientEndpoint;
+import me.bokov.prog3.command.endpoint.ConnectionInformationImpl;
 import me.bokov.prog3.command.request.Request;
 import me.bokov.prog3.command.request.RequestBuilder;
 import me.bokov.prog3.command.response.Response;
@@ -31,6 +33,7 @@ import javax.enterprise.inject.spi.CDI;
 import javax.json.JsonValue;
 import java.io.*;
 import java.net.Socket;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.BlockingDeque;
@@ -49,10 +52,14 @@ public class ChatClient {
     private Thread inputReaderThread;
     private Thread outputWriterThread;
 
-    private Map<String, CommandHandler <ChatClientMessageHandlingContext>> chatClientMessageHandlerMap = new HashMap<>();
+    private final Map<String, CommandHandler <ChatClientMessageHandlingContext>> chatClientMessageHandlerMap = new HashMap<>();
     private CommandHandler <ChatClientMessageHandlingContext> invalidMessageHandler = null;
 
-    private BlockingDeque<String> outgoingRawMessageQueue = new LinkedBlockingDeque<>(64);
+    private final BlockingDeque<String> outgoingRawMessageQueue = new LinkedBlockingDeque<>(64);
+
+    private final Map <String, Object> sessionData = Collections.synchronizedMap(new HashMap<>());
+
+    private ChatClientEndpoint chatClientEndpoint;
 
     public ChatClient(ChatServer chatServer, Socket clientSocket) {
         this.chatServer = chatServer;
@@ -60,7 +67,7 @@ public class ChatClient {
     }
 
     public ChatClientEndpoint getClientEndpoint() {
-        throw new UnsupportedOperationException("Not yet implemented!");
+        return chatClientEndpoint;
     }
 
     private void initializeMessageHandlers() {
@@ -128,6 +135,20 @@ public class ChatClient {
 
     }
 
+    private void createClientEndpoint () {
+
+        this.chatClientEndpoint = new ChatClientEndpointImpl(
+                this,
+                new ConnectionInformationImpl(
+                        clientSocket.getLocalPort(),
+                        clientSocket.getPort(),
+                        clientSocket.getLocalAddress().toString(),
+                        clientSocket.getInetAddress().toString()
+                )
+        );
+
+    }
+
     public void start() {
 
         try {
@@ -146,6 +167,8 @@ public class ChatClient {
         startInputReader();
 
         startOutputWriter();
+
+        createClientEndpoint();
 
     }
 
@@ -305,6 +328,47 @@ public class ChatClient {
 
     public ChatClientMessageHandlingContext getMessageHandlingContext () {
         return new ChatClientMessageHandlingContext(this, this.chatServer);
+    }
+
+    public Object getSessionValue (String key) {
+
+        synchronized (sessionData) {
+            return sessionData.get(key);
+        }
+
+    }
+
+    public void setSessionValue (String key, Object value) {
+
+        synchronized (sessionData) {
+            sessionData.put(key, value);
+        }
+
+    }
+
+    public void deleteSessionValue (String key) {
+
+        synchronized (sessionData) {
+            sessionData.remove(key);
+        }
+
+    }
+
+    public void clearSession () {
+
+        synchronized (sessionData) {
+            sessionData.clear();
+        }
+
+    }
+
+    public boolean isSessionValueSet (String key) {
+
+        synchronized (sessionData) {
+            return sessionData.containsKey(key)
+                    && sessionData.get(key) != null;
+        }
+
     }
 
 }

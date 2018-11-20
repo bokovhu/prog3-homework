@@ -133,6 +133,14 @@
 
             </plugin>
 
+
+            <plugin>
+
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>${version.maven.javadoc}</version>
+
+            </plugin>
+
         </plugins>
 
     </build>

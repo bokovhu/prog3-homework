@@ -28,6 +28,8 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class ChatServer {
 
@@ -41,13 +43,13 @@ public class ChatServer {
 
     private Thread clientConnectionListenerThread;
 
-    private final List <ChatClient> connectedClients = Collections.synchronizedList(new ArrayList<>());
+    private final List<ChatClient> connectedClients = Collections.synchronizedList(new ArrayList<>());
 
     public ChatServer(ServerConfig serverConfig) {
         this.serverConfig = serverConfig;
     }
 
-    private void setUpServerSocket () {
+    private void setUpServerSocket() {
 
         try {
 
@@ -62,13 +64,13 @@ public class ChatServer {
 
     }
 
-    public void broadcastRawMessage (String rawMessage) {
+    public void broadcastRawMessage(String rawMessage) {
 
         connectedClients.forEach(c -> c.sendRawMessage(rawMessage));
 
     }
 
-    public void removeClient (ChatClient client) {
+    public void removeClient(ChatClient client) {
 
         synchronized (connectedClients) {
             connectedClients.remove(client);
@@ -76,7 +78,35 @@ public class ChatServer {
 
     }
 
-    public void start () {
+    public void disconnectClientByUsername(String username) {
+
+        synchronized (connectedClients) {
+
+            connectedClients.stream().filter(cc -> cc.isSessionValueSet("username"))
+                    .filter(cc -> cc.getSessionValue("username").equals(username))
+                    .findFirst()
+                    .ifPresent(
+                            ChatClient::stop
+                    );
+
+        }
+
+    }
+
+    public Set<String> getConnectedUsernames() {
+
+        synchronized (connectedClients) {
+
+            return connectedClients.stream()
+                    .filter(cc -> cc.isSessionValueSet("username"))
+                    .map(cc -> cc.getSessionValue("username").toString())
+                    .collect(Collectors.toSet());
+
+        }
+
+    }
+
+    public void start() {
 
         logger.info("Starting server");
 
@@ -147,4 +177,6 @@ public class ChatServer {
     public ServerConfig getServerConfig() {
         return serverConfig;
     }
+
+
 }
