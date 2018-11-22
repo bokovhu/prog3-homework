@@ -16,19 +16,15 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.bokov.prog3.server;
+package me.bokov.prog3.service;
 
-import me.bokov.prog3.service.server.ConnectedChatClient;
+import org.sql2o.Connection;
 
-public class ChatClientMessageHandlingContext {
+public interface Database {
 
-    private final ConnectedChatClient chatClient;
+    void start ();
+    boolean isRunning ();
+    void stop ();
+    Connection openConnection ();
 
-    public ChatClientMessageHandlingContext(ConnectedChatClient chatClient) {
-        this.chatClient = chatClient;
-    }
-
-    public ConnectedChatClient getChatClient() {
-        return chatClient;
-    }
 }

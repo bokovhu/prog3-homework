@@ -18,10 +18,10 @@
 
 package me.bokov.prog3.server.dao;
 
-import me.bokov.prog3.common.net.ChatManager;
-import me.bokov.prog3.db.Database;
+import me.bokov.prog3.db.DatabaseImpl;
 import me.bokov.prog3.event.UserBannedEvent;
 import me.bokov.prog3.event.UserUnbannedEvent;
+import me.bokov.prog3.service.ChatServer;
 import org.slf4j.Logger;
 import org.sql2o.Connection;
 
@@ -79,10 +79,10 @@ public class UserDao {
     private Logger logger;
 
     @Inject
-    private Database database;
+    private DatabaseImpl database;
 
     @Inject
-    private ChatManager chatManager;
+    private ChatServer chatServer;
 
     @Inject
     private Event <UserBannedEvent> userBannedEvent;
@@ -152,6 +152,10 @@ public class UserDao {
 
     public void banUserByIp(Long userId) {
 
+        if (true) {
+            throw new UnsupportedOperationException();
+        }
+
         try (Connection connection = database.getSql2o().open()) {
 
             connection.createQuery(SQL_BAN_USER_BY_IP)
@@ -160,8 +164,7 @@ public class UserDao {
 
             String username = getUsernameByUserId(userId);
 
-            chatManager.getCurrentRunningServer().disconnectClientByUsername(username);
-
+            // chatManager.getCurrentRunningServer().disconnectClientByUsername(username);
             userBannedEvent.fire(
                     new UserBannedEvent(
                             new Date(),
@@ -178,6 +181,10 @@ public class UserDao {
 
     public void banUserByUsername(Long userId) {
 
+        if (true) {
+            throw new UnsupportedOperationException();
+        }
+
         try (Connection connection = database.getSql2o().open()) {
 
             connection.createQuery(SQL_BAN_USER_BY_USERNAME)
@@ -186,7 +193,7 @@ public class UserDao {
 
             String username = getUsernameByUserId(userId);
 
-            chatManager.getCurrentRunningServer().disconnectClientByUsername(username);
+            // chatManager.getCurrentRunningServer().disconnectClientByUsername(username);
 
             userBannedEvent.fire(
                     new UserBannedEvent(

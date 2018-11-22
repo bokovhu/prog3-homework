@@ -16,19 +16,13 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.bokov.prog3.server;
+package me.bokov.prog3.service.db.dao;
 
-import me.bokov.prog3.service.server.ConnectedChatClient;
+import me.bokov.prog3.service.db.Dao;
 
-public class ChatClientMessageHandlingContext {
+public interface UserDao extends Dao {
 
-    private final ConnectedChatClient chatClient;
+    Long getUserIdByUsername (String username);
+    boolean isUserBanned (String username);
 
-    public ChatClientMessageHandlingContext(ConnectedChatClient chatClient) {
-        this.chatClient = chatClient;
-    }
-
-    public ConnectedChatClient getChatClient() {
-        return chatClient;
-    }
 }

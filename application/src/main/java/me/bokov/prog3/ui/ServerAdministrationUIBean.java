@@ -18,12 +18,13 @@
 
 package me.bokov.prog3.ui;
 
-import me.bokov.prog3.common.net.ChatManager;
 import me.bokov.prog3.event.UserBannedEvent;
 import me.bokov.prog3.event.UserConnectedEvent;
 import me.bokov.prog3.event.UserDisconnectedEvent;
 import me.bokov.prog3.event.UserUnbannedEvent;
 import me.bokov.prog3.server.dao.UserDao;
+import me.bokov.prog3.service.ChatServer;
+import me.bokov.prog3.service.common.ChatUserVO;
 import me.bokov.prog3.ui.common.PanelList;
 import me.bokov.prog3.ui.srvadmin.BannedUserItem;
 import me.bokov.prog3.ui.srvadmin.UserItem;
@@ -35,6 +36,7 @@ import javax.inject.Inject;
 import javax.swing.*;
 import java.awt.*;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class ServerAdministrationUIBean extends ScreenBase {
@@ -49,7 +51,7 @@ public class ServerAdministrationUIBean extends ScreenBase {
     private UserDao userDao;
 
     @Inject
-    private ChatManager chatManager;
+    private ChatServer chatServer;
 
     @Override
     public void initialize() {
@@ -94,7 +96,9 @@ public class ServerAdministrationUIBean extends ScreenBase {
 
     public void reloadData() {
 
-        Set<String> currentlyConnectedUserNames = chatManager.getCurrentRunningServer().getConnectedUsernames();
+        Set<String> currentlyConnectedUserNames = chatServer.getConnectedUsers().stream()
+                .map(ChatUserVO::getUsername)
+                .collect(Collectors.toSet());
 
         usersList.clearPanels();
         bannedUsersList.clearPanels();

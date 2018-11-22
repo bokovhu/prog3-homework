@@ -16,19 +16,17 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.bokov.prog3.server;
+package me.bokov.prog3.service.db;
 
-import me.bokov.prog3.service.server.ConnectedChatClient;
+import java.util.List;
 
-public class ChatClientMessageHandlingContext {
+public interface Dao <E extends BaseEntity> {
 
-    private final ConnectedChatClient chatClient;
+    List <E> getAll ();
+    E getById (Long id);
+    void create (E entity);
+    void update (E entity);
+    void delete (E entity);
+    void deleteById (Long id);
 
-    public ChatClientMessageHandlingContext(ConnectedChatClient chatClient) {
-        this.chatClient = chatClient;
-    }
-
-    public ConnectedChatClient getChatClient() {
-        return chatClient;
-    }
 }

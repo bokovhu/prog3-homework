@@ -18,7 +18,6 @@
 
 package me.bokov.prog3.server;
 
-import javafx.util.Pair;
 import me.bokov.prog3.command.CommandHandler;
 import me.bokov.prog3.command.endpoint.ChatClientEndpoint;
 import me.bokov.prog3.command.endpoint.ConnectionInformationImpl;
@@ -26,6 +25,8 @@ import me.bokov.prog3.command.request.Request;
 import me.bokov.prog3.command.request.RequestBuilder;
 import me.bokov.prog3.command.response.Response;
 import me.bokov.prog3.command.response.ResponseBuilder;
+import me.bokov.prog3.service.ChatServer;
+import me.bokov.prog3.service.server.ConnectedChatClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,12 +40,11 @@ import java.util.Map;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 
-public class ChatClient {
+public class ConnectedChatClientImpl implements ConnectedChatClient {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private final ChatServer chatServer;
-    private final Socket clientSocket;
+    private Socket clientSocket;
 
     private InputStream clientInputStream;
     private OutputStream clientOutputStream;
@@ -60,11 +60,6 @@ public class ChatClient {
     private final Map <String, Object> sessionData = Collections.synchronizedMap(new HashMap<>());
 
     private ChatClientEndpoint chatClientEndpoint;
-
-    public ChatClient(ChatServer chatServer, Socket clientSocket) {
-        this.chatServer = chatServer;
-        this.clientSocket = clientSocket;
-    }
 
     public ChatClientEndpoint getClientEndpoint() {
         return chatClientEndpoint;
@@ -149,7 +144,10 @@ public class ChatClient {
 
     }
 
-    public void start() {
+    @Override
+    public void start(Socket socket) {
+
+        this.clientSocket = socket;
 
         try {
 
@@ -163,11 +161,8 @@ public class ChatClient {
         }
 
         initializeMessageHandlers();
-
         startInputReader();
-
         startOutputWriter();
-
         createClientEndpoint();
 
     }
@@ -204,15 +199,25 @@ public class ChatClient {
             e.printStackTrace();
         }
 
-        chatServer.removeClient(this);
+        // chatServer.removeClient(this);
 
+    }
+
+    @Override
+    public void send(Request request) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Response readResponse(String messageId, long timeoutInMillisec) {
+        throw new UnsupportedOperationException();
     }
 
     class InputReaderTask implements Runnable {
 
-        private final ChatClient chatClient;
+        private final ConnectedChatClientImpl chatClient;
 
-        InputReaderTask(ChatClient chatClient) {
+        InputReaderTask(ConnectedChatClientImpl chatClient) {
             this.chatClient = chatClient;
         }
 
@@ -277,9 +282,9 @@ public class ChatClient {
 
     class OutputWriterTask implements Runnable {
 
-        private final ChatClient chatClient;
+        private final ConnectedChatClientImpl chatClient;
 
-        OutputWriterTask(ChatClient chatClient) {
+        OutputWriterTask(ConnectedChatClientImpl chatClient) {
             this.chatClient = chatClient;
         }
 
@@ -322,12 +327,8 @@ public class ChatClient {
         }
     }
 
-    public ChatServer getChatServer() {
-        return chatServer;
-    }
-
     public ChatClientMessageHandlingContext getMessageHandlingContext () {
-        return new ChatClientMessageHandlingContext(this, this.chatServer);
+        return new ChatClientMessageHandlingContext(this);
     }
 
     public Object getSessionValue (String key) {
@@ -346,14 +347,6 @@ public class ChatClient {
 
     }
 
-    public void deleteSessionValue (String key) {
-
-        synchronized (sessionData) {
-            sessionData.remove(key);
-        }
-
-    }
-
     public void clearSession () {
 
         synchronized (sessionData) {
@@ -367,6 +360,15 @@ public class ChatClient {
         synchronized (sessionData) {
             return sessionData.containsKey(key)
                     && sessionData.get(key) != null;
+        }
+
+    }
+
+    @Override
+    public void removeSessionValue(String key) {
+
+        synchronized (sessionData) {
+            sessionData.remove(key);
         }
 
     }

@@ -20,9 +20,16 @@ package me.bokov.prog3.server;
 
 import me.bokov.prog3.command.endpoint.ConnectionInformation;
 import me.bokov.prog3.command.endpoint.ConnectionInformationImpl;
+import me.bokov.prog3.command.request.Request;
+import me.bokov.prog3.service.ChatServer;
+import me.bokov.prog3.service.common.ChatUserVO;
+import me.bokov.prog3.service.server.ConnectedChatClient;
+import me.bokov.prog3.service.server.ServerConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -31,30 +38,25 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class ChatServer {
+@ApplicationScoped
+public class ChatServerImpl implements ChatServer {
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    @Inject
+    private Logger logger;
 
-    private static final String CLIENT_CONNECTION_LISTENER_THREAD_NAME = "SERVER - Client Connection Listener Thread";
-
-    private final ServerConfig serverConfig;
+    private boolean running = false;
 
     private ServerSocket serverSocket;
-
     private Thread clientConnectionListenerThread;
-
-    private final List<ChatClient> connectedClients = Collections.synchronizedList(new ArrayList<>());
-
-    public ChatServer(ServerConfig serverConfig) {
-        this.serverConfig = serverConfig;
-    }
+    private final List<ChatUserVO> connectedUsers = Collections.synchronizedList(new ArrayList<>());
+    private final List<ConnectedChatClient> connectedChatClients = Collections.synchronizedList(new ArrayList<>());
+    private ServerConfiguration serverConfiguration;
 
     private void setUpServerSocket() {
 
         try {
 
-            serverSocket = new ServerSocket(serverConfig.getPort());
-            // serverSocket.bind(new InetSocketAddress(bindToHost, port));
+            serverSocket = new ServerSocket(serverConfiguration.getPort());
 
         } catch (Exception exc) {
 
@@ -64,29 +66,15 @@ public class ChatServer {
 
     }
 
-    public void broadcastRawMessage(String rawMessage) {
-
-        connectedClients.forEach(c -> c.sendRawMessage(rawMessage));
-
-    }
-
-    public void removeClient(ChatClient client) {
-
-        synchronized (connectedClients) {
-            connectedClients.remove(client);
-        }
-
-    }
-
     public void disconnectClientByUsername(String username) {
 
-        synchronized (connectedClients) {
+        synchronized (connectedChatClients) {
 
-            connectedClients.stream().filter(cc -> cc.isSessionValueSet("username"))
+            connectedChatClients.stream().filter(cc -> cc.isSessionValueSet("username"))
                     .filter(cc -> cc.getSessionValue("username").equals(username))
                     .findFirst()
                     .ifPresent(
-                            ChatClient::stop
+                            ConnectedChatClient::stop
                     );
 
         }
@@ -95,9 +83,9 @@ public class ChatServer {
 
     public Set<String> getConnectedUsernames() {
 
-        synchronized (connectedClients) {
+        synchronized (connectedChatClients) {
 
-            return connectedClients.stream()
+            return connectedChatClients.stream()
                     .filter(cc -> cc.isSessionValueSet("username"))
                     .map(cc -> cc.getSessionValue("username").toString())
                     .collect(Collectors.toSet());
@@ -106,29 +94,103 @@ public class ChatServer {
 
     }
 
-    public void start() {
+    @Override
+    public void start(ServerConfiguration serverConfiguration) {
+
+        if (running) {
+            throw new IllegalStateException("Already running!");
+        }
 
         logger.info("Starting server");
+
+        this.serverConfiguration = serverConfiguration;
 
         setUpServerSocket();
 
         clientConnectionListenerThread = new Thread(
                 new ClientConnectionListenerTask(this)
         );
-        clientConnectionListenerThread.setName(CLIENT_CONNECTION_LISTENER_THREAD_NAME);
         clientConnectionListenerThread.start();
 
         logger.info("Server started successfully");
 
+        running = true;
+
+    }
+
+    @Override
+    public boolean isRunning() {
+        return running;
+    }
+
+    @Override
+    public ServerConfiguration getServerConfiguration() {
+        return serverConfiguration;
+    }
+
+    @Override
+    public void stop() {
+
+        throw new UnsupportedOperationException();
+
+    }
+
+    @Override
+    public List<ChatUserVO> getConnectedUsers() {
+
+        synchronized (connectedUsers) {
+            return new ArrayList<>(connectedUsers);
+        }
+
+    }
+
+    @Override
+    public void addConnectedUser(ChatUserVO user) {
+
+        synchronized (connectedUsers) {
+            connectedUsers.add(user);
+        }
+
+    }
+
+    @Override
+    public void removeConnectedUser(ChatUserVO user) {
+
+        synchronized (connectedUsers) {
+            connectedUsers.remove(user);
+        }
+
+    }
+
+    @Override
+    public void broadcast(Request request) {
+
+        connectedChatClients.forEach(c -> c.send(request));
+
+    }
+
+    @Override
+    public void banUserByUsername(Long userId) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void banUserByIp(Long userId) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void unbanUser(Long userId) {
+        throw new UnsupportedOperationException();
     }
 
     class ClientConnectionListenerTask implements Runnable {
 
         private final Logger logger = LoggerFactory.getLogger(getClass());
 
-        private final ChatServer chatServer;
+        private final ChatServerImpl chatServer;
 
-        ClientConnectionListenerTask(ChatServer chatServer) {
+        ClientConnectionListenerTask(ChatServerImpl chatServer) {
             this.chatServer = chatServer;
         }
 
@@ -152,11 +214,11 @@ public class ChatServer {
 
                     logger.info("New connection from {}:{}", connectionInformation.getRemoteAddress(), connectionInformation.getRemotePort());
 
-                    synchronized (chatServer.connectedClients) {
+                    synchronized (chatServer.connectedChatClients) {
 
-                        ChatClient newClient = new ChatClient(chatServer, newClientConnectionSocket);
-                        newClient.start();
-                        chatServer.connectedClients.add(newClient);
+                        ConnectedChatClientImpl newClient = new ConnectedChatClientImpl();
+                        newClient.start(newClientConnectionSocket);
+                        chatServer.connectedChatClients.add(newClient);
 
                     }
 
@@ -173,10 +235,5 @@ public class ChatServer {
         }
 
     }
-
-    public ServerConfig getServerConfig() {
-        return serverConfig;
-    }
-
 
 }

@@ -18,6 +18,7 @@
 
 package me.bokov.prog3.db;
 
+import me.bokov.prog3.service.Database;
 import me.bokov.prog3.util.Config;
 import org.slf4j.Logger;
 import org.sql2o.Connection;
@@ -38,18 +39,18 @@ import java.util.List;
  * The database used in the app is an embedded H2 database, the database file is located in the
  * {USER HOME}/.chatter/chatter.db file.
  *
- * When initialized, the bean also performs database migrations. These migrations are simple .SQL files, that are stored
+ * When running, the bean also performs database migrations. These migrations are simple .SQL files, that are stored
  * on the classpath. The order of the migrations is determined by the natural order of the name of the migration files.
  */
 @ApplicationScoped
-public class Database {
+public class DatabaseImpl implements Database {
 
     @Inject
     private Logger logger;
 
     private static final String MIGRATIONS_BASENAME = "/me/bokov/prog3/sql/ddl/";
 
-    private boolean initialized = false;
+    private boolean running = false;
 
     @Inject
     private Config config;
@@ -69,7 +70,7 @@ public class Database {
 
         try {
 
-            try (InputStreamReader isr = new InputStreamReader(Database.class.getResourceAsStream(MIGRATIONS_BASENAME));
+            try (InputStreamReader isr = new InputStreamReader(DatabaseImpl.class.getResourceAsStream(MIGRATIONS_BASENAME));
                  BufferedReader br = new BufferedReader(isr)) {
 
                 String line = null;
@@ -96,7 +97,7 @@ public class Database {
 
                 String sql = "";
 
-                try (InputStreamReader isr = new InputStreamReader(Database.class.getResourceAsStream(MIGRATIONS_BASENAME + migrationFileName));
+                try (InputStreamReader isr = new InputStreamReader(DatabaseImpl.class.getResourceAsStream(MIGRATIONS_BASENAME + migrationFileName));
                      BufferedReader br = new BufferedReader(isr)) {
 
                     String line = null;
@@ -127,15 +128,15 @@ public class Database {
     /**
      * Initializes the database.
      *
-     * If the database was already initialized, an IllegalStateException is thrown
+     * If the database was already running, an IllegalStateException is thrown
      *
-     * @throws IllegalStateException if the database was already initialized
+     * @throws IllegalStateException if the database was already running
      */
-    public void init() {
+    public void start() {
 
         logger.info("Initializing database");
 
-        if (!initialized) {
+        if (!running) {
 
             File databaseFile = new File(config.getAppConfigDirectory(), "chatter.db");
 
@@ -147,18 +148,28 @@ public class Database {
 
             migrate();
 
-            initialized = true;
+            running = true;
 
             logger.info("Initialization successful");
 
         } else {
 
-            logger.warn("Database is already initialized!");
+            logger.warn("DatabaseImpl is already running!");
 
-            throw new IllegalStateException("Already initialized!");
+            throw new IllegalStateException("Already running!");
 
         }
 
+    }
+
+    @Override
+    public boolean isRunning() {
+        return running;
+    }
+
+    @Override
+    public void stop() {
+        throw new UnsupportedOperationException();
     }
 
     public Sql2o getSql2o() {

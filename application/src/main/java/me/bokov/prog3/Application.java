@@ -18,7 +18,8 @@
 
 package me.bokov.prog3;
 
-import me.bokov.prog3.db.Database;
+import me.bokov.prog3.db.DatabaseImpl;
+import me.bokov.prog3.service.Database;
 import me.bokov.prog3.ui.ApplicationUIBean;
 import me.bokov.prog3.ui.ErrorUIBean;
 import me.bokov.prog3.util.Config;
@@ -63,7 +64,7 @@ public class Application {
             CDI.current().select(I18N.class).get().load(CDI.current().select(Config.class).get().getUserLocale());
 
             // Initialize database
-            CDI.current().select(Database.class).get().init();
+            CDI.current().select(Database.class).get().start();
 
             // Create UI
             CDI.current().select(ApplicationUIBean.class).get().initialize();

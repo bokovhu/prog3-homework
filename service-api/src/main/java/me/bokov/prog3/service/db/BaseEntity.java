@@ -16,19 +16,21 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.bokov.prog3.server;
+package me.bokov.prog3.service.db;
 
-import me.bokov.prog3.service.server.ConnectedChatClient;
+import java.io.Serializable;
+import java.util.Map;
 
-public class ChatClientMessageHandlingContext {
+public abstract class BaseEntity implements Serializable {
 
-    private final ConnectedChatClient chatClient;
+    private Long id;
 
-    public ChatClientMessageHandlingContext(ConnectedChatClient chatClient) {
-        this.chatClient = chatClient;
+    public Long getId() {
+        return id;
     }
 
-    public ConnectedChatClient getChatClient() {
-        return chatClient;
+    public void setId(Long id) {
+        this.id = id;
     }
+
 }

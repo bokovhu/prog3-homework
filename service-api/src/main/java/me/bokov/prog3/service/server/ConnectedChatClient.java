@@ -16,19 +16,21 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.bokov.prog3.server;
+package me.bokov.prog3.service.server;
 
-import me.bokov.prog3.service.server.ConnectedChatClient;
+import me.bokov.prog3.command.endpoint.ChatClientEndpoint;
+import me.bokov.prog3.command.request.Request;
+import me.bokov.prog3.command.response.Response;
+import me.bokov.prog3.service.common.CommunicationCapableService;
+import me.bokov.prog3.service.common.SessionCapableService;
 
-public class ChatClientMessageHandlingContext {
+import java.net.Socket;
+import java.util.Map;
 
-    private final ConnectedChatClient chatClient;
+public interface ConnectedChatClient extends SessionCapableService, CommunicationCapableService {
 
-    public ChatClientMessageHandlingContext(ConnectedChatClient chatClient) {
-        this.chatClient = chatClient;
-    }
+    void start (Socket clientSocket);
+    void stop ();
+    ChatClientEndpoint getClientEndpoint ();
 
-    public ConnectedChatClient getChatClient() {
-        return chatClient;
-    }
 }

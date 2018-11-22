@@ -27,10 +27,10 @@ import me.bokov.prog3.command.server.YouAreBannedCommand;
 
 public class ChatClientEndpointImpl implements ChatClientEndpoint {
 
-    private final ChatClient chatClient;
+    private final ConnectedChatClientImpl chatClient;
     private final ConnectionInformation connectionInformation;
 
-    public ChatClientEndpointImpl(ChatClient chatClient, ConnectionInformation connectionInformation) {
+    public ChatClientEndpointImpl(ConnectedChatClientImpl chatClient, ConnectionInformation connectionInformation) {
         this.chatClient = chatClient;
         this.connectionInformation = connectionInformation;
     }

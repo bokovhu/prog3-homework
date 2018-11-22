@@ -12,6 +12,7 @@
         <module>command-api</module>
         <module>application</module>
         <module>coverage-aggregator</module>
+        <module>service-api</module>
     </modules>
 
     <packaging>pom</packaging>

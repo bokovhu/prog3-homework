@@ -18,8 +18,8 @@
 
 package me.bokov.prog3.ui;
 
-import me.bokov.prog3.common.net.ChatManager;
-import me.bokov.prog3.server.ServerConfig;
+import me.bokov.prog3.service.ChatServer;
+import me.bokov.prog3.service.server.ServerConfiguration;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -32,7 +32,7 @@ public class WelcomeUIBean extends ScreenBase {
     private JButton startNewServerButton;
 
     @Inject
-    private ChatManager chatManager;
+    private ChatServer chatServer;
 
     @Inject
     private ServerAdministrationUIBean serverAdministrationUIBean;
@@ -80,13 +80,13 @@ public class WelcomeUIBean extends ScreenBase {
 
                     if (startNewServerResult == JOptionPane.OK_OPTION) {
 
-                        ServerConfig serverConfig = new ServerConfig();
+                        ServerConfiguration serverConfiguration = new ServerConfiguration();
 
-                        serverConfig.setPassword(new String(serverPasswordField.getPassword()));
-                        serverConfig.setPasswordEnabled(passwordEnabledCheckBox.isSelected());
-                        serverConfig.setPort(((Number) serverPortTextField.getValue()).intValue());
+                        serverConfiguration.setPassword(new String(serverPasswordField.getPassword()));
+                        serverConfiguration.setPasswordEnabled(passwordEnabledCheckBox.isSelected());
+                        serverConfiguration.setPort(((Number) serverPortTextField.getValue()).intValue());
 
-                        chatManager.startNewServer(serverConfig);
+                        chatServer.start(serverConfiguration);
 
                     }
 

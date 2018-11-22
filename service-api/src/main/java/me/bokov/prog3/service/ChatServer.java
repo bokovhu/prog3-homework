@@ -16,19 +16,27 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.bokov.prog3.server;
+package me.bokov.prog3.service;
 
-import me.bokov.prog3.service.server.ConnectedChatClient;
+import me.bokov.prog3.command.request.Request;
+import me.bokov.prog3.service.common.ChatUserVO;
+import me.bokov.prog3.service.server.ServerConfiguration;
 
-public class ChatClientMessageHandlingContext {
+import java.util.List;
+import java.util.Set;
 
-    private final ConnectedChatClient chatClient;
+public interface ChatServer {
 
-    public ChatClientMessageHandlingContext(ConnectedChatClient chatClient) {
-        this.chatClient = chatClient;
-    }
+    void start (ServerConfiguration configuration);
+    boolean isRunning ();
+    ServerConfiguration getServerConfiguration ();
+    void stop ();
+    List<ChatUserVO> getConnectedUsers ();
+    void addConnectedUser (ChatUserVO user);
+    void removeConnectedUser (ChatUserVO user);
+    void broadcast (Request request);
+    void banUserByUsername (Long userId);
+    void banUserByIp (Long userId);
+    void unbanUser (Long userId);
 
-    public ConnectedChatClient getChatClient() {
-        return chatClient;
-    }
 }

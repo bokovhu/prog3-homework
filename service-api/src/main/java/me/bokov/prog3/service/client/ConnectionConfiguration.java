@@ -16,19 +16,37 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.bokov.prog3.server;
+package me.bokov.prog3.service.client;
 
-import me.bokov.prog3.service.server.ConnectedChatClient;
+import java.io.Serializable;
 
-public class ChatClientMessageHandlingContext {
+public class ConnectionConfiguration implements Serializable {
 
-    private final ConnectedChatClient chatClient;
+    private String host;
+    private int port;
+    private String username;
 
-    public ChatClientMessageHandlingContext(ConnectedChatClient chatClient) {
-        this.chatClient = chatClient;
+    public String getHost() {
+        return host;
     }
 
-    public ConnectedChatClient getChatClient() {
-        return chatClient;
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 }
