@@ -72,6 +72,12 @@
 
         <dependency>
             <groupId>me.bokov.prog3</groupId>
+            <artifactId>prog3-homework-service-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>me.bokov.prog3</groupId>
             <artifactId>prog3-homework-application</artifactId>
             <version>${project.version}</version>
         </dependency>

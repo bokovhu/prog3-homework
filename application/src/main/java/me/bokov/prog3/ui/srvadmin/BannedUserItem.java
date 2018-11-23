@@ -18,7 +18,10 @@
 
 package me.bokov.prog3.ui.srvadmin;
 
-import me.bokov.prog3.server.dao.UserDao;
+import com.j256.ormlite.dao.Dao;
+import me.bokov.prog3.service.Database;
+import me.bokov.prog3.service.db.entity.ChatUserEntity;
+import me.bokov.prog3.ui.ErrorUIBean;
 
 import javax.enterprise.inject.spi.CDI;
 import javax.swing.*;
@@ -43,8 +46,23 @@ public class BannedUserItem extends JPanel {
 
         unbanButton.addActionListener(
                 e -> {
-                    UserDao userDao = CDI.current().select(UserDao.class).get();
-                    userDao.unbanUser(userDao.getUserIdByUsername(username));
+
+                    try {
+
+                        Dao<ChatUserEntity, Long> chatUserDao = CDI.current().select(Database.class).get().getChatUserDao();
+
+                        ChatUserEntity chatUserEntity = chatUserDao.queryForEq("username", username).get(0);
+
+                        chatUserEntity.setBanState("NOT_BANNED");
+
+                        chatUserDao.update(chatUserEntity);
+
+                    } catch (Exception exc) {
+
+                        CDI.current().select(ErrorUIBean.class).get().showThrowable(exc);
+
+                    }
+
                 }
         );
 

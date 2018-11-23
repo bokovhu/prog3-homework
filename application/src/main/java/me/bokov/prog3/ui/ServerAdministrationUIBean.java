@@ -22,9 +22,10 @@ import me.bokov.prog3.event.UserBannedEvent;
 import me.bokov.prog3.event.UserConnectedEvent;
 import me.bokov.prog3.event.UserDisconnectedEvent;
 import me.bokov.prog3.event.UserUnbannedEvent;
-import me.bokov.prog3.server.dao.UserDao;
 import me.bokov.prog3.service.ChatServer;
+import me.bokov.prog3.service.Database;
 import me.bokov.prog3.service.common.ChatUserVO;
+import me.bokov.prog3.service.db.entity.ChatUserEntity;
 import me.bokov.prog3.ui.common.PanelList;
 import me.bokov.prog3.ui.srvadmin.BannedUserItem;
 import me.bokov.prog3.ui.srvadmin.UserItem;
@@ -48,7 +49,7 @@ public class ServerAdministrationUIBean extends ScreenBase {
     private Logger logger;
 
     @Inject
-    private UserDao userDao;
+    private Database database;
 
     @Inject
     private ChatServer chatServer;
@@ -102,30 +103,26 @@ public class ServerAdministrationUIBean extends ScreenBase {
 
         usersList.clearPanels();
         bannedUsersList.clearPanels();
-        userDao.getAllUsers()
-                .forEach(
-                        userJson -> {
 
-                            logger.info(userJson.toString());
+        for (ChatUserEntity chatUserEntity : database.getChatUserDao()) {
 
-                            switch (userJson.getString("banState")) {
-                                case "NOT_BANNED":
-                                    usersList.addPanel(
-                                            new UserItem(
-                                                    userJson.getString("username"),
-                                                    currentlyConnectedUserNames.contains(userJson.getString("username"))
-                                            )
-                                    );
-                                    break;
-                                default:
-                                    bannedUsersList.addPanel(
-                                            new BannedUserItem(userJson.getString("username"))
-                                    );
-                                    break;
-                            }
+            switch (chatUserEntity.getBanState()) {
+                case "NOT_BANNED":
+                    usersList.addPanel(
+                            new UserItem(
+                                    chatUserEntity.getUsername(),
+                                    currentlyConnectedUserNames.contains(chatUserEntity.getUsername())
+                            )
+                    );
+                    break;
+                default:
+                    bannedUsersList.addPanel(
+                            new BannedUserItem(chatUserEntity.getUsername())
+                    );
+                    break;
+            }
 
-                        }
-                );
+        }
 
         panel.invalidate();
         panel.revalidate();

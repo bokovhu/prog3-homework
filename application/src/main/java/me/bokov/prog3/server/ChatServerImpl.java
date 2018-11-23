@@ -131,7 +131,27 @@ public class ChatServerImpl implements ChatServer {
     @Override
     public void stop() {
 
-        throw new UnsupportedOperationException();
+        try {
+
+            clientConnectionListenerThread.interrupt();
+
+            connectedChatClients.forEach(ConnectedChatClient::stop);
+
+            serverSocket.close();
+
+            synchronized (connectedChatClients) {
+                connectedChatClients.clear();
+            }
+
+            synchronized (connectedUsers) {
+                connectedUsers.clear();
+            }
+
+            running = false;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 

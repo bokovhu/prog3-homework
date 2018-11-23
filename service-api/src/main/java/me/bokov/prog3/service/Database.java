@@ -18,13 +18,20 @@
 
 package me.bokov.prog3.service;
 
-import org.sql2o.Connection;
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.support.ConnectionSource;
+import me.bokov.prog3.service.db.entity.ChatUserEntity;
 
 public interface Database {
 
-    void start ();
-    boolean isRunning ();
-    void stop ();
-    Connection openConnection ();
+    void start();
+
+    boolean isRunning();
+
+    void stop();
+
+    ConnectionSource getConnectionSource();
+
+    Dao<ChatUserEntity, Long> getChatUserDao();
 
 }

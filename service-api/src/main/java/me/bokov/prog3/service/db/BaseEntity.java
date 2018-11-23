@@ -18,19 +18,12 @@
 
 package me.bokov.prog3.service.db;
 
+import com.j256.ormlite.field.DatabaseField;
+
 import java.io.Serializable;
 import java.util.Map;
 
+
 public abstract class BaseEntity implements Serializable {
-
-    private Long id;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
 }

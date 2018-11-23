@@ -70,10 +70,18 @@
             <version>${project.version}</version>
         </dependency>
 
+        <!--
         <dependency>
             <groupId>org.sql2o</groupId>
             <artifactId>sql2o</artifactId>
             <version>${version.sql2o}</version>
+        </dependency>
+        -->
+
+        <dependency>
+            <groupId>com.j256.ormlite</groupId>
+            <artifactId>ormlite-core</artifactId>
+            <version>${version.ormlite}</version>
         </dependency>
 
     </dependencies>

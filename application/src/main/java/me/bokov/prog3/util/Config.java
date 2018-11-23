@@ -18,6 +18,7 @@
 
 package me.bokov.prog3.util;
 
+import me.bokov.prog3.Application;
 import org.slf4j.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -26,7 +27,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Properties;
 
 @ApplicationScoped
@@ -41,6 +44,8 @@ public class Config {
     private Locale userLocale;
     private String lastDatabaseMigration;
 
+    private Map<String, String> configurationMap = new HashMap<>();
+
     public void resetToDefaults() {
 
         userLocale = new Locale("en");
@@ -53,6 +58,9 @@ public class Config {
         userLocale = new Locale(properties.getProperty("user-locale"));
         lastDatabaseMigration = properties.getProperty("last-database-migration");
 
+        properties.stringPropertyNames()
+                .forEach(k -> configurationMap.put(k, properties.getProperty(k)));
+
     }
 
     private Properties toProperties() {
@@ -62,16 +70,26 @@ public class Config {
         properties.setProperty("user-locale", userLocale.getLanguage());
         properties.setProperty("last-database-migration", lastDatabaseMigration);
 
+        configurationMap.forEach(properties::setProperty);
+
         return properties;
 
     }
 
-    private void ensureAppConfigDirectory () {
+    private void ensureAppConfigDirectory() {
 
         if (!appConfigDirectoryInitialized) {
 
-            File userHomeDirectory = new File(System.getProperty("user.home"));
-            appConfigDirectory = new File(userHomeDirectory, ".chatter");
+            if (Application.getInstance().getCommandLine().hasOption("data-directory")) {
+
+                appConfigDirectory = new File(Application.getInstance().getCommandLine().getOptionValue("data-directory"));
+
+            } else {
+
+                File userHomeDirectory = new File(System.getProperty("user.home"));
+                appConfigDirectory = new File(userHomeDirectory, ".chatter");
+
+            }
 
             if (!appConfigDirectory.exists()) {
 
@@ -87,7 +105,7 @@ public class Config {
 
     }
 
-    public File getAppConfigDirectory () {
+    public File getAppConfigDirectory() {
         ensureAppConfigDirectory();
         return appConfigDirectory;
     }
@@ -153,6 +171,32 @@ public class Config {
 
     public void setLastDatabaseMigration(String lastDatabaseMigration) {
         this.lastDatabaseMigration = lastDatabaseMigration;
+    }
+
+    public DatabaseConnectionConfig getDatabaseConnectionConfig() {
+
+        DatabaseConnectionConfig cfg = new DatabaseConnectionConfig();
+
+        if (configurationMap.containsKey("db-jdbc-url")
+                && configurationMap.containsKey("db-jdbc-username")
+                && configurationMap.containsKey("db-jdbc-password")) {
+
+            cfg.setJdbcUrl(configurationMap.get("db-jdbc-url"));
+            cfg.setJdbcUsername(configurationMap.get("db-jdbc-username"));
+            cfg.setJdbcPassword(configurationMap.get("db-jdbc-password"));
+
+        } else {
+
+            File databaseFile = new File(getAppConfigDirectory(), "chatter.db");
+
+            cfg.setJdbcUrl("jdbc:h2:" + databaseFile.getAbsolutePath());
+            cfg.setJdbcUsername("sa");
+            cfg.setJdbcPassword("");
+
+        }
+
+        return cfg;
+
     }
 
 }

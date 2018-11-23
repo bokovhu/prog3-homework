@@ -18,13 +18,17 @@
 
 package me.bokov.prog3.server.handler;
 
+import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.Where;
 import me.bokov.prog3.command.CommandHandler;
 import me.bokov.prog3.command.client.HelloCommand;
 import me.bokov.prog3.command.response.ResponseBuilder;
 import me.bokov.prog3.event.UserConnectedEvent;
 import me.bokov.prog3.server.ChatClientMessageHandlingContext;
 import me.bokov.prog3.server.ClientCommandHandlerBean;
-import me.bokov.prog3.server.dao.UserDao;
+import me.bokov.prog3.service.ChatServer;
+import me.bokov.prog3.service.Database;
+import me.bokov.prog3.service.db.entity.ChatUserEntity;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
@@ -39,10 +43,13 @@ import java.util.Set;
 public class HelloCommandHandlerBean implements ClientCommandHandlerBean {
 
     @Inject
-    private UserDao userDao;
+    private Database database;
 
     @Inject
     private Event <UserConnectedEvent> userConnectedEvent;
+
+    @Inject
+    private ChatServer chatServer;
 
     @Override
     public Set<String> getHandledCommands() {
@@ -79,7 +86,14 @@ public class HelloCommandHandlerBean implements ClientCommandHandlerBean {
 
             String username = json.getString("username");
 
-            if (userDao.isUserBanned(userIpAddress, username)) {
+            boolean isUserBanned = database.getChatUserDao().queryBuilder()
+                    .where()
+                    .eq("username", username)
+                    .and()
+                    .ne("ban_state", "NOT_BANNED")
+                    .countOf() > 0L;
+
+            if (isUserBanned) {
                 return ResponseBuilder.create()
                         .messageId(req.getMessageId())
                         .code(HelloCommand.BANNED)
@@ -93,10 +107,28 @@ public class HelloCommandHandlerBean implements ClientCommandHandlerBean {
                         .build();
             }
 
-            userDao.ensureUser(username);
-            Long userId = userDao.getUserIdByUsername(username);
+            boolean userExistsByUsername = database.getChatUserDao().queryBuilder()
+                    .where().eq("username", username).countOf() > 0L;
 
-            if (ctx.getChatServer().getServerConfig().isPasswordEnabled()) {
+            ChatUserEntity chatUserEntity = null;
+
+            if (!userExistsByUsername) {
+
+                chatUserEntity = new ChatUserEntity();
+                chatUserEntity.setUsername(username);
+                chatUserEntity.setBanState("NOT_BANNED");
+                database.getChatUserDao().create(chatUserEntity);
+
+            } else {
+
+                chatUserEntity = database.getChatUserDao().queryForEq("username", username)
+                        .get(0);
+
+            }
+
+            Long userId = chatUserEntity.getId();
+
+            if (chatServer.getServerConfiguration().isPasswordEnabled()) {
                 return ResponseBuilder.create()
                         .messageId(req.getMessageId())
                         .code(HelloCommand.LOGIN_REQUIRED)

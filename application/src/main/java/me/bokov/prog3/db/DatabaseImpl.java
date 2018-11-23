@@ -18,20 +18,21 @@
 
 package me.bokov.prog3.db;
 
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.DaoManager;
+import com.j256.ormlite.db.H2DatabaseType;
+import com.j256.ormlite.jdbc.JdbcConnectionSource;
+import com.j256.ormlite.support.ConnectionSource;
+import com.j256.ormlite.table.TableUtils;
 import me.bokov.prog3.service.Database;
+import me.bokov.prog3.service.db.entity.ChatUserEntity;
 import me.bokov.prog3.util.Config;
+import me.bokov.prog3.util.DatabaseConnectionConfig;
 import org.slf4j.Logger;
-import org.sql2o.Connection;
-import org.sql2o.Sql2o;
+
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * This @ApplicationScoped CDI bean manages the database connection of the application.
@@ -55,71 +56,31 @@ public class DatabaseImpl implements Database {
     @Inject
     private Config config;
 
-    private Sql2o sql2o;
+    private Dao <ChatUserEntity, Long> chatUserDao;
 
-    /**
-     * Performs the database migration via first scanning for migration SQL files on the classpath, then determining
-     * which migrations to run, and lastly it runs the SQL code found in migration files, and sets the last migration
-     * file name in the configuration after each successful migration.
-     */
-    private void migrate() {
+    private ConnectionSource connectionSource;
 
-        logger.info("Migrating database");
-
-        List<String> migrationFileNames = new ArrayList<>();
+    private void migrateDatabase () {
 
         try {
 
-            try (InputStreamReader isr = new InputStreamReader(DatabaseImpl.class.getResourceAsStream(MIGRATIONS_BASENAME));
-                 BufferedReader br = new BufferedReader(isr)) {
+            TableUtils.createTableIfNotExists(connectionSource, ChatUserEntity.class);
 
-                String line = null;
-
-                while ((line = br.readLine()) != null) migrationFileNames.add(line.trim());
-
-            }
-
-        } catch (Exception exc) {
-
-            throw new IllegalStateException("Could not run database migrations!", exc);
-
+        } catch (Exception e) {
+            throw new IllegalStateException("Could not migrate database", e);
         }
 
-        Collections.sort(migrationFileNames);
+    }
 
-        logger.info("Discovered the following migration files: {}", migrationFileNames);
+    private void initDaos () {
 
-        for (String migrationFileName : migrationFileNames) {
+        try {
 
-            if (config.getLastDatabaseMigration() == null || migrationFileName.compareTo(config.getLastDatabaseMigration()) > 0) {
+            chatUserDao = DaoManager.createDao(connectionSource, ChatUserEntity.class);
 
-                logger.info("Running migration {}", migrationFileName);
+        } catch (Exception e) {
 
-                String sql = "";
-
-                try (InputStreamReader isr = new InputStreamReader(DatabaseImpl.class.getResourceAsStream(MIGRATIONS_BASENAME + migrationFileName));
-                     BufferedReader br = new BufferedReader(isr)) {
-
-                    String line = null;
-                    while ((line = br.readLine()) != null) sql += line + "\n";
-
-                } catch (Exception exc) {
-
-                    throw new IllegalStateException("Could not read migration file '" + migrationFileName + "'", exc);
-
-                }
-
-                try (Connection connection = sql2o.open()) {
-
-                    connection.createQuery(sql)
-                            .executeUpdate();
-
-                }
-
-                config.setLastDatabaseMigration(migrationFileName);
-                config.save();
-
-            }
+            throw new IllegalStateException("Could not initialize DAOs", e);
 
         }
 
@@ -138,19 +99,29 @@ public class DatabaseImpl implements Database {
 
         if (!running) {
 
-            File databaseFile = new File(config.getAppConfigDirectory(), "chatter.db");
+            DatabaseConnectionConfig dbCfg = config.getDatabaseConnectionConfig();
 
-            sql2o = new Sql2o(
-                    "jdbc:h2:" + databaseFile.getAbsolutePath(),
-                    "sa",
-                    ""
-            );
+            try {
 
-            migrate();
+                connectionSource = new JdbcConnectionSource(
+                        dbCfg.getJdbcUrl(),
+                        dbCfg.getJdbcUsername(),
+                        dbCfg.getJdbcPassword(),
+                        new H2DatabaseType()
+                );
 
-            running = true;
+                migrateDatabase();
+                initDaos();
 
-            logger.info("Initialization successful");
+                running = true;
+
+                logger.info("Initialization successful");
+
+            } catch (Exception e) {
+
+                throw new IllegalStateException("Could not initialize database", e);
+
+            }
 
         } else {
 
@@ -169,11 +140,19 @@ public class DatabaseImpl implements Database {
 
     @Override
     public void stop() {
-        throw new UnsupportedOperationException();
+
+        running = false;
+
     }
 
-    public Sql2o getSql2o() {
-        return sql2o;
+    @Override
+    public ConnectionSource getConnectionSource() {
+        return connectionSource;
+    }
+
+    @Override
+    public Dao<ChatUserEntity, Long> getChatUserDao() {
+        return chatUserDao;
     }
 
 }

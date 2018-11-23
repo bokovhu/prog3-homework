@@ -16,17 +16,35 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.bokov.prog3.service.db;
+package me.bokov.prog3;
 
-import java.util.List;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-public interface Dao <E extends BaseEntity> {
+import static org.junit.Assert.*;
 
-    List <E> getAll ();
-    E getById (Long id);
-    void create (E entity);
-    void update (E entity);
-    void delete (E entity);
-    void deleteById (Long id);
+public class ApplicationTest {
+
+    @After
+    public void afterEachTest () {
+
+        Application.destroyInstance();
+
+    }
+
+    @Test
+    public void test1 () {
+
+        Application.createInstance(new String[] { "--no-gui" });
+
+    }
+
+    @Test
+    public void test2 () {
+
+        Application.createInstance(new String[] { "--server", "--port", "10467" });
+
+    }
 
 }
