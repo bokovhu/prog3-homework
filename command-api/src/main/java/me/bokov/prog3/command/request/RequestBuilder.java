@@ -30,15 +30,15 @@ public final class RequestBuilder {
     private String command = null;
     private JsonValue data = null;
 
-    private RequestBuilder () {
+    private RequestBuilder() {
 
     }
 
-    public static RequestBuilder create () {
+    public static RequestBuilder create() {
         return new RequestBuilder();
     }
 
-    public static Request requestFromMessage (String rawMessage) {
+    public static Request requestFromMessage(String rawMessage) {
 
         if (rawMessage == null) {
             throw new IllegalArgumentException("Raw message cannot be null!");
@@ -50,19 +50,19 @@ public final class RequestBuilder {
             throw new IllegalArgumentException("Not a request");
         }
 
-        String [] splitted = trimmed.substring(2).split(" ", 3);
+        String[] splitted = trimmed.substring(2).split(" ", 3);
 
         if (splitted.length < 2) {
             throw new IllegalArgumentException("Malformed raw message!");
         }
 
-        String messageId = splitted [0];
-        String command = splitted [1];
+        String messageId = splitted[0];
+        String command = splitted[1];
         JsonValue data = null;
 
         if (splitted.length == 3) {
 
-            StringReader sr = new StringReader(splitted [2]);
+            StringReader sr = new StringReader(splitted[2]);
             data = Json.createReader(sr).readValue();
 
         }
@@ -71,7 +71,7 @@ public final class RequestBuilder {
 
     }
 
-    public Request build () {
+    public Request build() {
 
         if (command == null) {
             throw new IllegalStateException("Command cannot be null!");
@@ -81,17 +81,17 @@ public final class RequestBuilder {
 
     }
 
-    public RequestBuilder messageId (String messageId) {
+    public RequestBuilder messageId(String messageId) {
         this.messageId = messageId;
         return this;
     }
 
-    public RequestBuilder command (String command) {
+    public RequestBuilder command(String command) {
         this.command = command;
         return this;
     }
 
-    public RequestBuilder data (JsonValue data) {
+    public RequestBuilder data(JsonValue data) {
         this.data = data;
         return this;
     }
@@ -124,7 +124,7 @@ public final class RequestBuilder {
         }
 
         @Override
-        public String toString () {
+        public String toString() {
 
             StringBuilder sb = new StringBuilder();
 

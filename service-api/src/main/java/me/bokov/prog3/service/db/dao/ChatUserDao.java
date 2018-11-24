@@ -23,9 +23,10 @@ import me.bokov.prog3.service.db.entity.ChatUserEntity;
 
 import java.sql.SQLException;
 
-public interface ChatUserDao extends Dao <ChatUserEntity, Long> {
+public interface ChatUserDao extends Dao<ChatUserEntity, Long> {
 
-    ChatUserEntity ensureUserByUsername (String username) throws SQLException;
-    boolean isUserBanned (Long id) throws SQLException;
+    ChatUserEntity ensureUserByUsername(String username) throws SQLException;
+
+    boolean isUserBanned(Long id) throws SQLException;
 
 }

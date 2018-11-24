@@ -22,7 +22,6 @@ import me.bokov.prog3.command.Command;
 import me.bokov.prog3.command.CommandException;
 import me.bokov.prog3.command.request.RequestBuilder;
 import me.bokov.prog3.command.response.Response;
-import me.bokov.prog3.server.ServerChatClientImpl;
 
 import javax.json.JsonValue;
 import java.util.UUID;
@@ -35,10 +34,11 @@ public abstract class CommandBase implements Command {
         this.chatClient = chatClient;
     }
 
-    protected abstract String getCommand ();
-    protected abstract JsonValue getData ();
+    protected abstract String getCommand();
 
-    private String send () {
+    protected abstract JsonValue getData();
+
+    private String send() {
 
         String command = getCommand();
         JsonValue data = getData();

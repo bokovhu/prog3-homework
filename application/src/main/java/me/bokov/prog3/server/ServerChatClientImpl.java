@@ -30,11 +30,8 @@ import me.bokov.prog3.service.server.ServerChatClient;
 
 import javax.enterprise.inject.spi.CDI;
 import java.util.Date;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
-public class ServerChatClientImpl extends ClientBase <ServerChatClientMessageHandlingContext> implements ServerChatClient {
+public class ServerChatClientImpl extends ClientBase<ServerChatClientMessageHandlingContext> implements ServerChatClient {
 
     private final ChatServerImpl chatServer;
     private ChatClientEndpoint chatClientEndpoint;

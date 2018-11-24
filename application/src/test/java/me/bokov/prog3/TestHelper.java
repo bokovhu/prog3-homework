@@ -24,7 +24,7 @@ import java.nio.file.Path;
 
 public class TestHelper {
 
-    public static void startApplicationInTempEnv (String [] args) throws Exception {
+    public static void startApplicationInTempEnv(String[] args) throws Exception {
 
         Application.destroyInstance();
 
@@ -34,12 +34,12 @@ public class TestHelper {
 
         System.out.println("Will use '" + tempDirFile.getAbsolutePath() + "' as data directory for testing purposes\n");
 
-        String [] actualArgs = new String[(args != null ? args.length : 0) + 2];
-        actualArgs [0] = "--data-directory";
-        actualArgs [1] = tempDirFile.getAbsolutePath();
+        String[] actualArgs = new String[(args != null ? args.length : 0) + 2];
+        actualArgs[0] = "--data-directory";
+        actualArgs[1] = tempDirFile.getAbsolutePath();
         if (args != null) {
             for (int i = 0; i < args.length; i++) {
-                actualArgs [i + 2] = args [i];
+                actualArgs[i + 2] = args[i];
             }
         }
 

@@ -31,7 +31,7 @@ import static org.junit.Assert.*;
 public class RequestBuilderTest {
 
     @Test
-    public void build_whenNoMessageIdIsProvided_shouldHaveMessageIdAsARandomUUID () {
+    public void build_whenNoMessageIdIsProvided_shouldHaveMessageIdAsARandomUUID() {
 
         Request request = RequestBuilder.create()
                 .command("COMMAND")
@@ -48,7 +48,7 @@ public class RequestBuilderTest {
     }
 
     @Test
-    public void build_whenMessageIdIsProvided_shouldOverrideDefaultMessageId () {
+    public void build_whenMessageIdIsProvided_shouldOverrideDefaultMessageId() {
 
         Request request = RequestBuilder.create()
                 .messageId("message-1")
@@ -62,7 +62,7 @@ public class RequestBuilderTest {
     }
 
     @Test
-    public void build_whenDataIsProvided_shouldHaveData () {
+    public void build_whenDataIsProvided_shouldHaveData() {
 
         Request request = RequestBuilder.create()
                 .command("COMMAND")
@@ -76,12 +76,12 @@ public class RequestBuilderTest {
         assertNotNull(jv);
 
         assertEquals(JsonValue.ValueType.STRING, jv.getValueType());
-        assertEquals("test", ( (JsonString) jv ).getString());
+        assertEquals("test", ((JsonString) jv).getString());
 
     }
 
-    @Test (expected = IllegalStateException.class)
-    public void build_whenNoCommandIsProvided_shouldThrowException () {
+    @Test(expected = IllegalStateException.class)
+    public void build_whenNoCommandIsProvided_shouldThrowException() {
 
         Request request = RequestBuilder.create().build();
 
@@ -89,8 +89,8 @@ public class RequestBuilderTest {
 
     }
 
-    @Test (expected = IllegalArgumentException.class)
-    public void requestFromMessage_whenNullIsProvided_shouldThrowException () {
+    @Test(expected = IllegalArgumentException.class)
+    public void requestFromMessage_whenNullIsProvided_shouldThrowException() {
 
         Request request = RequestBuilder.requestFromMessage(null);
 
@@ -99,7 +99,7 @@ public class RequestBuilderTest {
     }
 
     @Test
-    public void requestFromMessage_whenOnlyWhitespaceOrEmptyStringIsProvided_shouldThrowException () {
+    public void requestFromMessage_whenOnlyWhitespaceOrEmptyStringIsProvided_shouldThrowException() {
 
         try {
 
@@ -128,7 +128,7 @@ public class RequestBuilderTest {
     }
 
     @Test
-    public void test_requestFromMessage_whenCorrectStringIsProvided_thenShouldWork () {
+    public void test_requestFromMessage_whenCorrectStringIsProvided_thenShouldWork() {
 
         Request request = RequestBuilder.requestFromMessage("Q message-1 HELLO");
 
@@ -150,7 +150,7 @@ public class RequestBuilderTest {
     }
 
     @Test
-    public void test_toString_whenNoDataIsProvided_thenMessageContainsNoData () {
+    public void test_toString_whenNoDataIsProvided_thenMessageContainsNoData() {
 
         Request request = RequestBuilder.create()
                 .messageId("message-1")
@@ -164,7 +164,7 @@ public class RequestBuilderTest {
     }
 
     @Test
-    public void test_toString_whenDataIsProvided_thenMessageContainsData () {
+    public void test_toString_whenDataIsProvided_thenMessageContainsData() {
 
         Request request = RequestBuilder.create()
                 .messageId("message-1")

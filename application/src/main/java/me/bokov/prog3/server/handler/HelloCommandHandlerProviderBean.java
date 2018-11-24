@@ -22,8 +22,8 @@ import me.bokov.prog3.command.CommandHandler;
 import me.bokov.prog3.command.client.HelloCommand;
 import me.bokov.prog3.command.response.ResponseBuilder;
 import me.bokov.prog3.event.UserConnectedEvent;
-import me.bokov.prog3.server.ServerChatClientMessageHandlingContext;
 import me.bokov.prog3.server.ServerChatClientCommandHandlerProviderBean;
+import me.bokov.prog3.server.ServerChatClientMessageHandlingContext;
 import me.bokov.prog3.service.ChatServer;
 import me.bokov.prog3.service.Database;
 import me.bokov.prog3.service.db.entity.ChatUserEntity;
@@ -32,7 +32,9 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.json.JsonObject;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
 
 @ApplicationScoped
 public class HelloCommandHandlerProviderBean implements ServerChatClientCommandHandlerProviderBean {

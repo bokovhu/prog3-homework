@@ -25,7 +25,7 @@ import me.bokov.prog3.service.db.entity.ChatRoomMembershipEntity;
 
 import java.sql.SQLException;
 
-public class ChatRoomMembershipDaoImpl extends BaseDaoImpl <ChatRoomMembershipEntity, Long> implements ChatRoomMembershipDao {
+public class ChatRoomMembershipDaoImpl extends BaseDaoImpl<ChatRoomMembershipEntity, Long> implements ChatRoomMembershipDao {
 
     public ChatRoomMembershipDaoImpl(ConnectionSource connectionSource) throws SQLException {
         super(connectionSource, ChatRoomMembershipEntity.class);

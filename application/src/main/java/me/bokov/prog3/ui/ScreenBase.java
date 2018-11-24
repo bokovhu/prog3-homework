@@ -46,7 +46,7 @@ public abstract class ScreenBase {
 
     }
 
-    protected boolean guiEnabled () {
+    protected boolean guiEnabled() {
         return !Application.getInstance().getCommandLine().hasOption("no-gui")
                 && !Application.getInstance().getCommandLine().hasOption("server");
     }

@@ -18,7 +18,6 @@
 
 package me.bokov.prog3;
 
-import me.bokov.prog3.db.DatabaseImpl;
 import me.bokov.prog3.service.ChatServer;
 import me.bokov.prog3.service.Database;
 import me.bokov.prog3.service.server.ServerConfiguration;
@@ -43,19 +42,44 @@ import java.security.SecureRandom;
 public class Application {
 
     private static final String RANDOM_PASSWORD_CHARS = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
+    private static Application INSTANCE = null;
     private final Logger logger = LoggerFactory.getLogger(getClass());
-
     private Weld weld;
     private WeldContainer weldContainer;
-
-    private static Application INSTANCE = null;
-
     private Options cliOptions = null;
     private CommandLine commandLine = null;
 
     private boolean serverMode = false;
     private boolean enableGui = false;
+
+    /**
+     * Creates the singleton instance
+     */
+    public static void createInstance(String[] args) {
+        INSTANCE = new Application();
+        INSTANCE.parseCommandLineArguments(args);
+        INSTANCE.initialize();
+    }
+
+    public static void destroyInstance() {
+        if (INSTANCE != null) {
+
+            if (INSTANCE.serverMode) {
+                CDI.current().select(ChatServer.class).get()
+                        .stop();
+            }
+
+            INSTANCE.getWeld().shutdown();
+            INSTANCE = null;
+        }
+    }
+
+    /**
+     * @return the singleton instance
+     */
+    public static Application getInstance() {
+        return INSTANCE;
+    }
 
     /**
      * Adds the server-mode related command line arguments to cliOptions
@@ -202,7 +226,6 @@ public class Application {
 
     }
 
-
     private String randomPassword() {
 
         StringBuilder sb = new StringBuilder();
@@ -303,35 +326,6 @@ public class Application {
 
         logger.info("Application initialization finished");
 
-    }
-
-    /**
-     * Creates the singleton instance
-     */
-    public static void createInstance(String[] args) {
-        INSTANCE = new Application();
-        INSTANCE.parseCommandLineArguments(args);
-        INSTANCE.initialize();
-    }
-
-    public static void destroyInstance() {
-        if (INSTANCE != null) {
-
-            if (INSTANCE.serverMode) {
-                CDI.current().select(ChatServer.class).get()
-                        .stop();
-            }
-
-            INSTANCE.getWeld().shutdown();
-            INSTANCE = null;
-        }
-    }
-
-    /**
-     * @return the singleton instance
-     */
-    public static Application getInstance() {
-        return INSTANCE;
     }
 
     /**

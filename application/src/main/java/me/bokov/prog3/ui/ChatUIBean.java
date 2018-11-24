@@ -27,7 +27,6 @@ public class ChatUIBean extends ScreenBase {
     public void initialize() {
 
 
-
     }
 
 }

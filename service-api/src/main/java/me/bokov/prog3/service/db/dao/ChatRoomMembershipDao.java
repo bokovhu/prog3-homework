@@ -21,5 +21,5 @@ package me.bokov.prog3.service.db.dao;
 import com.j256.ormlite.dao.Dao;
 import me.bokov.prog3.service.db.entity.ChatRoomMembershipEntity;
 
-public interface ChatRoomMembershipDao extends Dao <ChatRoomMembershipEntity, Long> {
+public interface ChatRoomMembershipDao extends Dao<ChatRoomMembershipEntity, Long> {
 }

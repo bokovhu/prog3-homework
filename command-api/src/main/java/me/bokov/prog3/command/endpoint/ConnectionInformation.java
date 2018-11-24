@@ -21,9 +21,11 @@ package me.bokov.prog3.command.endpoint;
 public interface ConnectionInformation {
 
     int getLocalPort();
+
     int getRemotePort();
 
     String getLocalAddress();
+
     String getRemoteAddress();
 
 }

@@ -25,9 +25,12 @@ import java.net.Socket;
 
 public interface CommunicationCapableService {
 
-    void start (Socket socket);
-    void stop ();
-    void send (Request request);
-    Response readResponse (String messageId, long timeoutInMillisec);
+    void start(Socket socket);
+
+    void stop();
+
+    void send(Request request);
+
+    Response readResponse(String messageId, long timeoutInMillisec);
 
 }

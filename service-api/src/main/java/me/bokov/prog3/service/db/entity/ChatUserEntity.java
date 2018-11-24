@@ -23,19 +23,16 @@ import com.j256.ormlite.table.DatabaseTable;
 import me.bokov.prog3.service.common.ChatUserVO;
 import me.bokov.prog3.service.db.BaseEntity;
 
-import java.util.HashMap;
-import java.util.Map;
-
-@DatabaseTable (tableName = "chat_user")
+@DatabaseTable(tableName = "chat_user")
 public class ChatUserEntity extends BaseEntity {
 
-    @DatabaseField (columnName = "username", unique = true, canBeNull = false)
+    @DatabaseField(columnName = "username", unique = true, canBeNull = false)
     private String username;
 
-    @DatabaseField (columnName = "ban_state", canBeNull = false, defaultValue = "NOT_BANNED")
+    @DatabaseField(columnName = "ban_state", canBeNull = false, defaultValue = "NOT_BANNED")
     private String banState;
 
-    @DatabaseField (columnName = "banned_ip")
+    @DatabaseField(columnName = "banned_ip")
     private String bannedIp;
 
     public String getUsername() {
@@ -62,7 +59,7 @@ public class ChatUserEntity extends BaseEntity {
         this.bannedIp = bannedIp;
     }
 
-    public ChatUserVO toVo () {
+    public ChatUserVO toVo() {
 
         ChatUserVO vo = new ChatUserVO();
 

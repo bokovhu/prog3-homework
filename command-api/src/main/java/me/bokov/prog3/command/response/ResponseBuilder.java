@@ -29,15 +29,15 @@ public final class ResponseBuilder {
     private Integer code = null;
     private JsonValue data = null;
 
-    private ResponseBuilder () {
+    private ResponseBuilder() {
 
     }
 
-    public static ResponseBuilder create () {
+    public static ResponseBuilder create() {
         return new ResponseBuilder();
     }
 
-    public static Response responseFromMessage (String rawMessage) {
+    public static Response responseFromMessage(String rawMessage) {
 
         if (rawMessage == null) {
             throw new IllegalArgumentException("Raw message cannot be null!");
@@ -49,19 +49,19 @@ public final class ResponseBuilder {
             throw new IllegalArgumentException("Not a response!");
         }
 
-        String [] splitted = trimmed.substring(2).split(" ", 3);
+        String[] splitted = trimmed.substring(2).split(" ", 3);
 
         if (splitted.length < 2) {
             throw new IllegalArgumentException("Malformed raw message!");
         }
 
-        String messageId = splitted [0];
-        Integer code = Integer.parseInt(splitted [1]);
+        String messageId = splitted[0];
+        Integer code = Integer.parseInt(splitted[1]);
         JsonValue data = null;
 
         if (splitted.length == 3) {
 
-            StringReader sr = new StringReader(splitted [2]);
+            StringReader sr = new StringReader(splitted[2]);
             data = Json.createReader(sr).readValue();
 
         }
@@ -70,7 +70,7 @@ public final class ResponseBuilder {
 
     }
 
-    public Response build () {
+    public Response build() {
 
         if (this.messageId == null) {
             throw new IllegalStateException("Message ID cannot be null!");
@@ -84,17 +84,17 @@ public final class ResponseBuilder {
 
     }
 
-    public ResponseBuilder messageId (String messageId) {
+    public ResponseBuilder messageId(String messageId) {
         this.messageId = messageId;
         return this;
     }
 
-    public ResponseBuilder code (int code) {
+    public ResponseBuilder code(int code) {
         this.code = code;
         return this;
     }
 
-    public ResponseBuilder data (JsonValue data) {
+    public ResponseBuilder data(JsonValue data) {
         this.data = data;
         return this;
     }
@@ -127,7 +127,7 @@ public final class ResponseBuilder {
         }
 
         @Override
-        public String toString () {
+        public String toString() {
 
             StringBuilder sb = new StringBuilder();
 

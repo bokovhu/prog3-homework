@@ -19,9 +19,6 @@
 package me.bokov.prog3.common;
 
 import me.bokov.prog3.command.PingCommand;
-import me.bokov.prog3.common.ClientBase;
-import me.bokov.prog3.common.CommandBase;
-import me.bokov.prog3.server.ServerChatClientImpl;
 
 import javax.json.JsonValue;
 

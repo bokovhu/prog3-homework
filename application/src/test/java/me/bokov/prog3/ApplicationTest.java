@@ -19,31 +19,28 @@
 package me.bokov.prog3;
 
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 public class ApplicationTest {
 
     @After
-    public void afterEachTest () {
+    public void afterEachTest() {
 
         Application.destroyInstance();
 
     }
 
     @Test
-    public void test1 () {
+    public void test1() {
 
-        Application.createInstance(new String[] { "--no-gui" });
+        Application.createInstance(new String[]{"--no-gui"});
 
     }
 
     @Test
-    public void test2 () {
+    public void test2() {
 
-        Application.createInstance(new String[] { "--server", "--port", "10467" });
+        Application.createInstance(new String[]{"--server", "--port", "10467"});
 
     }
 

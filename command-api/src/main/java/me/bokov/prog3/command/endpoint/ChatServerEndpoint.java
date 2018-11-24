@@ -26,8 +26,11 @@ import me.bokov.prog3.command.client.LoginCommand;
 public interface ChatServerEndpoint extends Endpoint {
 
     HelloCommand hello();
+
     LoginCommand login();
+
     CreateRoomCommand createRoom();
-    DisconnectCommand disconnect ();
+
+    DisconnectCommand disconnect();
 
 }

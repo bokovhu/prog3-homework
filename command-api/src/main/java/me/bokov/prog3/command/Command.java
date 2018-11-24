@@ -23,6 +23,7 @@ import me.bokov.prog3.command.response.Response;
 public interface Command {
 
     Response execute() throws CommandException;
-    void executeWithoutAnswer () throws CommandException;
+
+    void executeWithoutAnswer() throws CommandException;
 
 }

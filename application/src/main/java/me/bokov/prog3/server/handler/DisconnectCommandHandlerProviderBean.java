@@ -20,14 +20,12 @@ package me.bokov.prog3.server.handler;
 
 import me.bokov.prog3.command.CommandHandler;
 import me.bokov.prog3.command.response.ResponseBuilder;
-import me.bokov.prog3.event.UserDisconnectedEvent;
-import me.bokov.prog3.server.ServerChatClientMessageHandlingContext;
 import me.bokov.prog3.server.ServerChatClientCommandHandlerProviderBean;
+import me.bokov.prog3.server.ServerChatClientMessageHandlingContext;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
 
 @ApplicationScoped
 public class DisconnectCommandHandlerProviderBean implements ServerChatClientCommandHandlerProviderBean {

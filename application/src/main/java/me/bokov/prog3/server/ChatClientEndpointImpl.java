@@ -18,7 +18,6 @@
 
 package me.bokov.prog3.server;
 
-import me.bokov.prog3.command.PingCommand;
 import me.bokov.prog3.command.endpoint.ChatClientEndpoint;
 import me.bokov.prog3.command.endpoint.ConnectionInformation;
 import me.bokov.prog3.command.server.NewInvitationCommand;
@@ -28,7 +27,6 @@ import me.bokov.prog3.command.server.YouAreBannedCommand;
 import me.bokov.prog3.common.ClientBase;
 import me.bokov.prog3.common.EndpointBase;
 import me.bokov.prog3.server.command.NewMessageCommandImpl;
-import me.bokov.prog3.common.PingCommandImpl;
 
 public class ChatClientEndpointImpl extends EndpointBase implements ChatClientEndpoint {
 

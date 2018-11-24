@@ -34,7 +34,13 @@ public class UserItem extends JPanel {
     private final String username;
     private final boolean isConnected;
 
-    private void initPanel () {
+    public UserItem(String username, boolean isConnected) {
+        this.username = username;
+        this.isConnected = isConnected;
+        initPanel();
+    }
+
+    private void initPanel() {
 
         JLabel usernameLabel = new JLabel(username);
         if (!isConnected) {
@@ -47,7 +53,7 @@ public class UserItem extends JPanel {
 
         setLayout(new GridLayout(1, 2, 4, 4));
 
-        add (usernameLabel);
+        add(usernameLabel);
         add(banButton);
 
         banButton.addActionListener(
@@ -81,12 +87,6 @@ public class UserItem extends JPanel {
                 }
         );
 
-    }
-
-    public UserItem(String username, boolean isConnected) {
-        this.username = username;
-        this.isConnected = isConnected;
-        initPanel();
     }
 
 }

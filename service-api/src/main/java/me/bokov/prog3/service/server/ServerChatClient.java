@@ -19,16 +19,11 @@
 package me.bokov.prog3.service.server;
 
 import me.bokov.prog3.command.endpoint.ChatClientEndpoint;
-import me.bokov.prog3.command.request.Request;
-import me.bokov.prog3.command.response.Response;
 import me.bokov.prog3.service.common.CommunicationCapableService;
 import me.bokov.prog3.service.common.SessionCapableService;
 
-import java.net.Socket;
-import java.util.Map;
-
 public interface ServerChatClient extends SessionCapableService, CommunicationCapableService {
 
-    ChatClientEndpoint getClientEndpoint ();
+    ChatClientEndpoint getClientEndpoint();
 
 }

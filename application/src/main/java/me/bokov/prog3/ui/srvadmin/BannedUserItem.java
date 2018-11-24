@@ -33,7 +33,12 @@ public class BannedUserItem extends JPanel {
 
     private final String username;
 
-    private void initPanel () {
+    public BannedUserItem(String username) {
+        this.username = username;
+        initPanel();
+    }
+
+    private void initPanel() {
 
         JLabel usernameLabel = new JLabel(username);
         JButton unbanButton = new JButton("Unban");
@@ -76,11 +81,6 @@ public class BannedUserItem extends JPanel {
                 }
         );
 
-    }
-
-    public BannedUserItem(String username) {
-        this.username = username;
-        initPanel();
     }
 
 }

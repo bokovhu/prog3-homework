@@ -20,5 +20,5 @@ package me.bokov.prog3.client;
 
 import me.bokov.prog3.common.CommandHandlerProviderBean;
 
-public interface ChatClientCommandHandlerProviderBean extends CommandHandlerProviderBean <ChatClientMessageHandlingContext> {
+public interface ChatClientCommandHandlerProviderBean extends CommandHandlerProviderBean<ChatClientMessageHandlingContext> {
 }

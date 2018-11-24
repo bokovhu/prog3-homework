@@ -22,8 +22,10 @@ import javax.json.JsonValue;
 
 public interface Request {
 
-    String getMessageId ();
-    String getCommand ();
-    JsonValue getData ();
+    String getMessageId();
+
+    String getCommand();
+
+    JsonValue getData();
 
 }

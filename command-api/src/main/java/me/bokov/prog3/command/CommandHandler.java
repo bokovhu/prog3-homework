@@ -22,8 +22,8 @@ import me.bokov.prog3.command.request.Request;
 import me.bokov.prog3.command.response.Response;
 
 @FunctionalInterface
-public interface CommandHandler <CTX> {
+public interface CommandHandler<CTX> {
 
-    Response handleCommand (CTX context, Request request) throws Exception;
+    Response handleCommand(CTX context, Request request) throws Exception;
 
 }

@@ -34,7 +34,7 @@ import javax.enterprise.context.ApplicationScoped;
 import java.net.Socket;
 
 @ApplicationScoped
-public class ChatClientImpl extends ClientBase <ChatClientMessageHandlingContext> implements ChatClient {
+public class ChatClientImpl extends ClientBase<ChatClientMessageHandlingContext> implements ChatClient {
 
     private boolean connected = false;
 
@@ -114,7 +114,9 @@ public class ChatClientImpl extends ClientBase <ChatClientMessageHandlingContext
 
         try {
             getServerEndpoint().disconnect().execute();
-        } catch (Exception e) { e.printStackTrace(); }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         stop();
         connected = false;

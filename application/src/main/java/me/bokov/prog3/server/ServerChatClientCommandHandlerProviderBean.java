@@ -20,6 +20,6 @@ package me.bokov.prog3.server;
 
 import me.bokov.prog3.common.CommandHandlerProviderBean;
 
-public interface ServerChatClientCommandHandlerProviderBean extends CommandHandlerProviderBean <ServerChatClientMessageHandlingContext> {
+public interface ServerChatClientCommandHandlerProviderBean extends CommandHandlerProviderBean<ServerChatClientMessageHandlingContext> {
 
 }

@@ -22,7 +22,6 @@ import me.bokov.prog3.command.request.Request;
 import me.bokov.prog3.event.UserDisconnectedEvent;
 import me.bokov.prog3.service.ChatServer;
 import me.bokov.prog3.service.common.ChatUserVO;
-import me.bokov.prog3.service.common.CommunicationCapableService;
 import me.bokov.prog3.service.server.ServerChatClient;
 import me.bokov.prog3.service.server.ServerConfiguration;
 import org.slf4j.Logger;
@@ -35,24 +34,20 @@ import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class ChatServerImpl implements ChatServer {
 
+    final List<ServerChatClient> serverChatClients = Collections.synchronizedList(new ArrayList<>());
+    private final List<ChatUserVO> connectedUsers = Collections.synchronizedList(new ArrayList<>());
+    ServerSocket serverSocket;
     @Inject
     private Logger logger;
-
     private boolean running = false;
-
-    ServerSocket serverSocket;
     private ExecutorService taskExecutor;
-    private final List<ChatUserVO> connectedUsers = Collections.synchronizedList(new ArrayList<>());
-    final List<ServerChatClient> serverChatClients = Collections.synchronizedList(new ArrayList<>());
     private ServerConfiguration serverConfiguration;
 
     private void setUpServerSocket() {
@@ -69,7 +64,7 @@ public class ChatServerImpl implements ChatServer {
 
     }
 
-    void handleServerClientDisconnection (ServerChatClientImpl client) {
+    void handleServerClientDisconnection(ServerChatClientImpl client) {
 
         logger.info("Handling server client disconnection");
 
@@ -208,9 +203,9 @@ public class ChatServerImpl implements ChatServer {
         return serverChatClients;
     }
 
-    public void observeUserDisconnectedEvent (@Observes UserDisconnectedEvent event) {
+    public void observeUserDisconnectedEvent(@Observes UserDisconnectedEvent event) {
 
-        List <ServerChatClient> toStop = new ArrayList<>();
+        List<ServerChatClient> toStop = new ArrayList<>();
 
         synchronized (serverChatClients) {
             serverChatClients.stream().filter(c -> c.isSessionValueSet("username") && event.getUsername().equals(c.getSessionValue("username")))

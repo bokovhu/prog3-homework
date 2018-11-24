@@ -20,6 +20,6 @@ package me.bokov.prog3.command.client;
 
 public interface AcceptInvitationCommand extends ClientCommand {
 
-    AcceptInvitationCommand invitationId (String invitationId);
+    AcceptInvitationCommand invitationId(String invitationId);
 
 }

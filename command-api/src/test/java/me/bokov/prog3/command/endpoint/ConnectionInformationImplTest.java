@@ -20,12 +20,13 @@ package me.bokov.prog3.command.endpoint;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class ConnectionInformationImplTest {
 
     @Test
-    public void test_getters () {
+    public void test_getters() {
 
         ConnectionInformationImpl ci = new ConnectionInformationImpl(
                 123,
@@ -42,7 +43,7 @@ public class ConnectionInformationImplTest {
     }
 
     @Test
-    public void test_toString () {
+    public void test_toString() {
 
         ConnectionInformationImpl ci = new ConnectionInformationImpl(
                 123,

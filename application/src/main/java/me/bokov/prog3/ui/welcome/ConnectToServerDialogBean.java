@@ -31,7 +31,7 @@ public class ConnectToServerDialogBean {
     @Inject
     private I18N i18n;
 
-    public void show () {
+    public void show() {
 
         SwingUtilities.invokeLater(
                 () -> {
@@ -43,7 +43,7 @@ public class ConnectToServerDialogBean {
 
                     int connectToServerResult = JOptionPane.showConfirmDialog(
                             null,
-                            new Object[] {
+                            new Object[]{
                                     new InputGroup(i18n.getText("connect-to-server.server-hostname"), serverHostnameTextField),
                                     new InputGroup(i18n.getText("connect-to-server.server-port"), serverPortTextField),
                                     new InputGroup(i18n.getText("connect-to-server.username"), usernameTextField)
@@ -53,7 +53,6 @@ public class ConnectToServerDialogBean {
                     );
 
                     if (connectToServerResult == JOptionPane.OK_OPTION) {
-
 
 
                     }

@@ -27,8 +27,11 @@ import me.bokov.prog3.command.server.YouAreBannedCommand;
 public interface ChatClientEndpoint extends Endpoint {
 
     YouAreBannedCommand youAreBanned();
+
     RoomDeletedCommand roomDeleted();
+
     NewMessageCommand newMessage();
+
     NewInvitationCommand newInvitation();
 
 }

@@ -18,7 +18,6 @@
 
 package me.bokov.prog3.db;
 
-import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.db.H2DatabaseType;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
@@ -38,27 +37,24 @@ import me.bokov.prog3.util.Config;
 import me.bokov.prog3.util.DatabaseConnectionConfig;
 import org.slf4j.Logger;
 
-
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 /**
  * This @ApplicationScoped CDI bean manages the database connection of the application.
- *
+ * <p>
  * The database used in the app is an embedded H2 database, the database file is located in the
  * {USER HOME}/.chatter/chatter.db file.
- *
+ * <p>
  * When running, the bean also performs database migrations. These migrations are simple .SQL files, that are stored
  * on the classpath. The order of the migrations is determined by the natural order of the name of the migration files.
  */
 @ApplicationScoped
 public class DatabaseImpl implements Database {
 
+    private static final String MIGRATIONS_BASENAME = "/me/bokov/prog3/sql/ddl/";
     @Inject
     private Logger logger;
-
-    private static final String MIGRATIONS_BASENAME = "/me/bokov/prog3/sql/ddl/";
-
     private boolean running = false;
 
     @Inject
@@ -70,7 +66,7 @@ public class DatabaseImpl implements Database {
 
     private ConnectionSource connectionSource;
 
-    private void migrateDatabase () {
+    private void migrateDatabase() {
 
         try {
 
@@ -84,7 +80,7 @@ public class DatabaseImpl implements Database {
 
     }
 
-    private void initDaos () {
+    private void initDaos() {
 
         try {
 
@@ -106,7 +102,7 @@ public class DatabaseImpl implements Database {
 
     /**
      * Initializes the database.
-     *
+     * <p>
      * If the database was already running, an IllegalStateException is thrown
      *
      * @throws IllegalStateException if the database was already running

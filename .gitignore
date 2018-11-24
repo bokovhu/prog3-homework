@@ -17,3 +17,5 @@ target/
 
 command-api/target/
 application/target/
+service-api/target/
+coverage-aggregator/target/

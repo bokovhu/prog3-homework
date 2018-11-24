@@ -25,7 +25,7 @@ import me.bokov.prog3.service.db.entity.ChatUserEntity;
 
 import java.sql.SQLException;
 
-public class ChatUserDaoImpl extends BaseDaoImpl <ChatUserEntity, Long> implements ChatUserDao {
+public class ChatUserDaoImpl extends BaseDaoImpl<ChatUserEntity, Long> implements ChatUserDao {
 
     public ChatUserDaoImpl(ConnectionSource connectionSource) throws SQLException {
         super(connectionSource, ChatUserEntity.class);

@@ -33,15 +33,16 @@ public class LoggerProducer {
     /**
      * Produces a single Logger (SLF4J), and uses the injectionPoint's getBeanClass () if available, or the injected
      * member's declaring class otherwise as the parameter for the LoggerFactory.getLogger () method call.
-     *
+     * <p>
      * If neither of these are available in the injectionPoint, a Logger with the name "UNKNOWN" is returned.
+     *
      * @param injectionPoint the InjectionPoint
      * @return the created Logger object
      */
     @Produces
-    public Logger produceLogger (InjectionPoint injectionPoint) {
+    public Logger produceLogger(InjectionPoint injectionPoint) {
 
-        Class <?> clazz = null;
+        Class<?> clazz = null;
 
         if (injectionPoint.getBean() != null) clazz = injectionPoint.getBean().getBeanClass();
         else if (injectionPoint.getMember() != null) clazz = injectionPoint.getMember().getDeclaringClass();

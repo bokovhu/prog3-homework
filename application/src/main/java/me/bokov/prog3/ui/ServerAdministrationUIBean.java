@@ -29,7 +29,6 @@ import me.bokov.prog3.service.db.entity.ChatUserEntity;
 import me.bokov.prog3.ui.common.PanelList;
 import me.bokov.prog3.ui.srvadmin.BannedUserItem;
 import me.bokov.prog3.ui.srvadmin.UserItem;
-import org.slf4j.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;

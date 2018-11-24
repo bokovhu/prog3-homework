@@ -30,7 +30,7 @@ import static org.junit.Assert.*;
 public class ServerChatClientImplTest {
 
     @Test
-    public void test_sessionCapabilities () {
+    public void test_sessionCapabilities() {
 
         ServerChatClient ccc = new ServerChatClientImpl(null);
 
@@ -49,10 +49,10 @@ public class ServerChatClientImplTest {
     }
 
     @Test
-    public void test () throws Exception {
+    public void test() throws Exception {
 
         // Start the application in server mode
-        TestHelper.startApplicationInTempEnv(new String[] { "--server", "--port", "10467" });
+        TestHelper.startApplicationInTempEnv(new String[]{"--server", "--port", "10467"});
         ChatServerImpl chatServer = Application.getInstance().getWeldContainer().select(ChatServerImpl.class).get();
         Thread.sleep(1000L);
 

@@ -18,39 +18,33 @@
 
 package me.bokov.prog3.db;
 
-import com.j256.ormlite.table.TableUtils;
 import me.bokov.prog3.Application;
 import me.bokov.prog3.TestHelper;
 import me.bokov.prog3.service.Database;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.enterprise.inject.spi.CDI;
-import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class DatabaseTest {
 
     @Before
     public void afterEachTest() throws Exception {
 
-        TestHelper.startApplicationInTempEnv(new String[] { "--no-gui" });
+        TestHelper.startApplicationInTempEnv(new String[]{"--no-gui"});
 
     }
 
     @Test
-    public void test_whenInitialized_thenIsRunningShouldReturnTrue () throws Exception {
+    public void test_whenInitialized_thenIsRunningShouldReturnTrue() throws Exception {
 
         assertTrue(Application.getInstance().getWeldContainer().select(Database.class).get().isRunning());
 
     }
 
     @Test
-    public void test_whenStopped_thenIsRunningShouldReturnFalse () throws Exception {
+    public void test_whenStopped_thenIsRunningShouldReturnFalse() throws Exception {
 
         Application.getInstance().getWeldContainer().select(Database.class).get().stop();
 

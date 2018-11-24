@@ -22,13 +22,13 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import me.bokov.prog3.service.db.BaseEntity;
 
-@DatabaseTable (tableName = "chat_room")
+@DatabaseTable(tableName = "chat_room")
 public class ChatRoomEntity extends BaseEntity {
 
-    @DatabaseField (columnName = "name", unique = true, canBeNull = false)
+    @DatabaseField(columnName = "name", unique = true, canBeNull = false)
     private String name;
 
-    @DatabaseField (columnName = "owner_chat_user_id", foreign = true, canBeNull = true)
+    @DatabaseField(columnName = "owner_chat_user_id", foreign = true, canBeNull = true)
     private ChatUserEntity ownerChatUser;
 
     public String getName() {

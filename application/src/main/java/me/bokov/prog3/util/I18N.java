@@ -29,11 +29,9 @@ import java.util.ResourceBundle;
 @ApplicationScoped
 public class I18N {
 
+    private static final String RESOURCE_BUNDLE_BASENAME = "me.bokov.prog3.i18n.ui";
     @Inject
     private Logger logger;
-
-    private static final String RESOURCE_BUNDLE_BASENAME = "me.bokov.prog3.i18n.ui";
-
     private ResourceBundle resourceBundle;
 
     public void load(Locale locale) {

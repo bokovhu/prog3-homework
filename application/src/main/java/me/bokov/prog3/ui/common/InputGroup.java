@@ -26,18 +26,18 @@ public class InputGroup extends JPanel {
     private final String label;
     private final Component component;
 
-    private void initPanel () {
+    public InputGroup(String label, Component component) {
+        this.label = label;
+        this.component = component;
+        initPanel();
+    }
+
+    private void initPanel() {
 
         setLayout(new GridLayout(1, 2, 4, 4));
 
         add(new JLabel(this.label));
         add(component);
 
-    }
-
-    public InputGroup(String label, Component component) {
-        this.label = label;
-        this.component = component;
-        initPanel();
     }
 }

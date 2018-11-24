@@ -21,7 +21,6 @@ package me.bokov.prog3.server.command;
 import me.bokov.prog3.command.server.NewMessageCommand;
 import me.bokov.prog3.common.ClientBase;
 import me.bokov.prog3.common.CommandBase;
-import me.bokov.prog3.server.ServerChatClientImpl;
 
 import javax.json.Json;
 import javax.json.JsonObject;

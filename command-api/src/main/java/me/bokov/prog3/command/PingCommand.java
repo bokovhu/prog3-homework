@@ -18,7 +18,5 @@
 
 package me.bokov.prog3.command;
 
-import me.bokov.prog3.command.Command;
-
 public interface PingCommand extends Command {
 }

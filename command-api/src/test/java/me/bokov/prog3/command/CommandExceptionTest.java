@@ -25,7 +25,7 @@ import static org.junit.Assert.*;
 public class CommandExceptionTest {
 
     @Test
-    public void test_emptyConstructor () {
+    public void test_emptyConstructor() {
 
         try {
 
@@ -43,7 +43,7 @@ public class CommandExceptionTest {
     }
 
     @Test
-    public void test_messageOnlyConstructor () {
+    public void test_messageOnlyConstructor() {
 
         try {
 
@@ -61,7 +61,7 @@ public class CommandExceptionTest {
     }
 
     @Test
-    public void test_messageAndCauseConstructor () {
+    public void test_messageAndCauseConstructor() {
 
         try {
 
@@ -81,7 +81,7 @@ public class CommandExceptionTest {
     }
 
     @Test
-    public void test_causeOnlyConstructor () {
+    public void test_causeOnlyConstructor() {
 
         try {
 

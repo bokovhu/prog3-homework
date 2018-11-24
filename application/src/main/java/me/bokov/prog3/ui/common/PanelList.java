@@ -23,14 +23,14 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PanelList <PanelType extends JPanel> extends JPanel {
+public class PanelList<PanelType extends JPanel> extends JPanel {
 
     private boolean hasTitle;
     private String title = "";
 
-    private List <PanelType> panels = new ArrayList<>();
+    private List<PanelType> panels = new ArrayList<>();
 
-    public PanelList () {
+    public PanelList() {
 
         hasTitle = false;
         title = "";
@@ -38,7 +38,7 @@ public class PanelList <PanelType extends JPanel> extends JPanel {
 
     }
 
-    private void updateLayout () {
+    private void updateLayout() {
 
         setLayout(new GridLayout(panels.size() + (hasTitle ? 1 : 0), 1));
         removeAll();
@@ -49,28 +49,28 @@ public class PanelList <PanelType extends JPanel> extends JPanel {
 
     }
 
-    public void addPanel (PanelType panel) {
+    public void addPanel(PanelType panel) {
 
         panels.add(panel);
         updateLayout();
 
     }
 
-    public void removePanel (PanelType panel) {
+    public void removePanel(PanelType panel) {
 
         panels.remove(panel);
         updateLayout();
 
     }
 
-    public void removePanel (int index) {
+    public void removePanel(int index) {
 
         panels.remove(index);
         updateLayout();
 
     }
 
-    public int getPanelCount () {
+    public int getPanelCount() {
         return panels.size();
     }
 
@@ -81,14 +81,14 @@ public class PanelList <PanelType extends JPanel> extends JPanel {
 
     }
 
-    public PanelList <PanelType> enableTitle (String title) {
+    public PanelList<PanelType> enableTitle(String title) {
         this.hasTitle = true;
         this.title = title;
         updateLayout();
         return this;
     }
 
-    public PanelList <PanelType> disableTitle () {
+    public PanelList<PanelType> disableTitle() {
         this.hasTitle = false;
         updateLayout();
         return this;

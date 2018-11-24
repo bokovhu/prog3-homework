@@ -24,7 +24,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.Socket;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 class ChatServerClientConnectionListenerTask implements Runnable {
 
@@ -100,7 +103,6 @@ class ChatServerClientConnectionListenerTask implements Runnable {
         logger.info("Listening for new connections is stopped");
 
     }
-
 
 
 }

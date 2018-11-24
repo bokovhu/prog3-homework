@@ -23,20 +23,29 @@ import me.bokov.prog3.service.common.ChatUserVO;
 import me.bokov.prog3.service.server.ServerConfiguration;
 
 import java.util.List;
-import java.util.Set;
 
 public interface ChatServer {
 
-    void start (ServerConfiguration configuration);
-    boolean isRunning ();
-    ServerConfiguration getServerConfiguration ();
-    void stop ();
-    List<ChatUserVO> getConnectedUsers ();
-    void addConnectedUser (ChatUserVO user);
-    void removeConnectedUser (ChatUserVO user);
-    void broadcast (Request request);
-    void banUserByUsername (Long userId);
-    void banUserByIp (Long userId);
-    void unbanUser (Long userId);
+    void start(ServerConfiguration configuration);
+
+    boolean isRunning();
+
+    ServerConfiguration getServerConfiguration();
+
+    void stop();
+
+    List<ChatUserVO> getConnectedUsers();
+
+    void addConnectedUser(ChatUserVO user);
+
+    void removeConnectedUser(ChatUserVO user);
+
+    void broadcast(Request request);
+
+    void banUserByUsername(Long userId);
+
+    void banUserByIp(Long userId);
+
+    void unbanUser(Long userId);
 
 }

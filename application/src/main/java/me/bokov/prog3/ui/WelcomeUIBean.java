@@ -18,8 +18,6 @@
 
 package me.bokov.prog3.ui;
 
-import me.bokov.prog3.service.ChatServer;
-import me.bokov.prog3.service.server.ServerConfiguration;
 import me.bokov.prog3.ui.welcome.ConnectToServerDialogBean;
 import me.bokov.prog3.ui.welcome.StartNewServerDialogBean;
 
@@ -39,7 +37,7 @@ public class WelcomeUIBean extends ScreenBase {
     @Inject
     private ConnectToServerDialogBean connectToServerDialogBean;
 
-    private void createStartNewServerButton () {
+    private void createStartNewServerButton() {
 
         startNewServerButton = new JButton(i18n.getText("welcome.start-new-server"));
 
@@ -49,7 +47,7 @@ public class WelcomeUIBean extends ScreenBase {
 
     }
 
-    private void createConnectToServerButton () {
+    private void createConnectToServerButton() {
 
         connectToServerButton = new JButton(i18n.getText("welcome.connect-to-server"));
 

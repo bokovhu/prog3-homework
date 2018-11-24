@@ -29,7 +29,7 @@ import static org.junit.Assert.*;
 public class ResponseBuilderTest {
 
     @Test
-    public void build_whenMessageIdAndCodeAreProvided_shouldReturnACorrectResponse () {
+    public void build_whenMessageIdAndCodeAreProvided_shouldReturnACorrectResponse() {
 
         Response response = ResponseBuilder.create()
                 .messageId("message-1")
@@ -42,8 +42,8 @@ public class ResponseBuilderTest {
 
     }
 
-    @Test (expected = IllegalStateException.class)
-    public void build_whenMessageIdIsNotProvided_shouldThrowException () {
+    @Test(expected = IllegalStateException.class)
+    public void build_whenMessageIdIsNotProvided_shouldThrowException() {
 
         Response response = ResponseBuilder.create()
                 .code(123)
@@ -54,8 +54,8 @@ public class ResponseBuilderTest {
 
     }
 
-    @Test (expected = IllegalStateException.class)
-    public void build_whenCodeIsNotProvided_shouldThrowException () {
+    @Test(expected = IllegalStateException.class)
+    public void build_whenCodeIsNotProvided_shouldThrowException() {
 
         Response response = ResponseBuilder.create()
                 .messageId("message-1")
@@ -67,7 +67,7 @@ public class ResponseBuilderTest {
     }
 
     @Test
-    public void build_whenDataIsProvided_shouldHaveData () {
+    public void build_whenDataIsProvided_shouldHaveData() {
 
         Response response = ResponseBuilder.create()
                 .messageId("message-1")
@@ -89,15 +89,15 @@ public class ResponseBuilderTest {
 
     }
 
-    @Test (expected = IllegalArgumentException.class)
-    public void responseFromMessage_whenNullIsProvided_shouldThrowException () {
+    @Test(expected = IllegalArgumentException.class)
+    public void responseFromMessage_whenNullIsProvided_shouldThrowException() {
 
         ResponseBuilder.responseFromMessage(null);
 
     }
 
     @Test
-    public void responseFromMessage_whenOnlyWhitespaceOrEmptyStringIsProvided_shouldThrowException () {
+    public void responseFromMessage_whenOnlyWhitespaceOrEmptyStringIsProvided_shouldThrowException() {
 
         try {
 
@@ -124,7 +124,7 @@ public class ResponseBuilderTest {
     }
 
     @Test
-    public void responseFromMessage_whenNoDataIsPresent_shouldSucceedAndReturnResponseWithoutData () {
+    public void responseFromMessage_whenNoDataIsPresent_shouldSucceedAndReturnResponseWithoutData() {
 
         Response response = ResponseBuilder.responseFromMessage("A message-1 100");
 
@@ -135,7 +135,7 @@ public class ResponseBuilderTest {
     }
 
     @Test
-    public void responseFromMessage_whenDataIsPresent_shouldReturnResponseWithData () {
+    public void responseFromMessage_whenDataIsPresent_shouldReturnResponseWithData() {
 
         Response response = ResponseBuilder.responseFromMessage("A message-1 100 {\"a\":\"b\"}");
 
@@ -153,7 +153,7 @@ public class ResponseBuilderTest {
     }
 
     @Test
-    public void responseReturnedByBuild_shouldHaveCorrectStringReturnedByToString () {
+    public void responseReturnedByBuild_shouldHaveCorrectStringReturnedByToString() {
 
         Response response = ResponseBuilder.create()
                 .messageId("message-1")

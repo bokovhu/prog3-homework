@@ -25,9 +25,12 @@ import me.bokov.prog3.service.common.SessionCapableService;
 
 public interface ChatClient extends SessionCapableService, CommunicationCapableService {
 
-    void connect (ConnectionConfiguration configuration);
-    boolean isConnected ();
-    void disconnect ();
-    ChatServerEndpoint getServerEndpoint ();
+    void connect(ConnectionConfiguration configuration);
+
+    boolean isConnected();
+
+    void disconnect();
+
+    ChatServerEndpoint getServerEndpoint();
 
 }

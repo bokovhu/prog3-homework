@@ -31,44 +31,51 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.concurrent.*;
 
-public abstract class ClientBase <CTX> implements CommunicationCapableService, SessionCapableService {
+public abstract class ClientBase<CTX> implements CommunicationCapableService, SessionCapableService {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     // Fields
-
+    private final Map<String, CommandHandler<CTX>> commandHandlerMap = Collections.synchronizedMap(new HashMap<>());
+    private final Map<String, Object> sessionData = Collections.synchronizedMap(new HashMap<>());
+    private final BlockingDeque<Request> outgoingRequests = new LinkedBlockingDeque<>();
+    private final BlockingDeque<Response> outgoingResponses = new LinkedBlockingDeque<>();
+    private final BlockingDeque<Response> incomingResponses = new LinkedBlockingDeque<>();
     protected Socket socket;
-
-    private final Map <String, CommandHandler <CTX>> commandHandlerMap = Collections.synchronizedMap(new HashMap<>());
-    private CommandHandler <CTX> invalidCommandHandler = null;
-
-    private final Map <String, Object> sessionData = Collections.synchronizedMap(new HashMap<>());
-
-    private final BlockingDeque <Request> outgoingRequests = new LinkedBlockingDeque<>();
-    private final BlockingDeque <Response> outgoingResponses = new LinkedBlockingDeque<>();
-    private final BlockingDeque <Response> incomingResponses = new LinkedBlockingDeque<>();
-
+    private CommandHandler<CTX> invalidCommandHandler = null;
     private ExecutorService taskExecutor;
 
     private boolean running = false;
 
     // Abstract methods
 
-    protected abstract CommandHandler <CTX> createInvalidCommandHandler ();
-    protected abstract Class <? extends CommandHandlerProviderBean <CTX>> getCommandHandlerProviderBeanClass ();
-    protected abstract CTX getCommandHandlingContext ();
+    protected abstract CommandHandler<CTX> createInvalidCommandHandler();
+
+    protected abstract Class<? extends CommandHandlerProviderBean<CTX>> getCommandHandlerProviderBeanClass();
+
+    protected abstract CTX getCommandHandlingContext();
 
     // Other methods
 
-    protected void preStart () {}
-    protected void postStart () {}
-    protected void preStop () {}
-    protected void postStop () {}
+    protected void preStart() {
+    }
 
-    private void startTasks () {
+    protected void postStart() {
+    }
+
+    protected void preStop() {
+    }
+
+    protected void postStop() {
+    }
+
+    private void startTasks() {
 
         taskExecutor = Executors.newCachedThreadPool();
 
@@ -77,7 +84,7 @@ public abstract class ClientBase <CTX> implements CommunicationCapableService, S
 
     }
 
-    private void initCommandHandlers () {
+    private void initCommandHandlers() {
 
         this.invalidCommandHandler = createInvalidCommandHandler();
 
@@ -150,7 +157,7 @@ public abstract class ClientBase <CTX> implements CommunicationCapableService, S
 
         ExecutorService executorService = Executors.newSingleThreadExecutor();
 
-        Future <Response> future = executorService.submit(
+        Future<Response> future = executorService.submit(
 
                 () -> {
 
@@ -160,7 +167,7 @@ public abstract class ClientBase <CTX> implements CommunicationCapableService, S
 
                             if (!incomingResponses.isEmpty()) {
 
-                                Iterator <Response> responseIterator = incomingResponses.iterator();
+                                Iterator<Response> responseIterator = incomingResponses.iterator();
 
                                 while (responseIterator.hasNext()) {
 
@@ -250,7 +257,7 @@ public abstract class ClientBase <CTX> implements CommunicationCapableService, S
 
     }
 
-    Response handleRequest (Request request) throws Exception {
+    Response handleRequest(Request request) throws Exception {
 
         if (commandHandlerMap.containsKey(request.getCommand())) {
 
@@ -275,7 +282,7 @@ public abstract class ClientBase <CTX> implements CommunicationCapableService, S
         return running;
     }
 
-    void addIncomingResponse (Response r) {
+    void addIncomingResponse(Response r) {
 
         synchronized (incomingResponses) {
             incomingResponses.addLast(r);
@@ -283,7 +290,7 @@ public abstract class ClientBase <CTX> implements CommunicationCapableService, S
 
     }
 
-    void addOutgoingResponse (Response r) {
+    void addOutgoingResponse(Response r) {
 
         synchronized (outgoingResponses) {
             outgoingResponses.addLast(r);
@@ -291,7 +298,7 @@ public abstract class ClientBase <CTX> implements CommunicationCapableService, S
 
     }
 
-    boolean hasOutgoingRequest () {
+    boolean hasOutgoingRequest() {
 
         synchronized (outgoingRequests) {
             return !outgoingRequests.isEmpty();
@@ -299,7 +306,7 @@ public abstract class ClientBase <CTX> implements CommunicationCapableService, S
 
     }
 
-    boolean hasOutgoingResponse () {
+    boolean hasOutgoingResponse() {
 
         synchronized (outgoingResponses) {
             return !outgoingResponses.isEmpty();
@@ -307,7 +314,7 @@ public abstract class ClientBase <CTX> implements CommunicationCapableService, S
 
     }
 
-    Request takeOutgoingRequest () {
+    Request takeOutgoingRequest() {
 
         synchronized (outgoingRequests) {
             try {
@@ -319,7 +326,7 @@ public abstract class ClientBase <CTX> implements CommunicationCapableService, S
 
     }
 
-    Response takeOutgoingResponse () {
+    Response takeOutgoingResponse() {
 
         synchronized (outgoingResponses) {
             try {
@@ -331,7 +338,7 @@ public abstract class ClientBase <CTX> implements CommunicationCapableService, S
 
     }
 
-    InputStream getInputStream () {
+    InputStream getInputStream() {
         try {
             return socket.getInputStream();
         } catch (IOException e) {
@@ -339,7 +346,7 @@ public abstract class ClientBase <CTX> implements CommunicationCapableService, S
         }
     }
 
-    OutputStream getOutputStream () {
+    OutputStream getOutputStream() {
         try {
             return socket.getOutputStream();
         } catch (IOException e) {

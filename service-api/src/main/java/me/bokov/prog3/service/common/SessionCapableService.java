@@ -20,10 +20,14 @@ package me.bokov.prog3.service.common;
 
 public interface SessionCapableService {
 
-    void setSessionValue (String key, Object value);
-    Object getSessionValue (String key);
-    boolean isSessionValueSet (String key);
-    void removeSessionValue (String key);
-    void clearSession ();
+    void setSessionValue(String key, Object value);
+
+    Object getSessionValue(String key);
+
+    boolean isSessionValueSet(String key);
+
+    void removeSessionValue(String key);
+
+    void clearSession();
 
 }

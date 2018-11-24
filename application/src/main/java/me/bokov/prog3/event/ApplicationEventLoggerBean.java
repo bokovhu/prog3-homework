@@ -20,7 +20,6 @@ package me.bokov.prog3.event;
 
 import org.slf4j.Logger;
 
-import javax.annotation.ManagedBean;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.EventMetadata;
@@ -32,7 +31,7 @@ public class ApplicationEventLoggerBean {
     @Inject
     private Logger logger;
 
-    public void observeAll (@Observes Object eventObject, EventMetadata eventMetadata) {
+    public void observeAll(@Observes Object eventObject, EventMetadata eventMetadata) {
 
         logger.info(
                 "Event {} was fired from {}",

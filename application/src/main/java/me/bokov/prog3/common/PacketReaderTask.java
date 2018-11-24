@@ -26,15 +26,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Scanner;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
-public class PacketReaderTask <CTX> implements Runnable {
-
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+public class PacketReaderTask<CTX> implements Runnable {
 
     private static final long WAIT_INTERVAL_MS = 10L;
-
-    private final ClientBase <CTX> client;
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private final ClientBase<CTX> client;
 
     private Scanner inputScanner;
 
@@ -42,17 +43,17 @@ public class PacketReaderTask <CTX> implements Runnable {
         this.client = client;
     }
 
-    private void setUp () {
+    private void setUp() {
 
         this.inputScanner = new Scanner(client.getInputStream());
 
     }
 
-    private void performReadLoop () {
+    private void performReadLoop() {
 
         ExecutorService executorService = Executors.newSingleThreadExecutor();
 
-        Future <String> singleLineFuture = executorService.submit(() -> this.inputScanner.nextLine());
+        Future<String> singleLineFuture = executorService.submit(() -> this.inputScanner.nextLine());
 
         while (client.isRunning()) {
 

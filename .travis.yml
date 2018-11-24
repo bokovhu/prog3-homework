@@ -1,6 +1,6 @@
 language: java
 install: true
 script:
-  # In 2018, it seems like there is absolutely no way to publish my damn test
-  # coverage results ......
-  - mvn clean install
+# In 2018, it seems like there is absolutely no way to publish my damn test
+# coverage results ......
+- mvn clean install

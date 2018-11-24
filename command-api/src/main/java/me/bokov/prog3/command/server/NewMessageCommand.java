@@ -19,13 +19,13 @@
 package me.bokov.prog3.command.server;
 
 import me.bokov.prog3.command.Command;
-import me.bokov.prog3.command.response.Response;
 
 import javax.json.JsonObject;
 
 public interface NewMessageCommand extends Command {
 
     NewMessageCommand roomId(String roomId);
+
     NewMessageCommand message(JsonObject message);
 
 }

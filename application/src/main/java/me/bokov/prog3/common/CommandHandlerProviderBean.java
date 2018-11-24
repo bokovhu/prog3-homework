@@ -21,11 +21,11 @@ package me.bokov.prog3.common;
 import me.bokov.prog3.command.CommandHandler;
 
 import java.util.Collection;
-import java.util.Set;
 
-public interface CommandHandlerProviderBean <CTX> {
+public interface CommandHandlerProviderBean<CTX> {
 
-    Collection<String> getHandledCommands ();
-    CommandHandler <CTX> getCommandHandler ();
+    Collection<String> getHandledCommands();
+
+    CommandHandler<CTX> getCommandHandler();
 
 }

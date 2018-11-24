@@ -23,7 +23,9 @@ import javax.json.JsonValue;
 public interface Response {
 
     String getMessageId();
+
     int getCode();
+
     JsonValue getData();
 
 }

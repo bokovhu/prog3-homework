@@ -27,10 +27,8 @@ import java.io.PrintStream;
 
 public class PacketWriterTask<CTX> implements Runnable {
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
-
     private static final long WAIT_INTERVAL_MS = 10L;
-
+    private final Logger logger = LoggerFactory.getLogger(getClass());
     private final ClientBase<CTX> client;
 
     private PrintStream outputPrintStream;
