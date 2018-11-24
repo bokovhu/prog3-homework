@@ -22,8 +22,8 @@ package me.bokov.prog3.command.client;
 import me.bokov.prog3.command.Command;
 import me.bokov.prog3.command.response.Response;
 
-public interface ClientCommand <R extends Response> extends Command<R> {
+public interface ClientCommand extends Command {
 
-    ClientCommand <R> userId(String userId);
+    ClientCommand userId(String userId);
 
 }

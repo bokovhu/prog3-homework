@@ -19,6 +19,7 @@
 package me.bokov.prog3.ui.srvadmin;
 
 import com.j256.ormlite.dao.Dao;
+import me.bokov.prog3.event.UserBannedEvent;
 import me.bokov.prog3.service.Database;
 import me.bokov.prog3.service.db.entity.ChatUserEntity;
 import me.bokov.prog3.ui.ErrorUIBean;
@@ -26,6 +27,7 @@ import me.bokov.prog3.ui.ErrorUIBean;
 import javax.enterprise.inject.spi.CDI;
 import javax.swing.*;
 import java.awt.*;
+import java.util.Date;
 
 public class UserItem extends JPanel {
 
@@ -43,7 +45,7 @@ public class UserItem extends JPanel {
         banButton.setBackground(Color.RED);
         banButton.setForeground(Color.WHITE);
 
-        setLayout(new FlowLayout());
+        setLayout(new GridLayout(1, 2, 4, 4));
 
         add (usernameLabel);
         add(banButton);
@@ -59,6 +61,16 @@ public class UserItem extends JPanel {
                         chatUserEntity.setBanState("BANNED_BY_IP");
 
                         chatUserDao.update(chatUserEntity);
+
+                        CDI.current().getBeanManager().fireEvent(
+                                new UserBannedEvent(
+                                        new Date(),
+                                        "USER_BANNED",
+                                        username,
+                                        true,
+                                        false
+                                )
+                        );
 
                     } catch (Exception e) {
 

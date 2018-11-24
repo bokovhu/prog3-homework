@@ -18,6 +18,7 @@
 
 package me.bokov.prog3.ui;
 
+import me.bokov.prog3.Application;
 import me.bokov.prog3.util.Config;
 import me.bokov.prog3.util.I18N;
 
@@ -43,6 +44,11 @@ public abstract class ScreenBase {
 
         applicationUIBean.changeContent(panel);
 
+    }
+
+    protected boolean guiEnabled () {
+        return !Application.getInstance().getCommandLine().hasOption("no-gui")
+                && !Application.getInstance().getCommandLine().hasOption("server");
     }
 
 }

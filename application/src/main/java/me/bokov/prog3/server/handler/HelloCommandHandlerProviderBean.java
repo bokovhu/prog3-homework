@@ -18,14 +18,12 @@
 
 package me.bokov.prog3.server.handler;
 
-import com.j256.ormlite.stmt.QueryBuilder;
-import com.j256.ormlite.stmt.Where;
 import me.bokov.prog3.command.CommandHandler;
 import me.bokov.prog3.command.client.HelloCommand;
 import me.bokov.prog3.command.response.ResponseBuilder;
 import me.bokov.prog3.event.UserConnectedEvent;
-import me.bokov.prog3.server.ChatClientMessageHandlingContext;
-import me.bokov.prog3.server.ClientCommandHandlerBean;
+import me.bokov.prog3.server.ServerChatClientMessageHandlingContext;
+import me.bokov.prog3.server.ServerChatClientCommandHandlerProviderBean;
 import me.bokov.prog3.service.ChatServer;
 import me.bokov.prog3.service.Database;
 import me.bokov.prog3.service.db.entity.ChatUserEntity;
@@ -34,32 +32,29 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.json.JsonObject;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @ApplicationScoped
-public class HelloCommandHandlerBean implements ClientCommandHandlerBean {
+public class HelloCommandHandlerProviderBean implements ServerChatClientCommandHandlerProviderBean {
 
     @Inject
     private Database database;
 
     @Inject
-    private Event <UserConnectedEvent> userConnectedEvent;
+    private Event<UserConnectedEvent> userConnectedEvent;
 
     @Inject
     private ChatServer chatServer;
 
     @Override
-    public Set<String> getHandledCommands() {
-        return new HashSet<>(
-                Arrays.asList("HELLO")
-        );
+    public Collection<String> getHandledCommands() {
+
+        return Arrays.asList("HELLO");
+
     }
 
     @Override
-    public CommandHandler <ChatClientMessageHandlingContext> getMessageHandler() {
+    public CommandHandler<ServerChatClientMessageHandlingContext> getCommandHandler() {
 
         return (ctx, req) -> {
 
@@ -144,6 +139,8 @@ public class HelloCommandHandlerBean implements ClientCommandHandlerBean {
                                 userId
                         )
                 );
+
+                ctx.getChatClient().setSessionValue("username", username);
 
                 return ResponseBuilder.create()
                         .messageId(req.getMessageId())

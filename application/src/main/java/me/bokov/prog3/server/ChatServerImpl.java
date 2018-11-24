@@ -18,24 +18,27 @@
 
 package me.bokov.prog3.server;
 
-import me.bokov.prog3.command.endpoint.ConnectionInformation;
-import me.bokov.prog3.command.endpoint.ConnectionInformationImpl;
 import me.bokov.prog3.command.request.Request;
+import me.bokov.prog3.event.UserDisconnectedEvent;
 import me.bokov.prog3.service.ChatServer;
 import me.bokov.prog3.service.common.ChatUserVO;
-import me.bokov.prog3.service.server.ConnectedChatClient;
+import me.bokov.prog3.service.common.CommunicationCapableService;
+import me.bokov.prog3.service.server.ServerChatClient;
 import me.bokov.prog3.service.server.ServerConfiguration;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
+import java.io.IOException;
 import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
@@ -46,10 +49,10 @@ public class ChatServerImpl implements ChatServer {
 
     private boolean running = false;
 
-    private ServerSocket serverSocket;
-    private Thread clientConnectionListenerThread;
+    ServerSocket serverSocket;
+    private ExecutorService taskExecutor;
     private final List<ChatUserVO> connectedUsers = Collections.synchronizedList(new ArrayList<>());
-    private final List<ConnectedChatClient> connectedChatClients = Collections.synchronizedList(new ArrayList<>());
+    final List<ServerChatClient> serverChatClients = Collections.synchronizedList(new ArrayList<>());
     private ServerConfiguration serverConfiguration;
 
     private void setUpServerSocket() {
@@ -66,30 +69,18 @@ public class ChatServerImpl implements ChatServer {
 
     }
 
-    public void disconnectClientByUsername(String username) {
+    void handleServerClientDisconnection (ServerChatClientImpl client) {
 
-        synchronized (connectedChatClients) {
+        logger.info("Handling server client disconnection");
 
-            connectedChatClients.stream().filter(cc -> cc.isSessionValueSet("username"))
-                    .filter(cc -> cc.getSessionValue("username").equals(username))
-                    .findFirst()
-                    .ifPresent(
-                            ConnectedChatClient::stop
-                    );
-
+        synchronized (serverChatClients) {
+            serverChatClients.remove(client);
+            logger.info("Removed from serverChatClients");
         }
 
-    }
-
-    public Set<String> getConnectedUsernames() {
-
-        synchronized (connectedChatClients) {
-
-            return connectedChatClients.stream()
-                    .filter(cc -> cc.isSessionValueSet("username"))
-                    .map(cc -> cc.getSessionValue("username").toString())
-                    .collect(Collectors.toSet());
-
+        synchronized (connectedUsers) {
+            connectedUsers.removeIf(vo -> vo.getUsername().equals(client.getSessionValue("username")));
+            logger.info("Removed the connected user info");
         }
 
     }
@@ -107,19 +98,19 @@ public class ChatServerImpl implements ChatServer {
 
         setUpServerSocket();
 
-        clientConnectionListenerThread = new Thread(
-                new ClientConnectionListenerTask(this)
-        );
-        clientConnectionListenerThread.start();
+        synchronized (this) {
+            running = true;
+        }
+
+        taskExecutor = Executors.newSingleThreadExecutor();
+        taskExecutor.submit(new ChatServerClientConnectionListenerTask(this));
 
         logger.info("Server started successfully");
-
-        running = true;
 
     }
 
     @Override
-    public boolean isRunning() {
+    public synchronized boolean isRunning() {
         return running;
     }
 
@@ -131,26 +122,31 @@ public class ChatServerImpl implements ChatServer {
     @Override
     public void stop() {
 
+        synchronized (this) {
+            this.running = false;
+        }
+
         try {
-
-            clientConnectionListenerThread.interrupt();
-
-            connectedChatClients.forEach(ConnectedChatClient::stop);
-
-            serverSocket.close();
-
-            synchronized (connectedChatClients) {
-                connectedChatClients.clear();
-            }
-
-            synchronized (connectedUsers) {
-                connectedUsers.clear();
-            }
-
-            running = false;
-
-        } catch (Exception e) {
+            taskExecutor.shutdown();
+            taskExecutor.awaitTermination(1000L, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
             e.printStackTrace();
+        }
+
+        serverChatClients.forEach(ServerChatClient::stop);
+
+        try {
+            serverSocket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        synchronized (serverChatClients) {
+            serverChatClients.clear();
+        }
+
+        synchronized (connectedUsers) {
+            connectedUsers.clear();
         }
 
     }
@@ -185,7 +181,7 @@ public class ChatServerImpl implements ChatServer {
     @Override
     public void broadcast(Request request) {
 
-        connectedChatClients.forEach(c -> c.send(request));
+        serverChatClients.forEach(c -> c.send(request));
 
     }
 
@@ -204,55 +200,24 @@ public class ChatServerImpl implements ChatServer {
         throw new UnsupportedOperationException();
     }
 
-    class ClientConnectionListenerTask implements Runnable {
+    ServerSocket getServerSocket() {
+        return serverSocket;
+    }
 
-        private final Logger logger = LoggerFactory.getLogger(getClass());
+    List<ServerChatClient> getServerChatClients() {
+        return serverChatClients;
+    }
 
-        private final ChatServerImpl chatServer;
+    public void observeUserDisconnectedEvent (@Observes UserDisconnectedEvent event) {
 
-        ClientConnectionListenerTask(ChatServerImpl chatServer) {
-            this.chatServer = chatServer;
+        List <ServerChatClient> toStop = new ArrayList<>();
+
+        synchronized (serverChatClients) {
+            serverChatClients.stream().filter(c -> c.isSessionValueSet("username") && event.getUsername().equals(c.getSessionValue("username")))
+                    .forEach(toStop::add);
         }
 
-        @Override
-        public void run() {
-
-            logger.info("Starting to listen for client connections");
-
-            while (true) {
-
-                try {
-
-                    Socket newClientConnectionSocket = chatServer.serverSocket.accept();
-
-                    ConnectionInformation connectionInformation = new ConnectionInformationImpl(
-                            newClientConnectionSocket.getLocalPort(),
-                            newClientConnectionSocket.getPort(),
-                            newClientConnectionSocket.getLocalAddress().toString(),
-                            newClientConnectionSocket.getInetAddress().toString()
-                    );
-
-                    logger.info("New connection from {}:{}", connectionInformation.getRemoteAddress(), connectionInformation.getRemotePort());
-
-                    synchronized (chatServer.connectedChatClients) {
-
-                        ConnectedChatClientImpl newClient = new ConnectedChatClientImpl();
-                        newClient.start(newClientConnectionSocket);
-                        chatServer.connectedChatClients.add(newClient);
-
-                    }
-
-                } catch (Exception exc) {
-
-                    logger.error("Error during listening for client connections", exc);
-
-                    throw new IllegalStateException(exc);
-
-                }
-
-            }
-
-        }
+        toStop.forEach(ServerChatClient::stop);
 
     }
 

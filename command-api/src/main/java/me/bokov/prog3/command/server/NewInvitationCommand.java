@@ -21,7 +21,7 @@ package me.bokov.prog3.command.server;
 import me.bokov.prog3.command.Command;
 import me.bokov.prog3.command.response.Response;
 
-public interface NewInvitationCommand extends Command <Response> {
+public interface NewInvitationCommand extends Command {
 
     NewInvitationCommand roomId(String roomId);
     NewInvitationCommand byUserId(String userId);

@@ -21,7 +21,7 @@ package me.bokov.prog3.command.client;
 import me.bokov.prog3.command.Command;
 import me.bokov.prog3.command.response.Response;
 
-public interface LoginCommand extends Command <Response> {
+public interface LoginCommand extends Command {
 
     int SUCCESS = 200;
     int INVALID_PASSWORD = 400;

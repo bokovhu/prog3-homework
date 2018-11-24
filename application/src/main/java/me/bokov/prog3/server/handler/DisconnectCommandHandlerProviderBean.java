@@ -19,44 +19,31 @@
 package me.bokov.prog3.server.handler;
 
 import me.bokov.prog3.command.CommandHandler;
+import me.bokov.prog3.command.response.ResponseBuilder;
 import me.bokov.prog3.event.UserDisconnectedEvent;
-import me.bokov.prog3.server.ChatClientMessageHandlingContext;
-import me.bokov.prog3.server.ClientCommandHandlerBean;
+import me.bokov.prog3.server.ServerChatClientMessageHandlingContext;
+import me.bokov.prog3.server.ServerChatClientCommandHandlerProviderBean;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import javax.inject.Inject;
+import java.util.*;
 
 @ApplicationScoped
-public class DisconnectCommandHandlerBean implements ClientCommandHandlerBean {
-
-    private Event <UserDisconnectedEvent> userDisconnectedEvent;
+public class DisconnectCommandHandlerProviderBean implements ServerChatClientCommandHandlerProviderBean {
 
     @Override
-    public Set<String> getHandledCommands() {
-        return new HashSet<>(
-                Arrays.asList("DISCONNECT")
-        );
+    public Collection<String> getHandledCommands() {
+        return Arrays.asList("DISCONNECT");
     }
 
     @Override
-    public CommandHandler <ChatClientMessageHandlingContext> getMessageHandler() {
+    public CommandHandler<ServerChatClientMessageHandlingContext> getCommandHandler() {
         return (context, request) -> {
 
-            userDisconnectedEvent.fire(
-                    new UserDisconnectedEvent(
-                            new Date(),
-                            "USER_DISCONNECTED",
-                            context.getChatClient().getSessionValue("username").toString()
-                    )
-            );
+            context.getChatClient().setSessionValue("disconnected", true);
 
-            context.getChatClient().stop();
-
-            return null;
+            return ResponseBuilder.create().messageId(request.getMessageId()).code(200).build();
 
         };
     }

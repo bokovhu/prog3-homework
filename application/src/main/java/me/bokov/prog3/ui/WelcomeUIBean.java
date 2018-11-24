@@ -20,6 +20,8 @@ package me.bokov.prog3.ui;
 
 import me.bokov.prog3.service.ChatServer;
 import me.bokov.prog3.service.server.ServerConfiguration;
+import me.bokov.prog3.ui.welcome.ConnectToServerDialogBean;
+import me.bokov.prog3.ui.welcome.StartNewServerDialogBean;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -32,10 +34,30 @@ public class WelcomeUIBean extends ScreenBase {
     private JButton startNewServerButton;
 
     @Inject
-    private ChatServer chatServer;
+    private StartNewServerDialogBean startNewServerDialogBean;
 
     @Inject
-    private ServerAdministrationUIBean serverAdministrationUIBean;
+    private ConnectToServerDialogBean connectToServerDialogBean;
+
+    private void createStartNewServerButton () {
+
+        startNewServerButton = new JButton(i18n.getText("welcome.start-new-server"));
+
+        startNewServerButton.addActionListener(
+                e -> startNewServerDialogBean.show()
+        );
+
+    }
+
+    private void createConnectToServerButton () {
+
+        connectToServerButton = new JButton(i18n.getText("welcome.connect-to-server"));
+
+        connectToServerButton.addActionListener(
+                e -> connectToServerDialogBean.show()
+        );
+
+    }
 
     public void initialize() {
 
@@ -43,58 +65,11 @@ public class WelcomeUIBean extends ScreenBase {
 
         panel.add(new JLabel(i18n.getText("welcome.title")));
 
-        connectToServerButton = new JButton(i18n.getText("welcome.connect-to-server"));
-        startNewServerButton = new JButton(i18n.getText("welcome.start-new-server"));
+        createStartNewServerButton();
+        createConnectToServerButton();
 
         panel.add(connectToServerButton);
         panel.add(startNewServerButton);
-
-        connectToServerButton.addActionListener(
-                e -> JOptionPane.showMessageDialog(null, "Connect to server clicked!")
-        );
-        startNewServerButton.addActionListener(
-                e -> {
-
-                    JFormattedTextField serverPortTextField = new JFormattedTextField(Integer.valueOf(14672));
-                    serverPortTextField.setColumns(5);
-
-                    JCheckBox passwordEnabledCheckBox = new JCheckBox("Password enabled", false);
-                    JPasswordField serverPasswordField = new JPasswordField("", 24);
-                    passwordEnabledCheckBox.addChangeListener(
-                            changeEvent -> {
-                                if (passwordEnabledCheckBox.isSelected()) serverPasswordField.setEnabled(true);
-                                else serverPasswordField.setEnabled(false);
-                            }
-                    );
-
-                    int startNewServerResult = JOptionPane.showConfirmDialog(
-                            null,
-                            new Object[] {
-                                    "Server port: ", serverPortTextField,
-                                    passwordEnabledCheckBox,
-                                    "Server password: ", serverPasswordField
-                            },
-                            "Start new server",
-                            JOptionPane.OK_CANCEL_OPTION
-                    );
-
-                    if (startNewServerResult == JOptionPane.OK_OPTION) {
-
-                        ServerConfiguration serverConfiguration = new ServerConfiguration();
-
-                        serverConfiguration.setPassword(new String(serverPasswordField.getPassword()));
-                        serverConfiguration.setPasswordEnabled(passwordEnabledCheckBox.isSelected());
-                        serverConfiguration.setPort(((Number) serverPortTextField.getValue()).intValue());
-
-                        chatServer.start(serverConfiguration);
-
-                    }
-
-                    serverAdministrationUIBean.initialize();
-                    serverAdministrationUIBean.activate();
-
-                }
-        );
 
     }
 

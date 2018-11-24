@@ -20,6 +20,7 @@ package me.bokov.prog3.db;
 
 import com.j256.ormlite.table.TableUtils;
 import me.bokov.prog3.Application;
+import me.bokov.prog3.TestHelper;
 import me.bokov.prog3.service.Database;
 import org.junit.After;
 import org.junit.Before;
@@ -37,15 +38,23 @@ public class DatabaseTest {
     @Before
     public void afterEachTest() throws Exception {
 
-        Application.destroyInstance();
+        TestHelper.startApplicationInTempEnv(new String[] { "--no-gui" });
 
-        Path tempDirPath = Files.createTempDirectory("chatter-test");
+    }
 
-        File tempDirFile = tempDirPath.toFile();
+    @Test
+    public void test_whenInitialized_thenIsRunningShouldReturnTrue () throws Exception {
 
-        System.out.println("Will use '" + tempDirFile.getAbsolutePath() + "' as data directory for testing purposes");
+        assertTrue(Application.getInstance().getWeldContainer().select(Database.class).get().isRunning());
 
-        Application.createInstance(new String[]{"--no-gui", "--data-directory", tempDirFile.getAbsolutePath()});
+    }
+
+    @Test
+    public void test_whenStopped_thenIsRunningShouldReturnFalse () throws Exception {
+
+        Application.getInstance().getWeldContainer().select(Database.class).get().stop();
+
+        assertFalse(Application.getInstance().getWeldContainer().select(Database.class).get().isRunning());
 
     }
 
@@ -55,6 +64,8 @@ public class DatabaseTest {
         Database database = Application.getInstance().getWeldContainer().select(Database.class).get();
 
         assertTrue(database.getChatUserDao().isTableExists());
+        assertTrue(database.getChatRoomDao().isTableExists());
+        assertTrue(database.getChatRoomMembershipDao().isTableExists());
 
     }
 

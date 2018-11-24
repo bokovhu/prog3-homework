@@ -21,8 +21,12 @@ package me.bokov.prog3.service.common;
 import me.bokov.prog3.command.request.Request;
 import me.bokov.prog3.command.response.Response;
 
+import java.net.Socket;
+
 public interface CommunicationCapableService {
 
+    void start (Socket socket);
+    void stop ();
     void send (Request request);
     Response readResponse (String messageId, long timeoutInMillisec);
 

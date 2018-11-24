@@ -126,7 +126,7 @@ public class ResponseBuilderTest {
     @Test
     public void responseFromMessage_whenNoDataIsPresent_shouldSucceedAndReturnResponseWithoutData () {
 
-        Response response = ResponseBuilder.responseFromMessage("message-1 100");
+        Response response = ResponseBuilder.responseFromMessage("A message-1 100");
 
         assertEquals("message-1", response.getMessageId());
         assertEquals(100, response.getCode());
@@ -137,7 +137,7 @@ public class ResponseBuilderTest {
     @Test
     public void responseFromMessage_whenDataIsPresent_shouldReturnResponseWithData () {
 
-        Response response = ResponseBuilder.responseFromMessage("message-1 100 {\"a\":\"b\"}");
+        Response response = ResponseBuilder.responseFromMessage("A message-1 100 {\"a\":\"b\"}");
 
         assertEquals("message-1", response.getMessageId());
         assertEquals(100, response.getCode());
@@ -161,14 +161,14 @@ public class ResponseBuilderTest {
                 .data(Json.createValue(12))
                 .build();
 
-        assertEquals("message-1 123 12", response.toString());
+        assertEquals("A message-1 123 12", response.toString());
 
         response = ResponseBuilder.create()
                 .messageId("message-2")
                 .code(456)
                 .build();
 
-        assertEquals("message-2 456", response.toString());
+        assertEquals("A message-2 456", response.toString());
 
     }
 

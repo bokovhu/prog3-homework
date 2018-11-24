@@ -130,13 +130,13 @@ public class RequestBuilderTest {
     @Test
     public void test_requestFromMessage_whenCorrectStringIsProvided_thenShouldWork () {
 
-        Request request = RequestBuilder.requestFromMessage("message-1 HELLO");
+        Request request = RequestBuilder.requestFromMessage("Q message-1 HELLO");
 
         assertEquals("message-1", request.getMessageId());
         assertEquals("HELLO", request.getCommand());
         assertNull(request.getData());
 
-        request = RequestBuilder.requestFromMessage("message-2 HI {\"name\":\"Test\"}");
+        request = RequestBuilder.requestFromMessage("Q message-2 HI {\"name\":\"Test\"}");
 
         assertEquals("message-2", request.getMessageId());
         assertEquals("HI", request.getCommand());
@@ -159,7 +159,7 @@ public class RequestBuilderTest {
 
         String reqString = request.toString();
 
-        assertEquals("message-1 HELLO", reqString.trim());
+        assertEquals("Q message-1 HELLO", reqString.trim());
 
     }
 
@@ -174,7 +174,7 @@ public class RequestBuilderTest {
 
         String reqString = request.toString();
 
-        assertEquals("message-1 HELLO 13.4", reqString.trim());
+        assertEquals("Q message-1 HELLO 13.4", reqString.trim());
 
     }
 

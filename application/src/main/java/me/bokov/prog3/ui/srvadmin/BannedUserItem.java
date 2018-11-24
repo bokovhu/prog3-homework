@@ -19,6 +19,7 @@
 package me.bokov.prog3.ui.srvadmin;
 
 import com.j256.ormlite.dao.Dao;
+import me.bokov.prog3.event.UserUnbannedEvent;
 import me.bokov.prog3.service.Database;
 import me.bokov.prog3.service.db.entity.ChatUserEntity;
 import me.bokov.prog3.ui.ErrorUIBean;
@@ -26,6 +27,7 @@ import me.bokov.prog3.ui.ErrorUIBean;
 import javax.enterprise.inject.spi.CDI;
 import javax.swing.*;
 import java.awt.*;
+import java.util.Date;
 
 public class BannedUserItem extends JPanel {
 
@@ -39,7 +41,7 @@ public class BannedUserItem extends JPanel {
         unbanButton.setBackground(Color.GREEN);
         unbanButton.setForeground(Color.WHITE);
 
-        setLayout(new FlowLayout());
+        setLayout(new GridLayout(1, 2, 4, 4));
 
         add(usernameLabel);
         add(unbanButton);
@@ -56,6 +58,14 @@ public class BannedUserItem extends JPanel {
                         chatUserEntity.setBanState("NOT_BANNED");
 
                         chatUserDao.update(chatUserEntity);
+
+                        CDI.current().getBeanManager().fireEvent(
+                                new UserUnbannedEvent(
+                                        new Date(),
+                                        "USER_UNBANNED",
+                                        username
+                                )
+                        );
 
                     } catch (Exception exc) {
 

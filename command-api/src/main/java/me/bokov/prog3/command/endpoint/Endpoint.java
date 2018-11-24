@@ -18,9 +18,12 @@
 
 package me.bokov.prog3.command.endpoint;
 
+import me.bokov.prog3.command.PingCommand;
+
 public interface Endpoint {
 
     void close();
     ConnectionInformation getConnectionInformation();
+    PingCommand ping ();
 
 }

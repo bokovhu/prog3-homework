@@ -43,7 +43,13 @@ public final class ResponseBuilder {
             throw new IllegalArgumentException("Raw message cannot be null!");
         }
 
-        String [] splitted = rawMessage.trim().split(" ", 3);
+        String trimmed = rawMessage.trim();
+
+        if (!trimmed.startsWith("A ")) {
+            throw new IllegalArgumentException("Not a response!");
+        }
+
+        String [] splitted = trimmed.substring(2).split(" ", 3);
 
         if (splitted.length < 2) {
             throw new IllegalArgumentException("Malformed raw message!");
@@ -125,7 +131,7 @@ public final class ResponseBuilder {
 
             StringBuilder sb = new StringBuilder();
 
-            sb.append(messageId).append(" ").append(code);
+            sb.append("A ").append(messageId).append(" ").append(code);
 
             if (data != null) {
 

@@ -46,9 +46,6 @@ public class ServerAdministrationUIBean extends ScreenBase {
     private PanelList<BannedUserItem> bannedUsersList;
 
     @Inject
-    private Logger logger;
-
-    @Inject
     private Database database;
 
     @Inject
@@ -74,8 +71,10 @@ public class ServerAdministrationUIBean extends ScreenBase {
         usersListGbc.gridy = 1;
         usersListGbc.gridwidth = 1;
         usersListGbc.gridheight = 1;
+        usersListGbc.anchor = GridBagConstraints.NORTH;
 
         usersList = new PanelList<>();
+        usersList.enableTitle("Users");
         usersList.setBackground(Color.LIGHT_GRAY);
 
         panel.add(usersList, usersListGbc);
@@ -85,8 +84,10 @@ public class ServerAdministrationUIBean extends ScreenBase {
         bannedUsersListGbc.gridy = 1;
         bannedUsersListGbc.gridwidth = 1;
         bannedUsersListGbc.gridheight = 1;
+        bannedUsersListGbc.anchor = GridBagConstraints.NORTH;
 
         bannedUsersList = new PanelList<>();
+        bannedUsersList.enableTitle("Banned users");
         bannedUsersList.setBackground(Color.LIGHT_GRAY);
 
         panel.add(bannedUsersList, bannedUsersListGbc);
@@ -132,25 +133,33 @@ public class ServerAdministrationUIBean extends ScreenBase {
 
     public void handleUserConnectedEvent(@Observes UserConnectedEvent userConnectedEvent) {
 
-        reloadData();
+        if (guiEnabled()) {
+            reloadData();
+        }
 
     }
 
     public void handleUserBannedEvent(@Observes UserBannedEvent userBannedEvent) {
 
-        reloadData();
+        if (guiEnabled()) {
+            reloadData();
+        }
 
     }
 
     public void handleUserDisconnectedEvent(@Observes UserDisconnectedEvent userDisconnectedEvent) {
 
-        reloadData();
+        if (guiEnabled()) {
+            reloadData();
+        }
 
     }
 
     public void handleUserUnbannedEvent(@Observes UserUnbannedEvent userUnbannedEvent) {
 
-        reloadData();
+        if (guiEnabled()) {
+            reloadData();
+        }
 
     }
 

@@ -18,23 +18,23 @@
 
 package me.bokov.prog3.server;
 
+import me.bokov.prog3.command.PingCommand;
 import me.bokov.prog3.command.endpoint.ChatClientEndpoint;
 import me.bokov.prog3.command.endpoint.ConnectionInformation;
 import me.bokov.prog3.command.server.NewInvitationCommand;
 import me.bokov.prog3.command.server.NewMessageCommand;
 import me.bokov.prog3.command.server.RoomDeletedCommand;
 import me.bokov.prog3.command.server.YouAreBannedCommand;
+import me.bokov.prog3.common.ClientBase;
+import me.bokov.prog3.common.EndpointBase;
+import me.bokov.prog3.server.command.NewMessageCommandImpl;
+import me.bokov.prog3.common.PingCommandImpl;
 
-public class ChatClientEndpointImpl implements ChatClientEndpoint {
+public class ChatClientEndpointImpl extends EndpointBase implements ChatClientEndpoint {
 
-    private final ConnectedChatClientImpl chatClient;
-    private final ConnectionInformation connectionInformation;
-
-    public ChatClientEndpointImpl(ConnectedChatClientImpl chatClient, ConnectionInformation connectionInformation) {
-        this.chatClient = chatClient;
-        this.connectionInformation = connectionInformation;
+    public ChatClientEndpointImpl(ClientBase client, ConnectionInformation connectionInformation) {
+        super(client, connectionInformation);
     }
-
 
     @Override
     public YouAreBannedCommand youAreBanned() {
@@ -48,7 +48,9 @@ public class ChatClientEndpointImpl implements ChatClientEndpoint {
 
     @Override
     public NewMessageCommand newMessage() {
-        throw new UnsupportedOperationException("Not yet supported!");
+
+        return new NewMessageCommandImpl(client);
+
     }
 
     @Override
@@ -56,13 +58,4 @@ public class ChatClientEndpointImpl implements ChatClientEndpoint {
         throw new UnsupportedOperationException("Not yet supported!");
     }
 
-    @Override
-    public void close() {
-        chatClient.stop();
-    }
-
-    @Override
-    public ConnectionInformation getConnectionInformation() {
-        return connectionInformation;
-    }
 }

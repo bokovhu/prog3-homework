@@ -16,15 +16,27 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.bokov.prog3.server;
+package me.bokov.prog3.client.command;
 
-import me.bokov.prog3.command.CommandHandler;
+import me.bokov.prog3.command.client.DisconnectCommand;
+import me.bokov.prog3.common.ClientBase;
+import me.bokov.prog3.common.CommandBase;
 
-import java.util.Set;
+import javax.json.JsonValue;
 
-public interface ClientCommandHandlerBean {
+public class DisconnectCommandImpl extends CommandBase implements DisconnectCommand {
 
-    Set<String> getHandledCommands();
-    CommandHandler <ChatClientMessageHandlingContext> getMessageHandler();
+    public DisconnectCommandImpl(ClientBase chatClient) {
+        super(chatClient);
+    }
 
+    @Override
+    protected String getCommand() {
+        return "DISCONNECT";
+    }
+
+    @Override
+    protected JsonValue getData() {
+        return null;
+    }
 }

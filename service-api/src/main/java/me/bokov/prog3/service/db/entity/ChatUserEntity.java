@@ -27,11 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @DatabaseTable (tableName = "chat_user")
-public class ChatUserEntity {
-
-
-    @DatabaseField (columnName = "id", generatedId = true)
-    private Long id;
+public class ChatUserEntity extends BaseEntity {
 
     @DatabaseField (columnName = "username", unique = true, canBeNull = false)
     private String username;
@@ -76,14 +72,5 @@ public class ChatUserEntity {
 
         return vo;
 
-    }
-
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 }

@@ -20,8 +20,9 @@ package me.bokov.prog3.command;
 
 import me.bokov.prog3.command.response.Response;
 
-public interface Command <R extends Response> {
+public interface Command {
 
-    R execute() throws CommandException;
+    Response execute() throws CommandException;
+    void executeWithoutAnswer () throws CommandException;
 
 }

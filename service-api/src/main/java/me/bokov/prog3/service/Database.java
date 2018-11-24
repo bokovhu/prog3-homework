@@ -20,6 +20,9 @@ package me.bokov.prog3.service;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
+import me.bokov.prog3.service.db.dao.ChatRoomDao;
+import me.bokov.prog3.service.db.dao.ChatRoomMembershipDao;
+import me.bokov.prog3.service.db.dao.ChatUserDao;
 import me.bokov.prog3.service.db.entity.ChatUserEntity;
 
 public interface Database {
@@ -32,6 +35,8 @@ public interface Database {
 
     ConnectionSource getConnectionSource();
 
-    Dao<ChatUserEntity, Long> getChatUserDao();
+    ChatUserDao getChatUserDao();
+    ChatRoomDao getChatRoomDao ();
+    ChatRoomMembershipDao getChatRoomMembershipDao ();
 
 }

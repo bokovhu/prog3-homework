@@ -23,7 +23,7 @@ import me.bokov.prog3.command.response.Response;
 
 import javax.json.JsonObject;
 
-public interface NewMessageCommand extends Command <Response> {
+public interface NewMessageCommand extends Command {
 
     NewMessageCommand roomId(String roomId);
     NewMessageCommand message(JsonObject message);

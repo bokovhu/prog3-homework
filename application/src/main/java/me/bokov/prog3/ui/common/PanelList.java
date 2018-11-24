@@ -25,18 +25,26 @@ import java.util.List;
 
 public class PanelList <PanelType extends JPanel> extends JPanel {
 
+    private boolean hasTitle;
+    private String title = "";
+
     private List <PanelType> panels = new ArrayList<>();
 
     public PanelList () {
 
+        hasTitle = false;
+        title = "";
         setLayout(new GridLayout(0, 1, 4, 4));
 
     }
 
     private void updateLayout () {
 
-        setLayout(new GridLayout(panels.size(), 1));
+        setLayout(new GridLayout(panels.size() + (hasTitle ? 1 : 0), 1));
         removeAll();
+        if (hasTitle) {
+            add(new JLabel(title));
+        }
         panels.forEach(this::add);
 
     }
@@ -71,6 +79,19 @@ public class PanelList <PanelType extends JPanel> extends JPanel {
         panels.clear();
         updateLayout();
 
+    }
+
+    public PanelList <PanelType> enableTitle (String title) {
+        this.hasTitle = true;
+        this.title = title;
+        updateLayout();
+        return this;
+    }
+
+    public PanelList <PanelType> disableTitle () {
+        this.hasTitle = false;
+        updateLayout();
+        return this;
     }
 
 }

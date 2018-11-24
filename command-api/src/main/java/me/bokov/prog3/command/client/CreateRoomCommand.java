@@ -20,7 +20,7 @@ package me.bokov.prog3.command.client;
 
 import me.bokov.prog3.command.response.Response;
 
-public interface CreateRoomCommand extends ClientCommand <Response> {
+public interface CreateRoomCommand extends ClientCommand {
 
     CreateRoomCommand roomName(String roomName);
 

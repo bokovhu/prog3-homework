@@ -44,7 +44,13 @@ public final class RequestBuilder {
             throw new IllegalArgumentException("Raw message cannot be null!");
         }
 
-        String [] splitted = rawMessage.trim().split(" ", 3);
+        String trimmed = rawMessage.trim();
+
+        if (!trimmed.startsWith("Q ")) {
+            throw new IllegalArgumentException("Not a request");
+        }
+
+        String [] splitted = trimmed.substring(2).split(" ", 3);
 
         if (splitted.length < 2) {
             throw new IllegalArgumentException("Malformed raw message!");
@@ -122,7 +128,7 @@ public final class RequestBuilder {
 
             StringBuilder sb = new StringBuilder();
 
-            sb.append(messageId).append(" ").append(command);
+            sb.append("Q ").append(messageId).append(" ").append(command);
 
             if (data != null) {
 

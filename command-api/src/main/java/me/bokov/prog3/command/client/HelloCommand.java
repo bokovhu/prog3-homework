@@ -21,7 +21,7 @@ package me.bokov.prog3.command.client;
 import me.bokov.prog3.command.Command;
 import me.bokov.prog3.command.response.Response;
 
-public interface HelloCommand extends Command <Response> {
+public interface HelloCommand extends Command {
 
     int SUCCESS = 200;
     int LOGIN_REQUIRED = 300;

@@ -24,7 +24,15 @@ import com.j256.ormlite.db.H2DatabaseType;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
+import me.bokov.prog3.db.dao.ChatRoomDaoImpl;
+import me.bokov.prog3.db.dao.ChatRoomMembershipDaoImpl;
+import me.bokov.prog3.db.dao.ChatUserDaoImpl;
 import me.bokov.prog3.service.Database;
+import me.bokov.prog3.service.db.dao.ChatRoomDao;
+import me.bokov.prog3.service.db.dao.ChatRoomMembershipDao;
+import me.bokov.prog3.service.db.dao.ChatUserDao;
+import me.bokov.prog3.service.db.entity.ChatRoomEntity;
+import me.bokov.prog3.service.db.entity.ChatRoomMembershipEntity;
 import me.bokov.prog3.service.db.entity.ChatUserEntity;
 import me.bokov.prog3.util.Config;
 import me.bokov.prog3.util.DatabaseConnectionConfig;
@@ -56,7 +64,9 @@ public class DatabaseImpl implements Database {
     @Inject
     private Config config;
 
-    private Dao <ChatUserEntity, Long> chatUserDao;
+    private ChatUserDao chatUserDao;
+    private ChatRoomDao chatRoomDao;
+    private ChatRoomMembershipDao chatRoomMembershipDao;
 
     private ConnectionSource connectionSource;
 
@@ -65,6 +75,8 @@ public class DatabaseImpl implements Database {
         try {
 
             TableUtils.createTableIfNotExists(connectionSource, ChatUserEntity.class);
+            TableUtils.createTableIfNotExists(connectionSource, ChatRoomEntity.class);
+            TableUtils.createTableIfNotExists(connectionSource, ChatRoomMembershipEntity.class);
 
         } catch (Exception e) {
             throw new IllegalStateException("Could not migrate database", e);
@@ -76,7 +88,13 @@ public class DatabaseImpl implements Database {
 
         try {
 
-            chatUserDao = DaoManager.createDao(connectionSource, ChatUserEntity.class);
+            chatUserDao = new ChatUserDaoImpl(connectionSource);
+            chatRoomDao = new ChatRoomDaoImpl(connectionSource);
+            chatRoomMembershipDao = new ChatRoomMembershipDaoImpl(connectionSource);
+
+            DaoManager.registerDao(connectionSource, chatUserDao);
+            DaoManager.registerDao(connectionSource, chatRoomDao);
+            DaoManager.registerDao(connectionSource, chatRoomMembershipDao);
 
         } catch (Exception e) {
 
@@ -141,6 +159,12 @@ public class DatabaseImpl implements Database {
     @Override
     public void stop() {
 
+        try {
+            connectionSource.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
         running = false;
 
     }
@@ -151,8 +175,18 @@ public class DatabaseImpl implements Database {
     }
 
     @Override
-    public Dao<ChatUserEntity, Long> getChatUserDao() {
+    public ChatUserDao getChatUserDao() {
         return chatUserDao;
+    }
+
+    @Override
+    public ChatRoomDao getChatRoomDao() {
+        return chatRoomDao;
+    }
+
+    @Override
+    public ChatRoomMembershipDao getChatRoomMembershipDao() {
+        return chatRoomMembershipDao;
     }
 
 }
