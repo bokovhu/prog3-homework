@@ -48,6 +48,7 @@
         <version.commons-lang3>3.8.1</version.commons-lang3>
         <version.commons-collections4>4.2</version.commons-collections4>
         <version.commons-cli>1.4</version.commons-cli>
+        <version.commons-io>2.6</version.commons-io>
         <version.javax-json>1.1.3</version.javax-json>
         <version.weld>3.0.5.Final</version.weld>
         <version.sql2o>1.6.0</version.sql2o>

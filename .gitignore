@@ -22,3 +22,6 @@ coverage-aggregator/target/
 
 # IDEA is configured to have a run target which uses this directory as its --data-directory
 .chatter-test-data/
+
+# This directory is only on my local machine, it contains pictures of cats
+.test-images/

@@ -63,13 +63,16 @@ public class ConnectToServerDialogBean {
 
                     if (connectToServerResult == JOptionPane.OK_OPTION) {
 
+                        System.err.println("WARNING: Remove the comments from these lines because connection is disabled temporarily!");
+
+/*
                         ConnectionConfiguration connectionConfiguration = new ConnectionConfiguration();
                         connectionConfiguration.setUsername(usernameTextField.getText());
                         connectionConfiguration.setHost(serverHostnameTextField.getText());
                         connectionConfiguration.setPort(((Number) serverPortTextField.getValue()).intValue());
 
                         chatClient.connect(connectionConfiguration);
-
+*/
                         chatUIBean.initialize();
                         chatUIBean.activate();
 

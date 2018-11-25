@@ -18,15 +18,63 @@
 
 package me.bokov.prog3.ui;
 
+import me.bokov.prog3.ui.chat.ChatRoomTab;
+import me.bokov.prog3.ui.chat.MessageComposerPanel;
+
 import javax.enterprise.context.ApplicationScoped;
+import javax.swing.*;
+import java.awt.*;
 
 @ApplicationScoped
 public class ChatUIBean extends ScreenBase {
 
+    JTabbedPane chatRoomsTabbedPane;
+    MessageComposerPanel messageComposerPanel;
+
+    private void initChatRoomTabs () {
+
+        chatRoomsTabbedPane = new JTabbedPane();
+        chatRoomsTabbedPane.addTab("Lobby", new ChatRoomTab());
+
+    }
+
+    private void initMessageComposer () {
+
+        messageComposerPanel = new MessageComposerPanel();
+
+    }
+
     @Override
     public void initialize() {
 
+        panel = new JPanel();
+        panel.setLayout(new GridBagLayout());
 
+        initChatRoomTabs();
+        initMessageComposer();
+
+        GridBagConstraints tabsGbc = new GridBagConstraints();
+        tabsGbc.gridx = 0;
+        tabsGbc.gridy = 0;
+        tabsGbc.gridwidth = 1;
+        tabsGbc.gridheight = 1;
+        tabsGbc.weightx = 1.0;
+        tabsGbc.weighty = 1.0;
+        tabsGbc.fill = GridBagConstraints.BOTH;
+
+        panel.add(chatRoomsTabbedPane, tabsGbc);
+
+
+        GridBagConstraints composerGbc = new GridBagConstraints();
+        composerGbc.gridx = 0;
+        composerGbc.gridy = 1;
+        composerGbc.gridwidth = 1;
+        composerGbc.gridheight = 1;
+        composerGbc.weightx = 1.0;
+        composerGbc.weighty = 0.0;
+        composerGbc.fill = GridBagConstraints.HORIZONTAL;
+
+        panel.add(messageComposerPanel, composerGbc);
 
     }
 
