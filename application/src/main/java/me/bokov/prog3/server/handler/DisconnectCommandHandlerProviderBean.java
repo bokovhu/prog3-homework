@@ -20,15 +20,21 @@ package me.bokov.prog3.server.handler;
 
 import me.bokov.prog3.command.CommandHandler;
 import me.bokov.prog3.command.response.ResponseBuilder;
+import me.bokov.prog3.event.ClientShouldStopEvent;
 import me.bokov.prog3.server.ServerChatClientCommandHandlerProviderBean;
 import me.bokov.prog3.server.ServerChatClientMessageHandlingContext;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
 import java.util.Arrays;
 import java.util.Collection;
 
 @ApplicationScoped
 public class DisconnectCommandHandlerProviderBean implements ServerChatClientCommandHandlerProviderBean {
+
+    @Inject
+    private Event <ClientShouldStopEvent> clientShouldStopEvent;
 
     @Override
     public Collection<String> getHandledCommands() {
@@ -38,8 +44,6 @@ public class DisconnectCommandHandlerProviderBean implements ServerChatClientCom
     @Override
     public CommandHandler<ServerChatClientMessageHandlingContext> getCommandHandler() {
         return (context, request) -> {
-
-            context.getChatClient().setSessionValue("disconnected", true);
 
             return ResponseBuilder.create().messageId(request.getMessageId()).code(200).build();
 

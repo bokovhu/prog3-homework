@@ -16,18 +16,24 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.bokov.prog3.ui;
+package me.bokov.prog3.event;
 
-import javax.enterprise.context.ApplicationScoped;
+import java.io.Serializable;
+import java.util.UUID;
 
-@ApplicationScoped
-public class ChatUIBean extends ScreenBase {
+public class ClientShouldStopEvent implements Serializable {
 
-    @Override
-    public void initialize() {
+    private UUID clientId;
 
-
-
+    public ClientShouldStopEvent(UUID clientId) {
+        this.clientId = clientId;
     }
 
+    public UUID getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(UUID clientId) {
+        this.clientId = clientId;
+    }
 }

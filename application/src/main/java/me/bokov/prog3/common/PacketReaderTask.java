@@ -18,18 +18,21 @@
 
 package me.bokov.prog3.common;
 
+import me.bokov.prog3.AsyncHelper;
 import me.bokov.prog3.command.request.Request;
 import me.bokov.prog3.command.request.RequestBuilder;
 import me.bokov.prog3.command.response.Response;
 import me.bokov.prog3.command.response.ResponseBuilder;
+import me.bokov.prog3.event.ClientShouldStopEvent;
+import me.bokov.prog3.service.server.ServerChatClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Scanner;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
+import javax.enterprise.inject.spi.CDI;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.SocketException;
+import java.util.concurrent.*;
 
 public class PacketReaderTask<CTX> implements Runnable {
 
@@ -37,7 +40,9 @@ public class PacketReaderTask<CTX> implements Runnable {
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final ClientBase<CTX> client;
 
-    private Scanner inputScanner;
+    private BufferedReader inputReader;
+
+    private boolean shouldStop = false;
 
     public PacketReaderTask(ClientBase<CTX> client) {
         this.client = client;
@@ -45,7 +50,7 @@ public class PacketReaderTask<CTX> implements Runnable {
 
     private void setUp() {
 
-        this.inputScanner = new Scanner(client.getInputStream());
+        this.inputReader = new BufferedReader(new InputStreamReader(client.getInputStream()));
 
     }
 
@@ -53,15 +58,32 @@ public class PacketReaderTask<CTX> implements Runnable {
 
         ExecutorService executorService = Executors.newSingleThreadExecutor();
 
-        Future<String> singleLineFuture = executorService.submit(() -> this.inputScanner.nextLine());
+        Future<String> singleLineFuture = executorService.submit(() -> this.inputReader.readLine());
 
         while (client.isRunning()) {
+
+            if (isShouldStop()) break;
 
             try {
 
                 if (singleLineFuture.isDone()) {
 
                     String line = singleLineFuture.get();
+
+                    if (line == null) {
+
+                        synchronized (this) {
+                            shouldStop = true;
+                        }
+
+                        CDI.current().getBeanManager().fireEvent(
+                                new ClientShouldStopEvent(client.getId())
+                        );
+
+                        break;
+
+                    }
+
                     String message = line.trim();
 
                     logger.info("New packet arrived, length: {}, content: {}", message.length(), message);
@@ -72,6 +94,17 @@ public class PacketReaderTask<CTX> implements Runnable {
                         Response response = this.client.handleRequest(request);
                         this.client.addOutgoingResponse(response);
 
+                        if (client instanceof ServerChatClient && request.getCommand().equals("DISCONNECT")) {
+                            // Refactor to some kind of AsyncTasks helper class
+                            // The event must be fired from a different thread, as it causes a deadlock if fired from
+                            // this thread.
+                            AsyncHelper.runAsync( () -> {
+                                CDI.current().getBeanManager().fireEvent(
+                                        new ClientShouldStopEvent(client.getId())
+                                );
+                            } );
+                        }
+
                     } else if (message.startsWith("A")) {
 
                         Response response = ResponseBuilder.responseFromMessage(message);
@@ -79,13 +112,30 @@ public class PacketReaderTask<CTX> implements Runnable {
 
                     }
 
-                    singleLineFuture = executorService.submit(() -> this.inputScanner.nextLine());
+                    singleLineFuture = executorService.submit(() -> this.inputReader.readLine());
 
                 }
 
                 Thread.sleep(WAIT_INTERVAL_MS);
 
             } catch (Exception exc) {
+
+                if (exc instanceof ExecutionException) {
+                    ExecutionException execExc = (ExecutionException) exc;
+                    if (execExc.getCause() instanceof SocketException) {
+
+                        AsyncHelper.runAsync( () -> {
+                            CDI.current().getBeanManager().fireEvent(
+                                    new ClientShouldStopEvent(client.getId())
+                            );
+                        } );
+
+                        synchronized (this) {
+                            shouldStop = true;
+                        }
+
+                    }
+                }
 
                 exc.printStackTrace();
 
@@ -119,4 +169,7 @@ public class PacketReaderTask<CTX> implements Runnable {
 
     }
 
+    public synchronized boolean isShouldStop() {
+        return shouldStop;
+    }
 }

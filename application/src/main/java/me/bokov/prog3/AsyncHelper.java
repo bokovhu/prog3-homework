@@ -16,17 +16,28 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.bokov.prog3.ui;
+package me.bokov.prog3;
 
-import javax.enterprise.context.ApplicationScoped;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
-@ApplicationScoped
-public class ChatUIBean extends ScreenBase {
+public final class AsyncHelper {
 
-    @Override
-    public void initialize() {
+    private static final ExecutorService EXECUTOR_SERVICE = Executors.newCachedThreadPool();
 
+    public static void runAsync (Runnable r) {
+        EXECUTOR_SERVICE.submit(r);
+    }
 
+    static void destroy () {
+
+        EXECUTOR_SERVICE.shutdownNow();
+        try {
+            EXECUTOR_SERVICE.awaitTermination(60000L, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
     }
 

@@ -43,27 +43,35 @@ public class PacketWriterTask<CTX> implements Runnable {
 
     }
 
+    private void writeMessagesIfAvailable () {
+
+        // Only write requests is the client is not "marked" for stopping
+        while (this.client.hasOutgoingRequest() && this.client.isRunning()) {
+
+            Request r = this.client.takeOutgoingRequest();
+            logger.info("Outgoing request is ready to be sent: {}", r);
+            this.outputPrintStream.println(r.toString());
+
+        }
+
+        // Always write responses
+        while (this.client.hasOutgoingResponse()) {
+
+            Response r = this.client.takeOutgoingResponse();
+            logger.info("Outgoing response is ready to be sent: {}", r);
+            this.outputPrintStream.println(r.toString());
+
+        }
+
+    }
+
     private void performWriteLoop() {
 
         while (this.client.isRunning()) {
 
             try {
 
-                if (this.client.hasOutgoingRequest()) {
-
-                    Request r = this.client.takeOutgoingRequest();
-                    logger.info("Outgoing request is ready to be sent: {}", r);
-                    this.outputPrintStream.println(r.toString());
-
-                }
-
-                if (this.client.hasOutgoingResponse()) {
-
-                    Response r = this.client.takeOutgoingResponse();
-                    logger.info("Outgoing response is ready to be sent: {}", r);
-                    this.outputPrintStream.println(r.toString());
-
-                }
+                writeMessagesIfAvailable();
 
                 Thread.sleep(WAIT_INTERVAL_MS);
 
@@ -75,6 +83,9 @@ public class PacketWriterTask<CTX> implements Runnable {
 
         }
 
+        // Write any leftover responses
+        writeMessagesIfAvailable();
+
     }
 
     @Override
@@ -84,6 +95,12 @@ public class PacketWriterTask<CTX> implements Runnable {
 
         setUp();
         performWriteLoop();
+
+        try {
+            this.outputPrintStream.close();
+        } catch (Exception exc) {
+            exc.printStackTrace();
+        }
 
         logger.info("Packet writer finished");
 

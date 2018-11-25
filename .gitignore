@@ -19,3 +19,6 @@ command-api/target/
 application/target/
 service-api/target/
 coverage-aggregator/target/
+
+# IDEA is configured to have a run target which uses this directory as its --data-directory
+.chatter-test-data/

@@ -74,35 +74,6 @@ public class ServerChatClientImpl extends ClientBase<ServerChatClientMessageHand
 
         this.chatClientEndpoint = new ChatClientEndpointImpl(this, connectionInformation);
 
-        // This is a hack, but setting up an executor service is heavier
-        // The whole thing is set up like this, because we need to defer actual disconnection to a later time, when
-        // the answer to the DISCONNECT message was already sent
-        // The CDI event is observed in the ChatServer, and that's the point from where the client is shut down on the
-        // server side.
-        new Thread(
-                () -> {
-
-                    while (isRunning()) {
-                        if (isSessionValueSet("disconnected")) {
-                            CDI.current().getBeanManager().fireEvent(
-                                    new UserDisconnectedEvent(
-                                            new Date(),
-                                            "USER_DISCONNECTED",
-                                            getSessionValue("username").toString()
-                                    )
-                            );
-                        }
-
-                        try {
-                            Thread.sleep(100L);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                }
-        ).start();
-
     }
 
     @Override

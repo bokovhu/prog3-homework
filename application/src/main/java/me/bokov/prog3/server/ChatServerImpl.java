@@ -19,6 +19,7 @@
 package me.bokov.prog3.server;
 
 import me.bokov.prog3.command.request.Request;
+import me.bokov.prog3.event.ClientShouldStopEvent;
 import me.bokov.prog3.event.UserDisconnectedEvent;
 import me.bokov.prog3.service.ChatServer;
 import me.bokov.prog3.service.common.ChatUserVO;
@@ -203,12 +204,12 @@ public class ChatServerImpl implements ChatServer {
         return serverChatClients;
     }
 
-    public void observeUserDisconnectedEvent(@Observes UserDisconnectedEvent event) {
+    public void observeUserDisconnectedEvent(@Observes ClientShouldStopEvent event) {
 
         List<ServerChatClient> toStop = new ArrayList<>();
 
         synchronized (serverChatClients) {
-            serverChatClients.stream().filter(c -> c.isSessionValueSet("username") && event.getUsername().equals(c.getSessionValue("username")))
+            serverChatClients.stream().filter(c -> c.getId().equals(event.getClientId()))
                     .forEach(toStop::add);
         }
 

@@ -22,15 +22,14 @@ import me.bokov.prog3.command.request.Request;
 import me.bokov.prog3.command.response.Response;
 
 import java.net.Socket;
+import java.util.UUID;
 
 public interface CommunicationCapableService {
 
     void start(Socket socket);
-
     void stop();
-
     void send(Request request);
-
     Response readResponse(String messageId, long timeoutInMillisec);
+    UUID getId ();
 
 }

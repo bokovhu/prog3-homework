@@ -23,7 +23,11 @@ import me.bokov.prog3.command.endpoint.ConnectionInformationImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.net.Socket;
+import java.util.Enumeration;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -45,6 +49,33 @@ class ChatServerClientConnectionListenerTask implements Runnable {
     public void run() {
 
         logger.info("Starting to listen for client connections");
+
+        try {
+
+            logger.info("Connect using one of the following host:port pairs:");
+
+            int port = chatServer.serverSocket.getLocalPort();
+
+            Enumeration <NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
+            while (networkInterfaces.hasMoreElements()) {
+
+                NetworkInterface ni = networkInterfaces.nextElement();
+
+                Enumeration <InetAddress> inetAddresses = ni.getInetAddresses();
+
+                while (inetAddresses.hasMoreElements()) {
+
+                    InetAddress ia = inetAddresses.nextElement();
+
+                    logger.info("- {}:{}", ia.getHostAddress(), port);
+
+                }
+
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         ExecutorService executorService = Executors.newSingleThreadExecutor();
 

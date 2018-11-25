@@ -18,6 +18,9 @@
 
 package me.bokov.prog3.ui.welcome;
 
+import me.bokov.prog3.service.ChatClient;
+import me.bokov.prog3.service.client.ConnectionConfiguration;
+import me.bokov.prog3.ui.ChatUIBean;
 import me.bokov.prog3.ui.common.InputGroup;
 import me.bokov.prog3.util.I18N;
 
@@ -31,13 +34,19 @@ public class ConnectToServerDialogBean {
     @Inject
     private I18N i18n;
 
+    @Inject
+    private ChatClient chatClient;
+
+    @Inject
+    private ChatUIBean chatUIBean;
+
     public void show() {
 
         SwingUtilities.invokeLater(
                 () -> {
 
                     JTextField serverHostnameTextField = new JTextField(40);
-                    JFormattedTextField serverPortTextField = new JFormattedTextField();
+                    JFormattedTextField serverPortTextField = new JFormattedTextField(0);
                     serverPortTextField.setColumns(5);
                     JTextField usernameTextField = new JTextField(40);
 
@@ -54,6 +63,15 @@ public class ConnectToServerDialogBean {
 
                     if (connectToServerResult == JOptionPane.OK_OPTION) {
 
+                        ConnectionConfiguration connectionConfiguration = new ConnectionConfiguration();
+                        connectionConfiguration.setUsername(usernameTextField.getText());
+                        connectionConfiguration.setHost(serverHostnameTextField.getText());
+                        connectionConfiguration.setPort(((Number) serverPortTextField.getValue()).intValue());
+
+                        chatClient.connect(connectionConfiguration);
+
+                        chatUIBean.initialize();
+                        chatUIBean.activate();
 
                     }
 

@@ -31,10 +31,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.*;
 
 public abstract class ClientBase<CTX> implements CommunicationCapableService, SessionCapableService {
@@ -52,6 +49,7 @@ public abstract class ClientBase<CTX> implements CommunicationCapableService, Se
     private ExecutorService taskExecutor;
 
     private boolean running = false;
+    private UUID id = UUID.randomUUID();
 
     // Abstract methods
 
@@ -135,6 +133,12 @@ public abstract class ClientBase<CTX> implements CommunicationCapableService, Se
 
             e.printStackTrace();
 
+        }
+
+        try {
+            this.socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         postStop();
@@ -354,4 +358,7 @@ public abstract class ClientBase<CTX> implements CommunicationCapableService, Se
         }
     }
 
+    public UUID getId() {
+        return id;
+    }
 }
