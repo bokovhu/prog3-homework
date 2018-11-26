@@ -25,11 +25,16 @@ import me.bokov.prog3.service.ChatClient;
 import me.bokov.prog3.service.client.ConnectionConfiguration;
 import me.bokov.prog3.ui.ChatUIBean;
 import me.bokov.prog3.ui.common.InputGroup;
+import me.bokov.prog3.util.Config;
 import me.bokov.prog3.util.I18N;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.swing.*;
+import javax.swing.text.DefaultFormatter;
+import javax.swing.text.DefaultFormatterFactory;
+import javax.swing.text.NumberFormatter;
+import java.text.NumberFormat;
 
 @ApplicationScoped
 public class ConnectToServerDialogBean {
@@ -43,15 +48,37 @@ public class ConnectToServerDialogBean {
     @Inject
     private ChatUIBean chatUIBean;
 
+    @Inject
+    private Config config;
+
     public void show() {
 
         SwingUtilities.invokeLater(
                 () -> {
 
                     JTextField serverHostnameTextField = new JTextField(40);
-                    JFormattedTextField serverPortTextField = new JFormattedTextField(0);
-                    serverPortTextField.setColumns(5);
+
+                    NumberFormat portFormat = NumberFormat.getInstance();
+                    portFormat.setGroupingUsed(false);
+                    portFormat.setParseIntegerOnly(true);
+                    NumberFormatter portFormatter = new NumberFormatter(portFormat);
+                    portFormatter.setValueClass(Integer.class);
+                    portFormatter.setMinimum(0);
+                    portFormatter.setMaximum(65535);
+                    portFormatter.setAllowsInvalid(false);
+                    JFormattedTextField serverPortTextField = new JFormattedTextField(portFormatter);
+
                     JTextField usernameTextField = new JTextField(40);
+
+                    if (config.getLastConnectionHostname() != null) {
+                        serverHostnameTextField.setText(config.getLastConnectionHostname());
+                    }
+                    if (config.getLastConnectionPort() != null) {
+                        serverPortTextField.setValue(config.getLastConnectionPort());
+                    }
+                    if (config.getLastConnectionUsername() != null) {
+                        usernameTextField.setText(config.getLastConnectionUsername());
+                    }
 
                     int connectToServerResult = JOptionPane.showConfirmDialog(
                             null,
@@ -70,6 +97,11 @@ public class ConnectToServerDialogBean {
                         connectionConfiguration.setUsername(usernameTextField.getText());
                         connectionConfiguration.setHost(serverHostnameTextField.getText());
                         connectionConfiguration.setPort(((Number) serverPortTextField.getValue()).intValue());
+
+                        config.setLastConnectionHostname(connectionConfiguration.getHost());
+                        config.setLastConnectionPort(connectionConfiguration.getPort());
+                        config.setLastConnectionUsername(connectionConfiguration.getUsername());
+                        config.save();
 
                         ChatClient.ConnectResult connectResult = chatClient.connect(connectionConfiguration);
 

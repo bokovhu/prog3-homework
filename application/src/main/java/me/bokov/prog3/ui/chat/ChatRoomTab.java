@@ -39,6 +39,8 @@ public class ChatRoomTab extends JPanel {
     private ChatRoomMessagesPanel messagesPanel;
     private ChatRoomControlsPanel controlsPanel;
 
+    private JLabel tabTitleLabel = new JLabel();
+
     private void initPanel () {
 
         messagesPanel = new ChatRoomMessagesPanel(roomId);
@@ -124,6 +126,8 @@ public class ChatRoomTab extends JPanel {
         );
         controlsPanel.loadMembers(roomData);
 
+        tabTitleLabel.setText(getRoomName());
+
     }
 
     public void reloadRoom () {
@@ -147,5 +151,9 @@ public class ChatRoomTab extends JPanel {
 
     public Long getRoomId() {
         return roomId;
+    }
+
+    public JLabel getTabTitleLabel() {
+        return tabTitleLabel;
     }
 }

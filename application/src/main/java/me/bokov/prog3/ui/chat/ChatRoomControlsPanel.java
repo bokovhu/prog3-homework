@@ -20,6 +20,7 @@ package me.bokov.prog3.ui.chat;
 
 import me.bokov.prog3.service.ChatClient;
 import me.bokov.prog3.service.common.ChatRoomVO;
+import me.bokov.prog3.ui.ChatUIBean;
 import me.bokov.prog3.ui.common.PanelList;
 import me.bokov.prog3.util.I18N;
 
@@ -50,6 +51,20 @@ public class ChatRoomControlsPanel extends JPanel {
 
     }
 
+    private void doLeaveRoom () {
+
+        ChatClient chatClient = CDI.current().select(ChatClient.class).get();
+
+        chatClient.getServerEndpoint().leaveRoom()
+                .roomId(roomId)
+                .execute();
+
+        ChatUIBean chatUIBean = CDI.current().select(ChatUIBean.class).get();
+
+        chatUIBean.removeRoomTab(roomId);
+
+    }
+
     private void initButtons () {
 
         inviteUserButton = new JButton(i18n.getText("chat.chat-room-controls.invite-user"));
@@ -60,7 +75,9 @@ public class ChatRoomControlsPanel extends JPanel {
 
         leaveRoomButton = new JButton(i18n.getText("chat.chat-room-controls.leave-room"));
         leaveRoomButton.setBackground(Color.RED);
-        leaveRoomButton.addActionListener(e -> JOptionPane.showMessageDialog(null, "Leave room"));
+        leaveRoomButton.addActionListener(
+                e -> doLeaveRoom()
+        );
 
         deleteRoomButton = new JButton(i18n.getText("chat.chat-room-controls.delete-room"));
         deleteRoomButton.setBackground(Color.RED);

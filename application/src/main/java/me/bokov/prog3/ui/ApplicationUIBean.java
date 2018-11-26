@@ -30,8 +30,8 @@ import java.awt.*;
 public class ApplicationUIBean {
 
     private static final String WINDOW_TITLE_KEY = "window.title";
-    private static final Dimension WINDOW_MIN_SIZE = new Dimension(400, 300);
-    private static final Dimension WINDOW_PREF_SIZE = new Dimension(1024, 768);
+    private static final Dimension WINDOW_MIN_SIZE = new Dimension(800, 600);
+    private static final Dimension WINDOW_PREF_SIZE = new Dimension(1280, 720);
     @Inject
     private Logger logger;
     private boolean initialized = false;

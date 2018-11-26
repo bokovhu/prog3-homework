@@ -20,6 +20,7 @@ package me.bokov.prog3.ui.chat;
 
 import me.bokov.prog3.command.response.Response;
 import me.bokov.prog3.service.ChatClient;
+import me.bokov.prog3.ui.ChatUIBean;
 import me.bokov.prog3.ui.ImageStoreBean;
 import me.bokov.prog3.util.DateTimeUtils;
 import me.bokov.prog3.util.I18N;
@@ -56,6 +57,8 @@ public class ChatRoomMessagesPanel extends JPanel {
 
     private final Long roomId;
 
+    private int unreadMessageCount = 0;
+
     private void fetchMessages () {
 
         ChatClient chatClient = CDI.current().select(ChatClient.class).get();
@@ -88,6 +91,8 @@ public class ChatRoomMessagesPanel extends JPanel {
         chatTextPane.setEditable(false);
 
         fetchMessages();
+
+        unreadMessageCount = 0;
 
     }
 
@@ -151,6 +156,12 @@ public class ChatRoomMessagesPanel extends JPanel {
 
         messageItems.add(mi);
         updateMessages();
+
+        ChatUIBean chatUIBean = CDI.current().select(ChatUIBean.class).get();
+
+        if (chatUIBean.getActiveChatRoomTab() == null || !chatUIBean.getActiveChatRoomTab().getRoomId().equals(roomId)) {
+            unreadMessageCount++;
+        }
 
     }
 
@@ -400,4 +411,11 @@ public class ChatRoomMessagesPanel extends JPanel {
 
     }
 
+    public int getUnreadMessageCount() {
+        return unreadMessageCount;
+    }
+
+    public void setUnreadMessageCount(int unreadMessageCount) {
+        this.unreadMessageCount = unreadMessageCount;
+    }
 }

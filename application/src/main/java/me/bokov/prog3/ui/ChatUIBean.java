@@ -20,7 +20,6 @@ package me.bokov.prog3.ui;
 
 import me.bokov.prog3.AsyncHelper;
 import me.bokov.prog3.service.ChatClient;
-import me.bokov.prog3.ui.chat.ChatRoomMessagesPanel;
 import me.bokov.prog3.ui.chat.ChatRoomTab;
 import me.bokov.prog3.ui.chat.MessageComposerPanel;
 
@@ -30,8 +29,8 @@ import javax.json.JsonObject;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @ApplicationScoped
 public class ChatUIBean extends ScreenBase {
@@ -42,19 +41,16 @@ public class ChatUIBean extends ScreenBase {
     @Inject
     private ImageStoreBean imageStoreBean;
 
+    JButton createRoomButton;
     JTabbedPane chatRoomsTabbedPane;
     private List<ChatRoomTab> chatRoomTabs = new ArrayList<>();
     MessageComposerPanel messageComposerPanel;
 
-    private void initChatRoomTabs () {
-
-        // TODO: The tabs must be updated when a JoinedRoomEvent or LeftRoomEvent is fired
+    private void initChatRoomTabs() {
 
         chatRoomsTabbedPane = new JTabbedPane();
-        chatRoomsTabbedPane.addTab("", new JPanel());
 
-        JButton createRoomButton = new JButton(i18n.getText("chat.create-room"));
-        createRoomButton.setBorder(BorderFactory.createEmptyBorder());
+        createRoomButton = new JButton(i18n.getText("chat.create-room"));
         createRoomButton.addActionListener(
                 e -> {
 
@@ -72,11 +68,24 @@ public class ChatUIBean extends ScreenBase {
                 }
         );
 
-        chatRoomsTabbedPane.setTabComponentAt(0, createRoomButton);
+        chatRoomsTabbedPane.addChangeListener(
+                e -> {
+
+                    if (chatRoomsTabbedPane.getSelectedComponent() instanceof ChatRoomTab) {
+
+                        ChatRoomTab tab = (ChatRoomTab) chatRoomsTabbedPane.getSelectedComponent();
+
+                        tab.getTabTitleLabel().setText(tab.getRoomName());
+                        tab.getMessagesPanel().setUnreadMessageCount(0);
+
+                    }
+
+                }
+        );
 
     }
 
-    private void initMessageComposer () {
+    private void initMessageComposer() {
 
         messageComposerPanel = new MessageComposerPanel();
 
@@ -91,9 +100,19 @@ public class ChatUIBean extends ScreenBase {
         initChatRoomTabs();
         initMessageComposer();
 
+        GridBagConstraints createRoomGbc = new GridBagConstraints();
+        createRoomGbc.gridx = 0;
+        createRoomGbc.gridy = 0;
+        createRoomGbc.gridwidth = 1;
+        createRoomGbc.gridheight = 1;
+        createRoomGbc.weightx = 0.0;
+        createRoomGbc.weighty = 0.0;
+        createRoomGbc.anchor = GridBagConstraints.WEST;
+        panel.add(createRoomButton, createRoomGbc);
+
         GridBagConstraints tabsGbc = new GridBagConstraints();
         tabsGbc.gridx = 0;
-        tabsGbc.gridy = 0;
+        tabsGbc.gridy = 1;
         tabsGbc.gridwidth = 1;
         tabsGbc.gridheight = 1;
         tabsGbc.weightx = 1.0;
@@ -105,7 +124,7 @@ public class ChatUIBean extends ScreenBase {
 
         GridBagConstraints composerGbc = new GridBagConstraints();
         composerGbc.gridx = 0;
-        composerGbc.gridy = 1;
+        composerGbc.gridy = 2;
         composerGbc.gridwidth = 1;
         composerGbc.gridheight = 1;
         composerGbc.weightx = 1.0;
@@ -116,7 +135,7 @@ public class ChatUIBean extends ScreenBase {
 
     }
 
-    public void addRoomTab (Long roomId) {
+    public void addRoomTab(Long roomId) {
 
         SwingUtilities.invokeLater(
                 () -> {
@@ -125,6 +144,10 @@ public class ChatUIBean extends ScreenBase {
 
                         ChatRoomTab tab = new ChatRoomTab(roomId);
                         chatRoomsTabbedPane.addTab(tab.getRoomName(), tab);
+                        chatRoomsTabbedPane.setTabComponentAt(
+                                chatRoomsTabbedPane.getTabCount() - 1,
+                                tab.getTabTitleLabel()
+                        );
                         chatRoomTabs.add(tab);
                         tab.getMessagesPanel().updateMessages();
 
@@ -139,7 +162,30 @@ public class ChatUIBean extends ScreenBase {
 
     }
 
-    public void handleNewMessage (Long roomId, JsonObject messageObject) {
+    public void removeRoomTab (Long roomId) {
+
+        SwingUtilities.invokeLater(
+                () -> {
+
+                    chatRoomTabs.stream().filter(t -> t.getRoomId().equals(roomId)).findFirst()
+                    .ifPresent(
+                            tab -> {
+
+                                chatRoomsTabbedPane.removeTabAt(
+                                        chatRoomsTabbedPane.indexOfComponent(tab)
+                                );
+
+                                chatRoomTabs.remove(tab);
+
+                            }
+                    );
+
+                }
+        );
+
+    }
+
+    public void handleNewMessage(Long roomId, JsonObject messageObject) {
 
         SwingUtilities.invokeLater(
                 () -> {
@@ -150,6 +196,12 @@ public class ChatUIBean extends ScreenBase {
                                     chatRoomTab -> {
 
                                         chatRoomTab.getMessagesPanel().addMessage(messageObject);
+
+                                        if (chatRoomTab.getMessagesPanel().getUnreadMessageCount() > 0) {
+                                            chatRoomTab.getTabTitleLabel().setText(
+                                                    chatRoomTab.getRoomName() + " (" + chatRoomTab.getMessagesPanel().getUnreadMessageCount() + ")"
+                                            );
+                                        }
 
                                         chatRoomTab.invalidate();
                                         chatRoomTab.revalidate();
@@ -163,7 +215,7 @@ public class ChatUIBean extends ScreenBase {
 
     }
 
-    public void handleRoomChange (Long roomId) {
+    public void handleRoomChange(Long roomId) {
 
         SwingUtilities.invokeLater(
                 () -> {
@@ -187,7 +239,7 @@ public class ChatUIBean extends ScreenBase {
 
     }
 
-    public void handleNewInvitation (JsonObject newInvitationObject) {
+    public void handleNewInvitation(JsonObject newInvitationObject) {
 
         SwingUtilities.invokeLater(
                 () -> {
@@ -220,8 +272,9 @@ public class ChatUIBean extends ScreenBase {
 
     }
 
-    public ChatRoomTab getActiveChatRoomTab () {
+    public ChatRoomTab getActiveChatRoomTab() {
 
+        if (!(chatRoomsTabbedPane.getSelectedComponent() instanceof ChatRoomTab)) return null;
         return (ChatRoomTab) chatRoomsTabbedPane.getSelectedComponent();
 
     }

@@ -27,10 +27,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * This @ApplicationScoped CDI bean stores configuration for the application
@@ -49,7 +46,10 @@ public class Config {
     private File imageStoreDirectory;
 
     private Locale userLocale;
-    private String lastDatabaseMigration;
+
+    private String lastConnectionHostname = null;
+    private Integer lastConnectionPort = null;
+    private String lastConnectionUsername = null;
 
     private Map<String, String> configurationMap = new HashMap<>();
 
@@ -59,7 +59,9 @@ public class Config {
     public void resetToDefaults() {
 
         userLocale = new Locale("en");
-        lastDatabaseMigration = null;
+        lastConnectionHostname = null;
+        lastConnectionPort = null;
+        lastConnectionUsername = null;
 
     }
 
@@ -70,7 +72,11 @@ public class Config {
     private void parseProperties(Properties properties) {
 
         userLocale = new Locale(properties.getProperty("user-locale"));
-        lastDatabaseMigration = properties.getProperty("last-database-migration");
+        lastConnectionHostname = properties.getProperty("last-connection-hostname");
+        if (properties.containsKey("last-connection-port")) {
+            lastConnectionPort = Integer.parseInt(properties.getProperty("last-connection-port"));
+        }
+        lastConnectionUsername = properties.getProperty("last-connection-username");
 
         properties.stringPropertyNames()
                 .forEach(k -> configurationMap.put(k, properties.getProperty(k)));
@@ -86,7 +92,9 @@ public class Config {
         Properties properties = new Properties();
 
         properties.setProperty("user-locale", userLocale.getLanguage());
-        properties.setProperty("last-database-migration", lastDatabaseMigration);
+        properties.setProperty("last-connection-hostname", Objects.toString(lastConnectionHostname));
+        properties.setProperty("last-connection-port", Objects.toString(lastConnectionPort));
+        properties.setProperty("last-connection-username", Objects.toString(lastConnectionUsername));
 
         configurationMap.forEach(properties::setProperty);
 
@@ -202,14 +210,6 @@ public class Config {
         return userLocale;
     }
 
-    public String getLastDatabaseMigration() {
-        return lastDatabaseMigration;
-    }
-
-    public void setLastDatabaseMigration(String lastDatabaseMigration) {
-        this.lastDatabaseMigration = lastDatabaseMigration;
-    }
-
     public DatabaseConnectionConfig getDatabaseConnectionConfig() {
 
         DatabaseConnectionConfig cfg = new DatabaseConnectionConfig();
@@ -276,5 +276,29 @@ public class Config {
     public File getImageStoreDirectory() {
         ensureImageStoreDirectory();
         return imageStoreDirectory;
+    }
+
+    public String getLastConnectionHostname() {
+        return lastConnectionHostname;
+    }
+
+    public void setLastConnectionHostname(String lastConnectionHostname) {
+        this.lastConnectionHostname = lastConnectionHostname;
+    }
+
+    public Integer getLastConnectionPort() {
+        return lastConnectionPort;
+    }
+
+    public void setLastConnectionPort(Integer lastConnectionPort) {
+        this.lastConnectionPort = lastConnectionPort;
+    }
+
+    public String getLastConnectionUsername() {
+        return lastConnectionUsername;
+    }
+
+    public void setLastConnectionUsername(String lastConnectionUsername) {
+        this.lastConnectionUsername = lastConnectionUsername;
     }
 }

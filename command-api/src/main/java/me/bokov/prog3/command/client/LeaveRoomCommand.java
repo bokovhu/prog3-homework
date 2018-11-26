@@ -22,6 +22,8 @@ import me.bokov.prog3.command.Command;
 
 public interface LeaveRoomCommand extends Command {
 
+    int SUCCESS = 200;
+
     LeaveRoomCommand roomId (Long roomId);
 
 }

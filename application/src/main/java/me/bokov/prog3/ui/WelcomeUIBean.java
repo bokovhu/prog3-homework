@@ -25,6 +25,7 @@ import me.bokov.prog3.ui.welcome.StartNewServerDialogBean;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.swing.*;
+import java.awt.*;
 
 @ApplicationScoped
 public class WelcomeUIBean extends ScreenBase {
@@ -62,15 +63,42 @@ public class WelcomeUIBean extends ScreenBase {
 
         panel = new JPanel();
 
-        panel.add(new JLabel(i18n.getText("welcome.title")));
+        panel.setLayout(new GridBagLayout());
+        JLabel welcomeLabel = new JLabel(i18n.getText("welcome.title"));
+        welcomeLabel.setHorizontalAlignment(JLabel.CENTER);
+        panel.add(
+                welcomeLabel,
+                new GridBagConstraints(
+                        0, 0, 2, 1,
+                        1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                        new Insets(16, 16, 16, 16),
+                        0, 0
+                )
+        );
 
         createStartNewServerButton();
         createConnectToServerButton();
 
-        panel.add(connectToServerButton);
+        panel.add(
+                connectToServerButton,
+                new GridBagConstraints(
+                        0, 1, 1, 1,
+                        1.0, 1.0, GridBagConstraints.WEST, 0,
+                        new Insets(16, 16, 16, 16),
+                        0, 0
+                )
+        );
 
         if (!Application.getInstance().getCommandLine().hasOption("no-database")) {
-            panel.add(startNewServerButton);
+            panel.add(
+                    startNewServerButton,
+                    new GridBagConstraints(
+                            1, 1, 1, 1,
+                            1.0, 1.0, GridBagConstraints.EAST, 0,
+                            new Insets(16, 16, 16, 16),
+                            0, 0
+                    )
+            );
         }
 
     }

@@ -48,21 +48,10 @@ public class StartNewServerDialogBean {
                     JFormattedTextField serverPortTextField = new JFormattedTextField(14672);
                     serverPortTextField.setColumns(5);
 
-                    JCheckBox passwordEnabledCheckBox = new JCheckBox(i18n.getText("start-new-server.password-enabled"), false);
-                    JPasswordField serverPasswordField = new JPasswordField("", 24);
-                    passwordEnabledCheckBox.addChangeListener(
-                            changeEvent -> {
-                                if (passwordEnabledCheckBox.isSelected()) serverPasswordField.setEnabled(true);
-                                else serverPasswordField.setEnabled(false);
-                            }
-                    );
-
                     int startNewServerResult = JOptionPane.showConfirmDialog(
                             null,
                             new Object[]{
-                                    new InputGroup(i18n.getText("start-new-server.server-port"), serverPortTextField),
-                                    passwordEnabledCheckBox,
-                                    new InputGroup(i18n.getText("start-new-server.server-password"), serverPasswordField)
+                                    new InputGroup(i18n.getText("start-new-server.server-port"), serverPortTextField)
                             },
                             i18n.getText("start-new-server.dialog-title"),
                             JOptionPane.OK_CANCEL_OPTION
@@ -72,8 +61,6 @@ public class StartNewServerDialogBean {
 
                         ServerConfiguration serverConfiguration = new ServerConfiguration();
 
-                        serverConfiguration.setPassword(new String(serverPasswordField.getPassword()));
-                        serverConfiguration.setPasswordEnabled(passwordEnabledCheckBox.isSelected());
                         serverConfiguration.setPort(((Number) serverPortTextField.getValue()).intValue());
 
                         chatServer.start(serverConfiguration);
