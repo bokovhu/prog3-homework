@@ -18,20 +18,27 @@
 
 package me.bokov.prog3.ui.chat;
 
+import me.bokov.prog3.command.response.Response;
+import me.bokov.prog3.service.ChatClient;
+import me.bokov.prog3.ui.ImageStoreBean;
 import me.bokov.prog3.util.DateTimeUtils;
 import me.bokov.prog3.util.I18N;
 import org.apache.commons.io.FileUtils;
 
 import javax.enterprise.inject.spi.CDI;
+import javax.json.JsonArray;
+import javax.json.JsonObject;
 import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.text.MessageFormat;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 
@@ -44,7 +51,28 @@ public class ChatRoomMessagesPanel extends JPanel {
 
     private I18N i18n;
 
+    private JTextPane chatTextPane;
     private List<MessageItem> messageItems = new ArrayList<>();
+
+    private final Long roomId;
+
+    private void fetchMessages () {
+
+        ChatClient chatClient = CDI.current().select(ChatClient.class).get();
+
+        Response response = chatClient.getServerEndpoint()
+                .getMessages()
+                .roomId(roomId)
+                .execute();
+
+        JsonArray messagesArray = response.getData().asJsonObject()
+                .getJsonArray("messages");
+
+        messagesArray.forEach(
+                msg -> addMessage(msg.asJsonObject())
+        );
+
+    }
 
     private void initPanel() {
 
@@ -52,12 +80,19 @@ public class ChatRoomMessagesPanel extends JPanel {
         // TODO: Should update when a NewMessageEvent is fired
 
         setBackground(Color.WHITE);
+        setLayout(new GridLayout(1, 1));
 
-        updateMessages();
+        chatTextPane = new JTextPane();
+        add(new JScrollPane(chatTextPane));
+
+        chatTextPane.setEditable(false);
+
+        fetchMessages();
 
     }
 
-    public ChatRoomMessagesPanel() {
+    public ChatRoomMessagesPanel(Long roomId) {
+        this.roomId = roomId;
 
         i18n = CDI.current().select(I18N.class).get();
 
@@ -65,7 +100,54 @@ public class ChatRoomMessagesPanel extends JPanel {
 
     }
 
-    public void addMessage(MessageItem mi) {
+    public void addMessage (JsonObject messageObject) {
+
+        ImageStoreBean imageStoreBean = CDI.current().select(ImageStoreBean.class).get();
+
+        if (messageObject.getBoolean("isTextMessage")) {
+
+                    addMessageItem(
+                            ChatRoomMessagesPanel.MessageItem.text(
+                                    new Date(messageObject.getJsonNumber("sentDate").longValue()),
+                                    messageObject.getJsonObject("sentBy").getString("username"),
+                                    messageObject.getString("messageText")
+                            )
+                    );
+
+        }
+
+        if (messageObject.getBoolean("isFileMessage")) {
+
+                    addMessageItem(
+                            ChatRoomMessagesPanel.MessageItem.file(
+                                    new Date(messageObject.getJsonNumber("sentDate").longValue()),
+                                    messageObject.getJsonObject("sentBy").getString("username"),
+                                    messageObject.getString("fileName"),
+                                    messageObject.getJsonNumber("fileSize").longValue(),
+                                    messageObject.getString("fileId")
+                            )
+                    );
+
+        }
+
+        if (messageObject.getBoolean("isImageMessage")) {
+
+                    addMessageItem(
+                            ChatRoomMessagesPanel.MessageItem.image(
+                                    new Date(messageObject.getJsonNumber("sentDate").longValue()),
+                                    messageObject.getJsonObject("sentBy").getString("username"),
+                                    imageStoreBean.getImageIconByFileId(
+                                            messageObject.getString("fileId"),
+                                            messageObject.getString("imageExtension")
+                                    )
+                            )
+                    );
+
+        }
+
+    }
+
+    public void addMessageItem(MessageItem mi) {
 
         messageItems.add(mi);
         updateMessages();
@@ -74,29 +156,19 @@ public class ChatRoomMessagesPanel extends JPanel {
 
     public void updateMessages() {
 
-        removeAll();
+        chatTextPane.setStyledDocument(new DefaultStyledDocument());
 
-        setLayout(new GridLayout(1, 1));
-
-        JTextPane jTextPane = new JTextPane();
+        StyledDocument sd = chatTextPane.getStyledDocument();
 
         SimpleAttributeSet attributeSet = new SimpleAttributeSet();
         StyleConstants.setAlignment(attributeSet, StyleConstants.ALIGN_LEFT);
         StyleConstants.setFontFamily(attributeSet, "Courier New");
-        jTextPane.setParagraphAttributes(attributeSet, true);
-
-        jTextPane.setEditable(false);
-
-        StyledDocument sd = jTextPane.getStyledDocument();
+        chatTextPane.setParagraphAttributes(attributeSet, true);
 
         // messageItems.forEach(mi -> mi.modifyDocument(jTextPane, sd));
         for (MessageItem mi : messageItems) {
-            mi.modifyDocument(jTextPane, sd);
+            mi.modifyDocument(chatTextPane, sd);
         }
-
-        add(
-                new JScrollPane(jTextPane)
-        );
 
     }
 
@@ -232,6 +304,36 @@ public class ChatRoomMessagesPanel extends JPanel {
 
         }
 
+        private void doDownloadAndSaveFile() {
+
+            try {
+
+                JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setSelectedFile(new File(fileName));
+
+                int fileChooserResult = fileChooser.showSaveDialog(null);
+                if (fileChooserResult == JFileChooser.APPROVE_OPTION) {
+
+                    File saveToFile = fileChooser.getSelectedFile();
+
+                    ChatClient chatClient = CDI.current().select(ChatClient.class).get();
+                    Response downloadResponse = chatClient.getServerEndpoint().download()
+                            .fileId(fileId)
+                            .execute();
+
+                    FileUtils.writeByteArrayToFile(
+                            saveToFile,
+                            Base64.getDecoder().decode(downloadResponse.getData().asJsonObject().getString("content"))
+                    );
+
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+
         private void addFileToDocument(JTextPane pane, StyledDocument sd) {
 
             addDateAndSentBy(sd);
@@ -239,6 +341,7 @@ public class ChatRoomMessagesPanel extends JPanel {
             JButton fileButton = new JButton(fileName + " (" + FileUtils.byteCountToDisplaySize(fileSize) + ")");
             fileButton.setBorder(BorderFactory.createEmptyBorder());
             fileButton.setBackground(Color.WHITE);
+            fileButton.addActionListener(e -> doDownloadAndSaveFile());
 
             pane.insertComponent(fileButton);
 

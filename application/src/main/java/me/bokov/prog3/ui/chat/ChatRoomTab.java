@@ -21,11 +21,14 @@ package me.bokov.prog3.ui.chat;
 import me.bokov.prog3.command.response.Response;
 import me.bokov.prog3.service.ChatClient;
 import me.bokov.prog3.service.common.ChatRoomVO;
+import me.bokov.prog3.service.common.ChatUserVO;
 
 import javax.enterprise.inject.spi.CDI;
 import javax.json.JsonObject;
+import javax.json.JsonValue;
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 
 public class ChatRoomTab extends JPanel {
 
@@ -38,8 +41,8 @@ public class ChatRoomTab extends JPanel {
 
     private void initPanel () {
 
-        messagesPanel = new ChatRoomMessagesPanel();
-        controlsPanel = new ChatRoomControlsPanel();
+        messagesPanel = new ChatRoomMessagesPanel(roomId);
+        controlsPanel = new ChatRoomControlsPanel(roomId);
 
         setLayout(new GridBagLayout());
 
@@ -79,6 +82,30 @@ public class ChatRoomTab extends JPanel {
 
         roomData = new ChatRoomVO();
         roomData.setName(roomObject.getString("name"));
+        roomData.setLobby(roomObject.getBoolean("isLobby"));
+
+        if (roomObject.containsKey("owner") && !roomObject.isNull("owner") && !roomObject.getJsonObject("owner").isNull("id")) {
+            roomData.setOwner(new ChatUserVO());
+            roomData.getOwner().setId(roomObject.getJsonObject("owner").getJsonNumber("id").longValue());
+        }
+
+        roomData.setMembers(new ArrayList<>());
+        for (JsonValue memberJson : roomObject.getJsonArray("members")) {
+
+            JsonObject memberObject = memberJson.asJsonObject();
+
+            ChatUserVO member = new ChatUserVO();
+            member.setUsername(memberObject.getString("username"));
+            member.setId(memberObject.getJsonNumber("id").longValue());
+            if (memberObject.containsKey("isOnline") && !memberObject.isNull("isOnline")) {
+                member.setOnline(memberObject.getBoolean("isOnline"));
+            } else {
+                member.setOnline(false);
+            }
+
+            roomData.getMembers().add(member);
+
+        }
 
     }
 
@@ -88,6 +115,21 @@ public class ChatRoomTab extends JPanel {
 
         fetchRoom();
         initPanel();
+
+        ChatClient chatClient = CDI.current().select(ChatClient.class).get();
+
+        controlsPanel.init(
+                roomData.getOwner() != null && roomData.getOwner().getId().equals(chatClient.getSessionValue("userId")),
+                roomData.getLobby()
+        );
+        controlsPanel.loadMembers(roomData);
+
+    }
+
+    public void reloadRoom () {
+
+        fetchRoom();
+        controlsPanel.loadMembers(roomData);
 
     }
 

@@ -16,42 +16,36 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.bokov.prog3.command.endpoint;
+package me.bokov.prog3.client.command;
 
-import me.bokov.prog3.command.client.*;
+import me.bokov.prog3.command.client.GetMessagesCommand;
+import me.bokov.prog3.common.ClientBase;
+import me.bokov.prog3.common.CommandBase;
 
-public interface ChatServerEndpoint extends Endpoint {
+import javax.json.Json;
+import javax.json.JsonValue;
 
-    HelloCommand hello();
+public class GetMessagesCommandImpl extends CommandBase implements GetMessagesCommand {
 
-    LoginCommand login();
+    private Long roomId;
 
-    RegisterCommand register ();
+    public GetMessagesCommandImpl(ClientBase chatClient) {
+        super(chatClient);
+    }
 
-    CreateRoomCommand createRoom();
+    @Override
+    public GetMessagesCommand roomId(Long roomId) {
+        this.roomId = roomId;
+        return this;
+    }
 
-    DisconnectCommand disconnect();
+    @Override
+    protected String getCommand() {
+        return "GET-MESSAGES";
+    }
 
-    GetRoomCommand getRoom ();
-
-    GetUserCommand getUser ();
-
-    AcceptInvitationCommand acceptInvitation ();
-
-    InviteUserCommand inviteUser ();
-
-    DownloadCommand download ();
-
-    SendMessageCommand sendMessage ();
-
-    SendImageCommand sendImage ();
-
-    SendFileCommand sendFile ();
-
-    LeaveRoomCommand leaveRoom ();
-
-    DeleteRoomCommand deleteRoom ();
-
-    GetMessagesCommand getMessages ();
-
+    @Override
+    protected JsonValue getData() {
+        return Json.createObjectBuilder().add("roomId", this.roomId).build();
+    }
 }

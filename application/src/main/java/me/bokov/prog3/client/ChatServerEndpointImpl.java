@@ -105,4 +105,9 @@ public class ChatServerEndpointImpl extends EndpointBase implements ChatServerEn
     public DeleteRoomCommand deleteRoom() {
         return new DeleteRoomCommandImpl(client);
     }
+
+    @Override
+    public GetMessagesCommand getMessages() {
+        return new GetMessagesCommandImpl(client);
+    }
 }

@@ -23,22 +23,26 @@ import me.bokov.prog3.command.client.AcceptInvitationCommand;
 import me.bokov.prog3.command.response.ResponseBuilder;
 import me.bokov.prog3.server.ServerChatClientCommandHandlerProviderBean;
 import me.bokov.prog3.server.ServerChatClientMessageHandlingContext;
+import me.bokov.prog3.service.ChatServer;
 import me.bokov.prog3.service.Database;
 import me.bokov.prog3.service.db.entity.ChatInvitationEntity;
 import me.bokov.prog3.service.db.entity.ChatRoomMembershipEntity;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.json.Json;
 import javax.json.JsonObject;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 @ApplicationScoped
 public class AcceptInvitationCommandHandlerProviderBean implements ServerChatClientCommandHandlerProviderBean {
 
     @Inject
     private Database database;
+
+    @Inject
+    private ChatServer chatServer;
 
     @Override
     public Collection<String> getHandledCommands() {
@@ -65,6 +69,20 @@ public class AcceptInvitationCommandHandlerProviderBean implements ServerChatCli
             context.getChatClient().getClientEndpoint().joinRoom()
                     .roomId(invitation.getRoom().getId())
                     .execute();
+
+            // Send JOIN-ROOM messages
+            List<ChatRoomMembershipEntity> memberships = database.getChatRoomMembershipDao()
+                    .queryBuilder().where().eq("chat_user_id", invitation.getInvitedUser().getId()).query();
+
+            for (ChatRoomMembershipEntity m : memberships) {
+                context.getChatClient().getClientEndpoint()
+                        .joinRoom().roomId(m.getChatRoom().getId())
+                        .executeWithoutAnswer();
+                chatServer.clientsInRoom(m.getChatRoom().getId())
+                        .forEach(
+                                c -> c.roomChanged().roomId(m.getChatRoom().getId()).executeWithoutAnswer()
+                        );
+            }
 
             return ResponseBuilder.create()
                     .messageId(request.getMessageId())

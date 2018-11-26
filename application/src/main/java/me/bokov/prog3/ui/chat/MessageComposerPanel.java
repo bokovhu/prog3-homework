@@ -38,73 +38,117 @@ public class MessageComposerPanel extends JPanel {
     private JButton sendFileButton;
     private JButton sendImageButton;
 
-    // TODO: When the sendButton is clicked, the message should actually be sent
     // TODO: When the sendFileButton is clicked, a file chooser should appear, and the file should be actually sent
-    // TODO: When the sendImageButton is clicked, a file chooser should appear, and the image should be actually sent
 
     private JTextField messageTextField;
     private JButton sendButton;
 
+    private void doSendTextMessage () {
+
+        ChatClient chatClient = CDI.current().select(ChatClient.class).get();
+
+        chatClient.getServerEndpoint()
+                .sendMessage()
+                .messageText(messageTextField.getText())
+                .roomId(
+                        CDI.current().select(ChatUIBean.class).get()
+                                .getActiveChatRoomTab().getRoomId()
+                ).executeWithoutAnswer();
+
+        messageTextField.setText("");
+
+    }
+
+    private void doSendImageMessage () {
+
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileFilter(
+                new FileNameExtensionFilter("Images", "png", "jpg", "jpeg", "gif", "bmp")
+        );
+        int fileChooserResult = fileChooser.showOpenDialog(null);
+
+        if (fileChooserResult == JFileChooser.APPROVE_OPTION) {
+
+            try {
+
+                File imageFile = fileChooser.getSelectedFile();
+                String imageContentBase64 = Base64.getEncoder().encodeToString(
+                        FileUtils.readFileToByteArray(imageFile)
+                );
+                String imageExtension = FilenameUtils.getExtension(imageFile.getName());
+
+                CDI.current().select(ChatClient.class).get()
+                        .getServerEndpoint()
+                        .sendImage()
+                        .roomId(
+                                CDI.current().select(ChatUIBean.class).get()
+                                        .getActiveChatRoomTab().getRoomId()
+                        )
+                        .imageContent(imageContentBase64)
+                        .extension(imageExtension)
+                        .executeWithoutAnswer();
+
+            } catch (Exception exc) {
+                exc.printStackTrace();
+            }
+
+        }
+
+    }
+
+    private void doSendFileMessage () {
+
+        JFileChooser fileChooser = new JFileChooser();
+        int fileChooserResult = fileChooser.showOpenDialog(null);
+
+        if (fileChooserResult == JFileChooser.APPROVE_OPTION) {
+
+            try {
+
+                File file = fileChooser.getSelectedFile();
+                String fileContentBase64 = Base64.getEncoder().encodeToString(
+                        FileUtils.readFileToByteArray(file)
+                );
+
+                CDI.current().select(ChatClient.class).get()
+                        .getServerEndpoint()
+                        .sendFile()
+                        .roomId(
+                                CDI.current().select(ChatUIBean.class).get()
+                                        .getActiveChatRoomTab().getRoomId()
+                        )
+                        .fileContent(fileContentBase64)
+                        .fileName(file.getName())
+                        .executeWithoutAnswer();
+
+            } catch (Exception exc) {
+                exc.printStackTrace();
+            }
+
+        }
+
+    }
+
     private void initButtons() {
 
         sendFileButton = new JButton(i18n.getText("chat.message-composer.send-file"));
+
+        sendFileButton.addActionListener(
+                e -> doSendFileMessage()
+        );
+
+
         sendImageButton = new JButton(i18n.getText("chat.message-composer.send-image"));
 
         sendImageButton.addActionListener(
-                e -> {
-
-                    JFileChooser fileChooser = new JFileChooser();
-                    fileChooser.addChoosableFileFilter(
-                            new FileNameExtensionFilter("Images", "png", "jpg", "jpeg", "gif", "bmp")
-                    );
-                    int fileChooserResult = fileChooser.showOpenDialog(null);
-
-                    if (fileChooserResult == JFileChooser.APPROVE_OPTION) {
-
-                        try {
-
-                            File imageFile = fileChooser.getSelectedFile();
-                            String imageContentBase64 = Base64.getEncoder().encodeToString(
-                                    FileUtils.readFileToByteArray(imageFile)
-                            );
-                            String imageExtension = FilenameUtils.getExtension(imageFile.getName());
-
-                            CDI.current().select(ChatClient.class).get()
-                                    .getServerEndpoint()
-                                    .sendImage()
-                                    .roomId(
-                                            CDI.current().select(ChatUIBean.class).get()
-                                                    .getActiveChatRoomTab().getRoomId()
-                                    )
-                                    .imageContent(imageContentBase64)
-                                    .extension(imageExtension)
-                                    .executeWithoutAnswer();
-
-                        } catch (Exception exc) {
-                            exc.printStackTrace();
-                        }
-
-                    }
-
-                }
+                e -> doSendImageMessage()
         );
+
 
         sendButton = new JButton(i18n.getText("chat.message-composer.send"));
 
         sendButton.addActionListener(
-                e -> {
-
-                    ChatClient chatClient = CDI.current().select(ChatClient.class).get();
-
-                    chatClient.getServerEndpoint()
-                            .sendMessage()
-                            .messageText(messageTextField.getText())
-                            .roomId(
-                                    CDI.current().select(ChatUIBean.class).get()
-                                            .getActiveChatRoomTab().getRoomId()
-                            ).executeWithoutAnswer();
-
-                }
+                e -> doSendTextMessage()
         );
 
     }
@@ -131,6 +175,9 @@ public class MessageComposerPanel extends JPanel {
 
         messageTextField = new JTextField();
         messageTextField.setToolTipText(i18n.getText("chat.message-composer.your-message-here"));
+        messageTextField.addActionListener(
+                e -> doSendTextMessage()
+        );
 
         GridBagConstraints textFieldGbc = new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, 10, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 0, 0);
 

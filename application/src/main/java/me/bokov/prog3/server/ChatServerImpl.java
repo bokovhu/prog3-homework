@@ -19,9 +19,7 @@
 package me.bokov.prog3.server;
 
 import me.bokov.prog3.command.endpoint.ChatClientEndpoint;
-import me.bokov.prog3.command.request.Request;
 import me.bokov.prog3.event.ClientShouldStopEvent;
-import me.bokov.prog3.event.UserDisconnectedEvent;
 import me.bokov.prog3.service.ChatServer;
 import me.bokov.prog3.service.Database;
 import me.bokov.prog3.service.common.ChatUserVO;
@@ -86,6 +84,26 @@ public class ChatServerImpl implements ChatServer {
         synchronized (connectedUsers) {
             connectedUsers.removeIf(vo -> vo.getUsername().equals(client.getSessionValue("username")));
             logger.info("Removed the connected user info");
+        }
+
+        if (client.isSessionValueSet("userId")) {
+
+            try {
+
+                for (ChatRoomMembershipEntity membership : database.getChatRoomMembershipDao()
+                        .queryForEq("chat_user_id", client.getSessionValue("userId"))) {
+
+                    clientsInRoom(membership.getChatRoom().getId())
+                            .forEach(
+                                    c -> c.roomChanged().roomId(membership.getChatRoom().getId()).executeWithoutAnswer()
+                            );
+
+                }
+
+            } catch (Exception exc) {
+                exc.printStackTrace();
+            }
+
         }
 
     }
@@ -170,7 +188,7 @@ public class ChatServerImpl implements ChatServer {
 
         try {
 
-            List <Long> userIdsInRoom = database.getChatRoomMembershipDao()
+            List<Long> userIdsInRoom = database.getChatRoomMembershipDao()
                     .queryBuilder().where().eq("chat_room_id", roomId)
                     .query()
                     .stream().map(ChatRoomMembershipEntity::getChatUser)

@@ -23,6 +23,7 @@ import me.bokov.prog3.command.client.GetRoomCommand;
 import me.bokov.prog3.command.response.ResponseBuilder;
 import me.bokov.prog3.server.ServerChatClientCommandHandlerProviderBean;
 import me.bokov.prog3.server.ServerChatClientMessageHandlingContext;
+import me.bokov.prog3.service.ChatServer;
 import me.bokov.prog3.service.Database;
 import me.bokov.prog3.service.common.ChatRoomVO;
 import me.bokov.prog3.service.db.BaseEntity;
@@ -44,6 +45,9 @@ public class GetRoomCommandHandlerProviderBean implements ServerChatClientComman
 
     @Inject
     private Database database;
+
+    @Inject
+    private ChatServer chatServer;
 
     @Override
     public Collection<String> getHandledCommands() {
@@ -78,7 +82,11 @@ public class GetRoomCommandHandlerProviderBean implements ServerChatClientComman
             }
 
             vo.setMembers(
-                    members.stream().map(ChatUserEntity::toVo).collect(Collectors.toList())
+                    members.stream().map(ChatUserEntity::toVo)
+                            .peek(
+                                    u -> u.setOnline(chatServer.clientByUserId(u.getId()).isPresent())
+                            )
+                            .collect(Collectors.toList())
             );
 
             return ResponseBuilder.create()

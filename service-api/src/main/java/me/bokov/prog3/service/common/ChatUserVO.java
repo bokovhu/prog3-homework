@@ -20,6 +20,7 @@ package me.bokov.prog3.service.common;
 
 import javax.json.Json;
 import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 import java.io.Serializable;
 
 public class ChatUserVO implements Serializable {
@@ -27,6 +28,7 @@ public class ChatUserVO implements Serializable {
     private Long id;
     private String username;
     private String banState;
+    private Boolean isOnline;
 
     public Long getId() {
         return id;
@@ -52,13 +54,24 @@ public class ChatUserVO implements Serializable {
         this.banState = banState;
     }
 
+    public Boolean getOnline() {
+        return isOnline;
+    }
+
+    public void setOnline(Boolean online) {
+        isOnline = online;
+    }
+
     public JsonObject toJson () {
 
-        return Json.createObjectBuilder()
+        JsonObjectBuilder job = Json.createObjectBuilder()
                 .add("id", getId())
                 .add("username", getUsername())
-                .add("banState", getBanState())
-                .build();
+                .add("banState", getBanState());
+
+        if (getOnline() != null) job.add("isOnline", getOnline());
+
+        return job.build();
 
     }
 

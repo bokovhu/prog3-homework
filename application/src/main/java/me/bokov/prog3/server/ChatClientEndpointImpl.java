@@ -25,6 +25,7 @@ import me.bokov.prog3.common.ClientBase;
 import me.bokov.prog3.common.EndpointBase;
 import me.bokov.prog3.server.command.JoinRoomCommandImpl;
 import me.bokov.prog3.server.command.NewMessageCommandImpl;
+import me.bokov.prog3.server.command.RoomChangedCommandImpl;
 
 public class ChatClientEndpointImpl extends EndpointBase implements ChatClientEndpoint {
 
@@ -57,6 +58,11 @@ public class ChatClientEndpointImpl extends EndpointBase implements ChatClientEn
     @Override
     public JoinRoomCommand joinRoom() {
         return new JoinRoomCommandImpl(client);
+    }
+
+    @Override
+    public RoomChangedCommand roomChanged() {
+        return new RoomChangedCommandImpl(client);
     }
 
 }

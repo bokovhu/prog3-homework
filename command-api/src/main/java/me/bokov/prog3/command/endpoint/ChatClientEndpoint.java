@@ -35,4 +35,6 @@ public interface ChatClientEndpoint extends Endpoint {
 
     JoinRoomCommand joinRoom ();
 
+    RoomChangedCommand roomChanged ();
+
 }

@@ -23,6 +23,7 @@ import me.bokov.prog3.command.client.RegisterCommand;
 import me.bokov.prog3.command.response.ResponseBuilder;
 import me.bokov.prog3.server.ServerChatClientCommandHandlerProviderBean;
 import me.bokov.prog3.server.ServerChatClientMessageHandlingContext;
+import me.bokov.prog3.service.ChatServer;
 import me.bokov.prog3.service.Database;
 import me.bokov.prog3.service.db.dao.ChatRoomMembershipDao;
 import me.bokov.prog3.service.db.entity.ChatRoomMembershipEntity;
@@ -40,6 +41,9 @@ public class RegisterCommandHandlerProviderBean implements ServerChatClientComma
 
     @Inject
     private Database database;
+
+    @Inject
+    private ChatServer chatServer;
 
     @Override
     public Collection<String> getHandledCommands() {
@@ -96,6 +100,10 @@ public class RegisterCommandHandlerProviderBean implements ServerChatClientComma
                 context.getChatClient().getClientEndpoint()
                         .joinRoom().roomId(m.getChatRoom().getId())
                         .executeWithoutAnswer();
+                chatServer.clientsInRoom(m.getChatRoom().getId())
+                        .forEach(
+                                c -> c.roomChanged().roomId(m.getChatRoom().getId()).executeWithoutAnswer()
+                        );
             }
 
 

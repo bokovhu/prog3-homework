@@ -94,6 +94,8 @@ public class ConnectToServerDialogBean {
 
                                     if (loginResponse.getCode() == LoginCommand.SUCCESS) {
 
+                                        chatClient.setSessionValue("userId", loginResponse.getData().asJsonObject().getJsonNumber("userId").longValue());
+
                                         chatUIBean.initialize();
                                         chatUIBean.activate();
 
@@ -131,6 +133,8 @@ public class ConnectToServerDialogBean {
                                             .execute();
 
                                     if (registerResponse.getCode() == RegisterCommand.SUCCESS) {
+
+                                        chatClient.setSessionValue("userId", registerResponse.getData().asJsonObject().getJsonNumber("userId").longValue());
 
                                         chatUIBean.initialize();
                                         chatUIBean.activate();

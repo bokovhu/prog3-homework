@@ -18,10 +18,13 @@
 
 package me.bokov.prog3.ui.chat;
 
+import me.bokov.prog3.service.ChatClient;
+import me.bokov.prog3.service.common.ChatRoomVO;
 import me.bokov.prog3.ui.common.PanelList;
 import me.bokov.prog3.util.I18N;
 
 import javax.enterprise.inject.spi.CDI;
+import javax.json.JsonArray;
 import javax.swing.*;
 import java.awt.*;
 
@@ -33,6 +36,8 @@ public class ChatRoomControlsPanel extends JPanel {
     private PanelList <UserListItem> usersList;
 
     private I18N i18n;
+
+    private final Long roomId;
 
     private void initButtons () {
 
@@ -55,32 +60,67 @@ public class ChatRoomControlsPanel extends JPanel {
         usersList = new PanelList<>();
         usersList.enableTitle(i18n.getText("chat.chat-room-controls.users"));
 
-        usersList.addPanel(new UserListItem("Someone", false, false));
-        usersList.addPanel(new UserListItem("Joe", true, false));
-        usersList.addPanel(new UserListItem("Janett", false, true));
-        usersList.addPanel(new UserListItem("John Doe", false, false));
-        usersList.addPanel(new UserListItem("Jack", false, false));
-
     }
 
-    private void initPanel () {
+    private void initPanel (boolean canLeave, boolean canDelete, boolean canInvite) {
 
-        setLayout(new GridLayout(3, 1, 4, 4));
+        setLayout(new GridBagLayout ());
 
         initButtons();
         initUsersList();
 
-        add(inviteUserButton);
-        add(leaveRoomButton);
-        add(usersList);
+        int row = 0;
+
+        if (canInvite) {
+            GridBagConstraints gbc = new GridBagConstraints(0, row++, 1, 1, 1.0, 1.0, GridBagConstraints.NORTH, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 4,  4);
+            add(inviteUserButton, gbc);
+        }
+        if (canLeave) {
+            GridBagConstraints gbc = new GridBagConstraints(0, row++, 1, 1, 1.0, 1.0, GridBagConstraints.NORTH, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 4,  4);
+            add(leaveRoomButton, gbc);
+        }
+        if (canDelete) {
+            GridBagConstraints gbc = new GridBagConstraints(0, row++, 1, 1, 1.0, 1.0, GridBagConstraints.NORTH, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 4,  4);
+            add(deleteRoomButton, gbc);
+        }
+        GridBagConstraints gbc = new GridBagConstraints(0, row++, 1, 1, 1.0, 1.0, GridBagConstraints.NORTH, GridBagConstraints.BOTH, new Insets(0, 0, 0, 0), 4,  4);
+        add(usersList, gbc);
 
     }
 
-    public ChatRoomControlsPanel () {
+    public ChatRoomControlsPanel(Long roomId) {
+        this.roomId = roomId;
 
         i18n = CDI.current().select(I18N.class).get();
 
-        initPanel();
+    }
+
+    public void init (boolean isOwner, boolean isLobby) {
+
+        initPanel(!isOwner && !isLobby, isOwner, !isLobby);
+
+    }
+
+    public void loadMembers (ChatRoomVO vo) {
+
+        usersList.clearPanels();
+
+        ChatClient chatClient = CDI.current().select(ChatClient.class).get();
+
+        vo.getMembers().forEach(
+                member -> {
+
+                    usersList.addPanel(
+                            new UserListItem(
+                                    member.getUsername(),
+                                    chatClient.getSessionValue("userId").equals(member.getId()),
+                                    vo.getOwner() != null && member.getId().equals(vo.getOwner().getId()),
+                                    member.getOnline()
+                            )
+                    );
+
+                }
+        );
 
     }
 
@@ -89,6 +129,7 @@ public class ChatRoomControlsPanel extends JPanel {
         private String username;
         private boolean isYou;
         private boolean isOwner;
+        private boolean isOnline;
 
         private void initPanel () {
 
@@ -104,15 +145,22 @@ public class ChatRoomControlsPanel extends JPanel {
                 sb.append(" (").append(i18n.getText("chat.chat-room-controls.owner")).append(")");
             }
 
-            add(new JLabel(sb.toString()));
+            JLabel label = new JLabel(sb.toString());
+
+            if (!isOnline) {
+                label.setForeground(Color.GRAY);
+            }
+
+            add(label);
 
         }
 
-        public UserListItem(String username, boolean isYou, boolean isOwner) {
+        public UserListItem(String username, boolean isYou, boolean isOwner, boolean isOnline) {
 
             this.username = username;
             this.isYou = isYou;
             this.isOwner = isOwner;
+            this.isOnline = isOnline;
 
             initPanel();
 

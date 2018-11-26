@@ -16,42 +16,14 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.bokov.prog3.command.endpoint;
+package me.bokov.prog3.command.server;
 
-import me.bokov.prog3.command.client.*;
+import me.bokov.prog3.command.Command;
 
-public interface ChatServerEndpoint extends Endpoint {
+public interface RoomChangedCommand extends Command {
 
-    HelloCommand hello();
+    int SUCCESS = 200;
 
-    LoginCommand login();
-
-    RegisterCommand register ();
-
-    CreateRoomCommand createRoom();
-
-    DisconnectCommand disconnect();
-
-    GetRoomCommand getRoom ();
-
-    GetUserCommand getUser ();
-
-    AcceptInvitationCommand acceptInvitation ();
-
-    InviteUserCommand inviteUser ();
-
-    DownloadCommand download ();
-
-    SendMessageCommand sendMessage ();
-
-    SendImageCommand sendImage ();
-
-    SendFileCommand sendFile ();
-
-    LeaveRoomCommand leaveRoom ();
-
-    DeleteRoomCommand deleteRoom ();
-
-    GetMessagesCommand getMessages ();
+    RoomChangedCommand roomId (Long roomId);
 
 }

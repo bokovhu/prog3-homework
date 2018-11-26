@@ -23,7 +23,6 @@ import me.bokov.prog3.service.ChatClient;
 import me.bokov.prog3.ui.chat.ChatRoomMessagesPanel;
 import me.bokov.prog3.ui.chat.ChatRoomTab;
 import me.bokov.prog3.ui.chat.MessageComposerPanel;
-import me.bokov.prog3.ui.common.PanelList;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -146,53 +145,35 @@ public class ChatUIBean extends ScreenBase {
                             .ifPresent(
                                     chatRoomTab -> {
 
-                                        if (messageObject.getBoolean("isTextMessage")) {
-
-                                            chatRoomTab.getMessagesPanel()
-                                                    .addMessage(
-                                                            ChatRoomMessagesPanel.MessageItem.text(
-                                                                    new Date(messageObject.getJsonNumber("sentDate").longValue()),
-                                                                    messageObject.getJsonObject("sentBy").getString("username"),
-                                                                    messageObject.getString("messageText")
-                                                            )
-                                                    );
-
-                                        }
-
-                                        if (messageObject.getBoolean("isFileMessage")) {
-
-                                            chatRoomTab.getMessagesPanel()
-                                                    .addMessage(
-                                                            ChatRoomMessagesPanel.MessageItem.file(
-                                                                    new Date(messageObject.getJsonNumber("sentDate").longValue()),
-                                                                    messageObject.getJsonObject("sentBy").getString("username"),
-                                                                    messageObject.getString("fileName"),
-                                                                    messageObject.getJsonNumber("fileSize").longValue(),
-                                                                    messageObject.getString("fileId")
-                                                            )
-                                                    );
-
-                                        }
-
-                                        if (messageObject.getBoolean("isImageMessage")) {
-
-                                            chatRoomTab.getMessagesPanel()
-                                                    .addMessage(
-                                                            ChatRoomMessagesPanel.MessageItem.image(
-                                                                    new Date(messageObject.getJsonNumber("sentDate").longValue()),
-                                                                    messageObject.getJsonObject("sentBy").getString("username"),
-                                                                    imageStoreBean.getImageIconByFileId(
-                                                                            messageObject.getString("fileId"),
-                                                                            messageObject.getString("imageExtension")
-                                                                    )
-                                                            )
-                                                    );
-
-                                        }
+                                        chatRoomTab.getMessagesPanel().addMessage(messageObject);
 
                                         chatRoomTab.invalidate();
                                         chatRoomTab.revalidate();
                                         chatRoomTab.repaint();
+
+                                    }
+                            );
+
+                }
+        );
+
+    }
+
+    public void handleRoomChange (Long roomId) {
+
+        SwingUtilities.invokeLater(
+                () -> {
+
+                    chatRoomTabs.stream().filter(t -> t.getRoomId().equals(roomId))
+                            .findFirst()
+                            .ifPresent(
+                                    t -> {
+
+                                        t.reloadRoom();
+
+                                        t.invalidate();
+                                        t.revalidate();
+                                        t.repaint();
 
                                     }
                             );
