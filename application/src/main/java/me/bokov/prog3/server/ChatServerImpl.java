@@ -18,11 +18,15 @@
 
 package me.bokov.prog3.server;
 
+import me.bokov.prog3.command.endpoint.ChatClientEndpoint;
 import me.bokov.prog3.command.request.Request;
 import me.bokov.prog3.event.ClientShouldStopEvent;
 import me.bokov.prog3.event.UserDisconnectedEvent;
 import me.bokov.prog3.service.ChatServer;
+import me.bokov.prog3.service.Database;
 import me.bokov.prog3.service.common.ChatUserVO;
+import me.bokov.prog3.service.db.BaseEntity;
+import me.bokov.prog3.service.db.entity.ChatRoomMembershipEntity;
 import me.bokov.prog3.service.server.ServerChatClient;
 import me.bokov.prog3.service.server.ServerConfiguration;
 import org.slf4j.Logger;
@@ -32,12 +36,15 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class ChatServerImpl implements ChatServer {
@@ -47,6 +54,8 @@ public class ChatServerImpl implements ChatServer {
     ServerSocket serverSocket;
     @Inject
     private Logger logger;
+    @Inject
+    private Database database;
     private boolean running = false;
     private ExecutorService taskExecutor;
     private ServerConfiguration serverConfiguration;
@@ -157,43 +166,47 @@ public class ChatServerImpl implements ChatServer {
     }
 
     @Override
-    public void addConnectedUser(ChatUserVO user) {
+    public List<ChatClientEndpoint> clientsInRoom(Long roomId) {
 
-        synchronized (connectedUsers) {
-            connectedUsers.add(user);
+        try {
+
+            List <Long> userIdsInRoom = database.getChatRoomMembershipDao()
+                    .queryBuilder().where().eq("room_id", roomId)
+                    .query()
+                    .stream().map(ChatRoomMembershipEntity::getChatUser)
+                    .map(BaseEntity::getId)
+                    .collect(Collectors.toList());
+
+            synchronized (serverChatClients) {
+
+                return serverChatClients.stream()
+                        .filter(c -> c.isSessionValueSet("userId"))
+                        .filter(c -> userIdsInRoom.contains(c.getSessionValue("userId")))
+                        .map(ServerChatClient::getClientEndpoint)
+                        .collect(Collectors.toList());
+
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
+        return Collections.emptyList();
     }
 
     @Override
-    public void removeConnectedUser(ChatUserVO user) {
+    public Optional<ChatClientEndpoint> clientByUserId(Long userId) {
 
-        synchronized (connectedUsers) {
-            connectedUsers.remove(user);
+        synchronized (serverChatClients) {
+
+            return serverChatClients.stream()
+                    .filter(c -> c.isSessionValueSet("userId"))
+                    .filter(c -> userId.equals(c.getSessionValue("userId")))
+                    .findFirst()
+                    .map(ServerChatClient::getClientEndpoint);
+
         }
 
-    }
-
-    @Override
-    public void broadcast(Request request) {
-
-        serverChatClients.forEach(c -> c.send(request));
-
-    }
-
-    @Override
-    public void banUserByUsername(Long userId) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void banUserByIp(Long userId) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void unbanUser(Long userId) {
-        throw new UnsupportedOperationException();
     }
 
     ServerSocket getServerSocket() {

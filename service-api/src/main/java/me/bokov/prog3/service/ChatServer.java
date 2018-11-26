@@ -18,11 +18,13 @@
 
 package me.bokov.prog3.service;
 
+import me.bokov.prog3.command.endpoint.ChatClientEndpoint;
 import me.bokov.prog3.command.request.Request;
 import me.bokov.prog3.service.common.ChatUserVO;
 import me.bokov.prog3.service.server.ServerConfiguration;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ChatServer {
 
@@ -36,16 +38,7 @@ public interface ChatServer {
 
     List<ChatUserVO> getConnectedUsers();
 
-    void addConnectedUser(ChatUserVO user);
-
-    void removeConnectedUser(ChatUserVO user);
-
-    void broadcast(Request request);
-
-    void banUserByUsername(Long userId);
-
-    void banUserByIp(Long userId);
-
-    void unbanUser(Long userId);
+    List <ChatClientEndpoint> clientsInRoom (Long roomId);
+    Optional <ChatClientEndpoint> clientByUserId (Long userId);
 
 }

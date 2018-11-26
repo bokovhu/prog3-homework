@@ -16,30 +16,14 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.bokov.prog3.service;
+package me.bokov.prog3.command.server;
 
-import com.j256.ormlite.support.ConnectionSource;
-import me.bokov.prog3.service.db.dao.ChatInvitationDao;
-import me.bokov.prog3.service.db.dao.ChatRoomDao;
-import me.bokov.prog3.service.db.dao.ChatRoomMembershipDao;
-import me.bokov.prog3.service.db.dao.ChatUserDao;
+import me.bokov.prog3.command.Command;
 
-public interface Database {
+import javax.json.JsonObject;
 
-    void start();
+public interface JoinRoomCommand extends Command {
 
-    boolean isRunning();
-
-    void stop();
-
-    ConnectionSource getConnectionSource();
-
-    ChatUserDao getChatUserDao();
-
-    ChatRoomDao getChatRoomDao();
-
-    ChatRoomMembershipDao getChatRoomMembershipDao();
-
-    ChatInvitationDao getChatInvitationDao ();
+    JoinRoomCommand room (JsonObject roomObject);
 
 }

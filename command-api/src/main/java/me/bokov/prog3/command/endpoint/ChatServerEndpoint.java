@@ -18,10 +18,7 @@
 
 package me.bokov.prog3.command.endpoint;
 
-import me.bokov.prog3.command.client.CreateRoomCommand;
-import me.bokov.prog3.command.client.DisconnectCommand;
-import me.bokov.prog3.command.client.HelloCommand;
-import me.bokov.prog3.command.client.LoginCommand;
+import me.bokov.prog3.command.client.*;
 
 public interface ChatServerEndpoint extends Endpoint {
 
@@ -29,8 +26,18 @@ public interface ChatServerEndpoint extends Endpoint {
 
     LoginCommand login();
 
+    RegisterCommand register ();
+
     CreateRoomCommand createRoom();
 
     DisconnectCommand disconnect();
+
+    GetRoomCommand getRoom ();
+
+    GetUserCommand getUser ();
+
+    AcceptInvitationCommand acceptInvitation ();
+
+    InviteUserCommand inviteUser ();
 
 }

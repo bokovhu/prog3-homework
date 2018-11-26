@@ -25,7 +25,15 @@ import me.bokov.prog3.service.common.SessionCapableService;
 
 public interface ChatClient extends SessionCapableService, CommunicationCapableService {
 
-    void connect(ConnectionConfiguration configuration);
+    enum ConnectResult {
+
+        PROCEED_WITH_LOGIN,
+        PROCEED_WITH_REGISTRATION,
+        BANNED
+
+    }
+
+    ConnectResult connect(ConnectionConfiguration configuration);
 
     boolean isConnected();
 

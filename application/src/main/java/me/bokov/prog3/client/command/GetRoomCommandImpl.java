@@ -16,30 +16,36 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.bokov.prog3.service;
+package me.bokov.prog3.client.command;
 
-import com.j256.ormlite.support.ConnectionSource;
-import me.bokov.prog3.service.db.dao.ChatInvitationDao;
-import me.bokov.prog3.service.db.dao.ChatRoomDao;
-import me.bokov.prog3.service.db.dao.ChatRoomMembershipDao;
-import me.bokov.prog3.service.db.dao.ChatUserDao;
+import me.bokov.prog3.command.client.GetRoomCommand;
+import me.bokov.prog3.common.ClientBase;
+import me.bokov.prog3.common.CommandBase;
 
-public interface Database {
+import javax.json.Json;
+import javax.json.JsonValue;
 
-    void start();
+public class GetRoomCommandImpl extends CommandBase implements GetRoomCommand {
 
-    boolean isRunning();
+    private Long roomId = null;
 
-    void stop();
+    public GetRoomCommandImpl(ClientBase chatClient) {
+        super(chatClient);
+    }
 
-    ConnectionSource getConnectionSource();
+    @Override
+    public GetRoomCommand roomId(Long roomId) {
+        this.roomId = roomId;
+        return this;
+    }
 
-    ChatUserDao getChatUserDao();
+    @Override
+    protected String getCommand() {
+        return "GET-ROOM";
+    }
 
-    ChatRoomDao getChatRoomDao();
-
-    ChatRoomMembershipDao getChatRoomMembershipDao();
-
-    ChatInvitationDao getChatInvitationDao ();
-
+    @Override
+    protected JsonValue getData() {
+        return Json.createObjectBuilder().add("roomId", this.roomId).build();
+    }
 }

@@ -22,8 +22,8 @@ import me.bokov.prog3.command.Command;
 
 public interface HelloCommand extends Command {
 
-    int SUCCESS = 200;
-    int LOGIN_REQUIRED = 300;
+    int CONTINUE = 200;
+    int FIRST_TIME = 300;
     int BANNED = 400;
     int ALREADY_SAID_HELLO = 401;
 

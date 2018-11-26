@@ -16,35 +16,36 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.bokov.prog3.db.dao;
+package me.bokov.prog3.client.command;
 
-import com.j256.ormlite.dao.BaseDaoImpl;
-import com.j256.ormlite.support.ConnectionSource;
-import me.bokov.prog3.service.db.dao.ChatRoomDao;
-import me.bokov.prog3.service.db.entity.ChatRoomEntity;
+import me.bokov.prog3.command.client.AcceptInvitationCommand;
+import me.bokov.prog3.common.ClientBase;
+import me.bokov.prog3.common.CommandBase;
 
-import java.sql.SQLException;
+import javax.json.Json;
+import javax.json.JsonValue;
 
-public class ChatRoomDaoImpl extends BaseDaoImpl<ChatRoomEntity, Long> implements ChatRoomDao {
+public class AcceptInvitationCommandImpl extends CommandBase implements AcceptInvitationCommand {
 
-    public ChatRoomDaoImpl(ConnectionSource connectionSource) throws SQLException {
-        super(connectionSource, ChatRoomEntity.class);
+    private String invitationId = null;
+
+    public AcceptInvitationCommandImpl(ClientBase chatClient) {
+        super(chatClient);
     }
 
     @Override
-    public ChatRoomEntity getLobby() {
+    public AcceptInvitationCommand invitationId(String invitationId) {
+        this.invitationId = invitationId;
+        return this;
+    }
 
-        try {
+    @Override
+    protected String getCommand() {
+        return "ACCEPT-INVITATION";
+    }
 
-            return queryBuilder()
-                    .where().eq("is_lobby", 1)
-                    .queryForFirst();
-
-        } catch (SQLException sqlEx) {
-
-            throw new IllegalStateException(sqlEx);
-
-        }
-
+    @Override
+    protected JsonValue getData() {
+        return Json.createObjectBuilder().add("invitationId", this.invitationId).build();
     }
 }

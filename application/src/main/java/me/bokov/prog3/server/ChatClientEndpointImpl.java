@@ -20,12 +20,10 @@ package me.bokov.prog3.server;
 
 import me.bokov.prog3.command.endpoint.ChatClientEndpoint;
 import me.bokov.prog3.command.endpoint.ConnectionInformation;
-import me.bokov.prog3.command.server.NewInvitationCommand;
-import me.bokov.prog3.command.server.NewMessageCommand;
-import me.bokov.prog3.command.server.RoomDeletedCommand;
-import me.bokov.prog3.command.server.YouAreBannedCommand;
+import me.bokov.prog3.command.server.*;
 import me.bokov.prog3.common.ClientBase;
 import me.bokov.prog3.common.EndpointBase;
+import me.bokov.prog3.server.command.JoinRoomCommandImpl;
 import me.bokov.prog3.server.command.NewMessageCommandImpl;
 
 public class ChatClientEndpointImpl extends EndpointBase implements ChatClientEndpoint {
@@ -54,6 +52,11 @@ public class ChatClientEndpointImpl extends EndpointBase implements ChatClientEn
     @Override
     public NewInvitationCommand newInvitation() {
         throw new UnsupportedOperationException("Not yet supported!");
+    }
+
+    @Override
+    public JoinRoomCommand joinRoom() {
+        return new JoinRoomCommandImpl(client);
     }
 
 }

@@ -23,13 +23,16 @@ import com.j256.ormlite.db.H2DatabaseType;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
+import me.bokov.prog3.db.dao.ChatInvitationDaoImpl;
 import me.bokov.prog3.db.dao.ChatRoomDaoImpl;
 import me.bokov.prog3.db.dao.ChatRoomMembershipDaoImpl;
 import me.bokov.prog3.db.dao.ChatUserDaoImpl;
 import me.bokov.prog3.service.Database;
+import me.bokov.prog3.service.db.dao.ChatInvitationDao;
 import me.bokov.prog3.service.db.dao.ChatRoomDao;
 import me.bokov.prog3.service.db.dao.ChatRoomMembershipDao;
 import me.bokov.prog3.service.db.dao.ChatUserDao;
+import me.bokov.prog3.service.db.entity.ChatInvitationEntity;
 import me.bokov.prog3.service.db.entity.ChatRoomEntity;
 import me.bokov.prog3.service.db.entity.ChatRoomMembershipEntity;
 import me.bokov.prog3.service.db.entity.ChatUserEntity;
@@ -63,6 +66,7 @@ public class DatabaseImpl implements Database {
     private ChatUserDao chatUserDao;
     private ChatRoomDao chatRoomDao;
     private ChatRoomMembershipDao chatRoomMembershipDao;
+    private ChatInvitationDao chatInvitationDao;
 
     private ConnectionSource connectionSource;
 
@@ -73,6 +77,7 @@ public class DatabaseImpl implements Database {
             TableUtils.createTableIfNotExists(connectionSource, ChatUserEntity.class);
             TableUtils.createTableIfNotExists(connectionSource, ChatRoomEntity.class);
             TableUtils.createTableIfNotExists(connectionSource, ChatRoomMembershipEntity.class);
+            TableUtils.createTableIfNotExists(connectionSource, ChatInvitationEntity.class);
 
         } catch (Exception e) {
             throw new IllegalStateException("Could not migrate database", e);
@@ -87,14 +92,42 @@ public class DatabaseImpl implements Database {
             chatUserDao = new ChatUserDaoImpl(connectionSource);
             chatRoomDao = new ChatRoomDaoImpl(connectionSource);
             chatRoomMembershipDao = new ChatRoomMembershipDaoImpl(connectionSource);
+            chatInvitationDao = new ChatInvitationDaoImpl(connectionSource);
 
             DaoManager.registerDao(connectionSource, chatUserDao);
             DaoManager.registerDao(connectionSource, chatRoomDao);
             DaoManager.registerDao(connectionSource, chatRoomMembershipDao);
+            DaoManager.registerDao(connectionSource, chatInvitationDao);
 
         } catch (Exception e) {
 
             throw new IllegalStateException("Could not initialize DAOs", e);
+
+        }
+
+    }
+
+    private void populateData () {
+
+        try {
+
+            boolean lobbyExists = chatRoomDao.queryBuilder().where().eq("is_lobby", 1)
+                    .countOf() > 0L;
+
+            if (!lobbyExists) {
+
+                ChatRoomEntity lobbyRoom = new ChatRoomEntity();
+
+                lobbyRoom.setName("Lobby");
+                lobbyRoom.setIsLobby(true);
+
+                chatRoomDao.create(lobbyRoom);
+
+            }
+
+        } catch (Exception e) {
+
+            throw new IllegalStateException("Could not populate database", e);
 
         }
 
@@ -126,6 +159,7 @@ public class DatabaseImpl implements Database {
 
                 migrateDatabase();
                 initDaos();
+                populateData();
 
                 running = true;
 
@@ -183,6 +217,11 @@ public class DatabaseImpl implements Database {
     @Override
     public ChatRoomMembershipDao getChatRoomMembershipDao() {
         return chatRoomMembershipDao;
+    }
+
+    @Override
+    public ChatInvitationDao getChatInvitationDao() {
+        return chatInvitationDao;
     }
 
 }

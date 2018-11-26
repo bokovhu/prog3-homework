@@ -26,6 +26,11 @@ public final class AsyncHelper {
 
     private static final ExecutorService EXECUTOR_SERVICE = Executors.newCachedThreadPool();
 
+    /**
+     * This method takes a single Runnable and executes it on a different thread (in an ExecutorService) than the
+     * caller's thread
+     * @param r the Runnable to execute
+     */
     public static void runAsync (Runnable r) {
         EXECUTOR_SERVICE.submit(r);
     }

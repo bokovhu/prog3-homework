@@ -56,7 +56,7 @@ public class ChatClientImpl extends ClientBase<ChatClientMessageHandlingContext>
     }
 
     @Override
-    public void connect(ConnectionConfiguration configuration) {
+    public ConnectResult connect(ConnectionConfiguration configuration) {
 
         if (connected) throw new IllegalStateException("Already connected!");
 
@@ -80,21 +80,15 @@ public class ChatClientImpl extends ClientBase<ChatClientMessageHandlingContext>
 
             logger.info("Got hello response from server: {}", helloResponse.toString());
 
-            if (helloResponse.getCode() == HelloCommand.SUCCESS) {
+            connected = true;
 
-                setSessionValue("username", configuration.getUsername());
-                connected = true;
+            if (helloResponse.getCode() == HelloCommand.CONTINUE) return ConnectResult.PROCEED_WITH_LOGIN;
+            else if (helloResponse.getCode() == HelloCommand.FIRST_TIME) return ConnectResult.PROCEED_WITH_REGISTRATION;
+            else if (helloResponse.getCode() == HelloCommand.BANNED) return ConnectResult.BANNED;
 
-            } else if (helloResponse.getCode() == HelloCommand.LOGIN_REQUIRED) {
-                // TODO: Handle this case
+            disconnect();
 
-                connected = true;
-
-            } else {
-
-                disconnect();
-
-            }
+            throw new IllegalStateException("Invalid response");
 
         } catch (Exception exc) {
             throw new IllegalStateException(exc);

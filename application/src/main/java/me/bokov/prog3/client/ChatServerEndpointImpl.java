@@ -18,12 +18,8 @@
 
 package me.bokov.prog3.client;
 
-import me.bokov.prog3.client.command.DisconnectCommandImpl;
-import me.bokov.prog3.client.command.HelloCommandImpl;
-import me.bokov.prog3.command.client.CreateRoomCommand;
-import me.bokov.prog3.command.client.DisconnectCommand;
-import me.bokov.prog3.command.client.HelloCommand;
-import me.bokov.prog3.command.client.LoginCommand;
+import me.bokov.prog3.client.command.*;
+import me.bokov.prog3.command.client.*;
 import me.bokov.prog3.command.endpoint.ChatServerEndpoint;
 import me.bokov.prog3.command.endpoint.ConnectionInformation;
 import me.bokov.prog3.common.ClientBase;
@@ -42,16 +38,41 @@ public class ChatServerEndpointImpl extends EndpointBase implements ChatServerEn
 
     @Override
     public LoginCommand login() {
-        throw new UnsupportedOperationException();
+        return new LoginCommandImpl(client);
+    }
+
+    @Override
+    public RegisterCommand register() {
+        return new RegisterCommandImpl(client);
     }
 
     @Override
     public CreateRoomCommand createRoom() {
-        throw new UnsupportedOperationException();
+        return new CreateRoomCommandImpl(client);
     }
 
     @Override
     public DisconnectCommand disconnect() {
         return new DisconnectCommandImpl(client);
+    }
+
+    @Override
+    public GetRoomCommand getRoom() {
+        return new GetRoomCommandImpl(client);
+    }
+
+    @Override
+    public GetUserCommand getUser() {
+        return new GetUserCommandImpl(client);
+    }
+
+    @Override
+    public AcceptInvitationCommand acceptInvitation() {
+        return new AcceptInvitationCommandImpl(client);
+    }
+
+    @Override
+    public InviteUserCommand inviteUser() {
+        return new InviteUserCommandImpl(client);
     }
 }

@@ -33,8 +33,13 @@ public class ChatUIBean extends ScreenBase {
 
     private void initChatRoomTabs () {
 
+        // TODO: Retrieve list of user's rooms and create tabs accordingly
+        // TODO: The tabs must be updated when a JoinedRoomEvent or LeftRoomEvent is fired
+
         chatRoomsTabbedPane = new JTabbedPane();
         chatRoomsTabbedPane.addTab("Lobby", new ChatRoomTab());
+        chatRoomsTabbedPane.addTab("Create room", new JPanel());
+        chatRoomsTabbedPane.setTabComponentAt(chatRoomsTabbedPane.getTabCount() - 1, new JButton("Hello"));
 
     }
 

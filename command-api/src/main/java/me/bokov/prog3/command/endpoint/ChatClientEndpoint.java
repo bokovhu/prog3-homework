@@ -19,10 +19,9 @@
 package me.bokov.prog3.command.endpoint;
 
 
-import me.bokov.prog3.command.server.NewInvitationCommand;
-import me.bokov.prog3.command.server.NewMessageCommand;
-import me.bokov.prog3.command.server.RoomDeletedCommand;
-import me.bokov.prog3.command.server.YouAreBannedCommand;
+import me.bokov.prog3.command.client.GetRoomCommand;
+import me.bokov.prog3.command.client.GetUserCommand;
+import me.bokov.prog3.command.server.*;
 
 public interface ChatClientEndpoint extends Endpoint {
 
@@ -33,5 +32,7 @@ public interface ChatClientEndpoint extends Endpoint {
     NewMessageCommand newMessage();
 
     NewInvitationCommand newInvitation();
+
+    JoinRoomCommand joinRoom ();
 
 }

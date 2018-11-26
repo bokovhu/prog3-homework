@@ -29,6 +29,10 @@ public class ChatUserEntity extends BaseEntity {
     @DatabaseField(columnName = "username", unique = true, canBeNull = false)
     private String username;
 
+    // VERY, VERY, VERY BAD PRACTICE!!!!!!!! DON'T EVER DO THIS!!!!
+    @DatabaseField (columnName = "password", canBeNull = false)
+    private String password;
+
     @DatabaseField(columnName = "ban_state", canBeNull = false, defaultValue = "NOT_BANNED")
     private String banState;
 
@@ -57,6 +61,14 @@ public class ChatUserEntity extends BaseEntity {
 
     public void setBannedIp(String bannedIp) {
         this.bannedIp = bannedIp;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public ChatUserVO toVo() {

@@ -48,6 +48,9 @@ public class ChatRoomMessagesPanel extends JPanel {
 
     private void initPanel () {
 
+        // TODO: Should retrieve the messages from the chat room
+        // TODO: Should update when a NewMessageEvent is fired
+
         setBackground(Color.WHITE);
 
         messageItems.add(MessageItem.text(new Date(), "John", "Hi there!"));

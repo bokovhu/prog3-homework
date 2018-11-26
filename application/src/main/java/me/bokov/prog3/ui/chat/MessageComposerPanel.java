@@ -31,6 +31,10 @@ public class MessageComposerPanel extends JPanel {
     private JButton sendFileButton;
     private JButton sendImageButton;
 
+    // TODO: When the sendButton is clicked, the message should actually be sent
+    // TODO: When the sendFileButton is clicked, a file chooser should appear, and the file should be actually sent
+    // TODO: When the sendImageButton is clicked, a file chooser should appear, and the image should be actually sent
+
     private JTextField messageTextField;
     private JButton sendButton;
 

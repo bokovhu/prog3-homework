@@ -16,50 +16,37 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.bokov.prog3.service.common;
+package me.bokov.prog3.server.command;
+
+import me.bokov.prog3.command.server.NewInvitationCommand;
+import me.bokov.prog3.common.ClientBase;
+import me.bokov.prog3.common.CommandBase;
 
 import javax.json.Json;
 import javax.json.JsonObject;
-import java.io.Serializable;
+import javax.json.JsonValue;
 
-public class ChatUserVO implements Serializable {
+public class NewInvitationCommandImpl extends CommandBase implements NewInvitationCommand {
 
-    private Long id;
-    private String username;
-    private String banState;
+    private JsonObject invitation;
 
-    public Long getId() {
-        return id;
+    public NewInvitationCommandImpl(ClientBase chatClient) {
+        super(chatClient);
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    @Override
+    public NewInvitationCommand invitation(JsonObject invitationObject) {
+        this.invitation = invitationObject;
+        return this;
     }
 
-    public String getUsername() {
-        return username;
+    @Override
+    protected String getCommand() {
+        return "NEW-INVITATION";
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    @Override
+    protected JsonValue getData() {
+        return Json.createObjectBuilder().add("invitation", this.invitation).build();
     }
-
-    public String getBanState() {
-        return banState;
-    }
-
-    public void setBanState(String banState) {
-        this.banState = banState;
-    }
-
-    public JsonObject toJson () {
-
-        return Json.createObjectBuilder()
-                .add("id", getId())
-                .add("username", getUsername())
-                .add("banState", getBanState())
-                .build();
-
-    }
-
 }

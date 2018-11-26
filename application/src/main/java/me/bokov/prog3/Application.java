@@ -61,6 +61,9 @@ public class Application {
         INSTANCE.initialize();
     }
 
+    /**
+     * Destroys the singleton instance (before that, it also stops it)
+     */
     public static void destroyInstance() {
         if (INSTANCE != null) {
 
@@ -196,6 +199,10 @@ public class Application {
 
     }
 
+    /**
+     * Parses command line arguments in the way as they were provided at the application entrypoint by the JVM
+     * @param args the command line arguments, as they were provided by the JVM
+     */
     private void parseCommandLineArguments(String[] args) {
 
         initializeCliOptions();
@@ -226,6 +233,10 @@ public class Application {
 
     }
 
+    /**
+     * Generates a random password
+     * @return the random password text
+     */
     private String randomPassword() {
 
         StringBuilder sb = new StringBuilder();
@@ -246,6 +257,10 @@ public class Application {
 
     }
 
+    /**
+     * Creates (parses) the server configuration from the command line arguments
+     * @return the command line arguments derived server configuration object
+     */
     private ServerConfiguration createServerConfigurationFromCommandLineArguments() {
 
         ServerConfiguration cfg = new ServerConfiguration();
@@ -271,6 +286,9 @@ public class Application {
     private void initialize() {
 
         logger.info("Application initialization started");
+
+        // Create Weld and initialize it
+        // After this point, CDI should be available in the application
 
         weld = new Weld();
         weldContainer = weld.initialize();
@@ -298,6 +316,9 @@ public class Application {
             }
 
             if (serverMode) {
+
+                // Running in server mode
+                // Server configuration comes from command line arguments
 
                 logger.info("Running in server mode");
 
@@ -342,6 +363,9 @@ public class Application {
         return weldContainer;
     }
 
+    /**
+     * @return the parsed command line arguments (parsed by Commons CLI)
+     */
     public CommandLine getCommandLine() {
         return commandLine;
     }

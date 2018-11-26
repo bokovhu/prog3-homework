@@ -22,4 +22,7 @@ import com.j256.ormlite.dao.Dao;
 import me.bokov.prog3.service.db.entity.ChatRoomEntity;
 
 public interface ChatRoomDao extends Dao<ChatRoomEntity, Long> {
+
+    ChatRoomEntity getLobby ();
+
 }

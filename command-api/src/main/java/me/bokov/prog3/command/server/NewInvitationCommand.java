@@ -20,10 +20,10 @@ package me.bokov.prog3.command.server;
 
 import me.bokov.prog3.command.Command;
 
+import javax.json.JsonObject;
+
 public interface NewInvitationCommand extends Command {
 
-    NewInvitationCommand roomId(String roomId);
-
-    NewInvitationCommand byUserId(String userId);
+    NewInvitationCommand invitation (JsonObject invitationObject);
 
 }

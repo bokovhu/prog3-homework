@@ -104,6 +104,8 @@ public class HelloCommandHandlerProviderBean implements ServerChatClientCommandH
                         .build();
             }
 
+            ctx.getChatClient().setSessionValue("username", username);
+
             boolean userExistsByUsername = database.getChatUserDao().queryBuilder()
                     .where().eq("username", username).countOf() > 0L;
 
@@ -111,45 +113,17 @@ public class HelloCommandHandlerProviderBean implements ServerChatClientCommandH
 
             if (!userExistsByUsername) {
 
-                chatUserEntity = new ChatUserEntity();
-                chatUserEntity.setUsername(username);
-                chatUserEntity.setBanState("NOT_BANNED");
-                database.getChatUserDao().create(chatUserEntity);
-
-            } else {
-
-                chatUserEntity = database.getChatUserDao().queryForEq("username", username)
-                        .get(0);
+                return ResponseBuilder.create()
+                        .messageId(req.getMessageId())
+                        .code(HelloCommand.FIRST_TIME)
+                        .build();
 
             }
 
-            Long userId = chatUserEntity.getId();
-
-            if (chatServer.getServerConfiguration().isPasswordEnabled()) {
-                return ResponseBuilder.create()
-                        .messageId(req.getMessageId())
-                        .code(HelloCommand.LOGIN_REQUIRED)
-                        .build();
-            } else {
-
-                userConnectedEvent.fire(
-                        new UserConnectedEvent(
-                                new Date(),
-                                "USER_CONNECTED",
-                                username,
-                                ctx.getChatClient().getClientEndpoint().getConnectionInformation(),
-                                userId
-                        )
-                );
-
-                ctx.getChatClient().setSessionValue("username", username);
-
-                return ResponseBuilder.create()
-                        .messageId(req.getMessageId())
-                        .code(HelloCommand.SUCCESS)
-                        .build();
-            }
-
+            return ResponseBuilder.create()
+                    .messageId(req.getMessageId())
+                    .code(HelloCommand.CONTINUE)
+                    .build();
         };
 
     }

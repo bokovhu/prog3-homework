@@ -16,30 +16,27 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.bokov.prog3.service;
+package me.bokov.prog3.db.dao;
 
+import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.support.ConnectionSource;
 import me.bokov.prog3.service.db.dao.ChatInvitationDao;
-import me.bokov.prog3.service.db.dao.ChatRoomDao;
-import me.bokov.prog3.service.db.dao.ChatRoomMembershipDao;
-import me.bokov.prog3.service.db.dao.ChatUserDao;
+import me.bokov.prog3.service.db.entity.ChatInvitationEntity;
 
-public interface Database {
+import java.sql.SQLException;
 
-    void start();
+public class ChatInvitationDaoImpl extends BaseDaoImpl<ChatInvitationEntity, Long> implements ChatInvitationDao {
 
-    boolean isRunning();
+    public ChatInvitationDaoImpl(ConnectionSource connectionSource) throws SQLException {
+        super(connectionSource, ChatInvitationEntity.class);
+    }
 
-    void stop();
-
-    ConnectionSource getConnectionSource();
-
-    ChatUserDao getChatUserDao();
-
-    ChatRoomDao getChatRoomDao();
-
-    ChatRoomMembershipDao getChatRoomMembershipDao();
-
-    ChatInvitationDao getChatInvitationDao ();
-
+    @Override
+    public ChatInvitationEntity getByInvitationId(String invitationId) {
+        try {
+            return queryBuilder().where().eq("invitation_id", invitationId).queryForFirst();
+        } catch (SQLException e) {
+            throw new IllegalStateException(e);
+        }
+    }
 }

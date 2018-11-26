@@ -18,7 +18,12 @@
 
 package me.bokov.prog3.command.client;
 
-public interface CreateRoomCommand extends ClientCommand {
+import me.bokov.prog3.command.Command;
+
+public interface CreateRoomCommand extends Command {
+
+    // TODO: Errors
+    int SUCCESS = 200;
 
     CreateRoomCommand roomName(String roomName);
 

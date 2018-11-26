@@ -28,6 +28,9 @@ public class ChatRoomEntity extends BaseEntity {
     @DatabaseField(columnName = "name", unique = true, canBeNull = false)
     private String name;
 
+    @DatabaseField (columnName = "is_lobby", canBeNull = false, columnDefinition = "BOOLEAN")
+    private Boolean isLobby;
+
     @DatabaseField(columnName = "owner_chat_user_id", foreign = true, canBeNull = true)
     private ChatUserEntity ownerChatUser;
 
@@ -45,5 +48,13 @@ public class ChatRoomEntity extends BaseEntity {
 
     public void setOwnerChatUser(ChatUserEntity ownerChatUser) {
         this.ownerChatUser = ownerChatUser;
+    }
+
+    public Boolean getIsLobby() {
+        return isLobby;
+    }
+
+    public void setIsLobby(Boolean lobby) {
+        isLobby = lobby;
     }
 }

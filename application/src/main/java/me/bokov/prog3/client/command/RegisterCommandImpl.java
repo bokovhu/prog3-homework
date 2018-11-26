@@ -16,30 +16,38 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.bokov.prog3.service;
+package me.bokov.prog3.client.command;
 
-import com.j256.ormlite.support.ConnectionSource;
-import me.bokov.prog3.service.db.dao.ChatInvitationDao;
-import me.bokov.prog3.service.db.dao.ChatRoomDao;
-import me.bokov.prog3.service.db.dao.ChatRoomMembershipDao;
-import me.bokov.prog3.service.db.dao.ChatUserDao;
+import me.bokov.prog3.command.client.RegisterCommand;
+import me.bokov.prog3.common.ClientBase;
+import me.bokov.prog3.common.CommandBase;
 
-public interface Database {
+import javax.json.Json;
+import javax.json.JsonValue;
 
-    void start();
+public class RegisterCommandImpl extends CommandBase implements RegisterCommand {
 
-    boolean isRunning();
+    private String password = null;
 
-    void stop();
+    public RegisterCommandImpl(ClientBase chatClient) {
+        super(chatClient);
+    }
 
-    ConnectionSource getConnectionSource();
+    @Override
+    public RegisterCommand password(String password) {
 
-    ChatUserDao getChatUserDao();
+        this.password = password;
 
-    ChatRoomDao getChatRoomDao();
+        return this;
+    }
 
-    ChatRoomMembershipDao getChatRoomMembershipDao();
+    @Override
+    protected String getCommand() {
+        return "REGISTER";
+    }
 
-    ChatInvitationDao getChatInvitationDao ();
-
+    @Override
+    protected JsonValue getData() {
+        return Json.createObjectBuilder().add("password", password).build();
+    }
 }

@@ -16,30 +16,36 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.bokov.prog3.service;
+package me.bokov.prog3.client.command;
 
-import com.j256.ormlite.support.ConnectionSource;
-import me.bokov.prog3.service.db.dao.ChatInvitationDao;
-import me.bokov.prog3.service.db.dao.ChatRoomDao;
-import me.bokov.prog3.service.db.dao.ChatRoomMembershipDao;
-import me.bokov.prog3.service.db.dao.ChatUserDao;
+import me.bokov.prog3.command.client.GetUserCommand;
+import me.bokov.prog3.common.ClientBase;
+import me.bokov.prog3.common.CommandBase;
 
-public interface Database {
+import javax.json.Json;
+import javax.json.JsonValue;
 
-    void start();
+public class GetUserCommandImpl extends CommandBase implements GetUserCommand {
 
-    boolean isRunning();
+    private Long userId;
 
-    void stop();
+    public GetUserCommandImpl(ClientBase chatClient) {
+        super(chatClient);
+    }
 
-    ConnectionSource getConnectionSource();
+    @Override
+    public GetUserCommand userId(Long userId) {
+        this.userId = userId;
+        return this;
+    }
 
-    ChatUserDao getChatUserDao();
+    @Override
+    protected String getCommand() {
+        return "GET-USER";
+    }
 
-    ChatRoomDao getChatRoomDao();
-
-    ChatRoomMembershipDao getChatRoomMembershipDao();
-
-    ChatInvitationDao getChatInvitationDao ();
-
+    @Override
+    protected JsonValue getData() {
+        return Json.createObjectBuilder().add("userId", this.userId).build();
+    }
 }

@@ -18,7 +18,12 @@
 
 package me.bokov.prog3.command.client;
 
-public interface AcceptInvitationCommand extends ClientCommand {
+import me.bokov.prog3.command.Command;
+
+public interface AcceptInvitationCommand extends Command {
+
+    // TODO: Errors
+    int SUCCESS = 200;
 
     AcceptInvitationCommand invitationId(String invitationId);
 

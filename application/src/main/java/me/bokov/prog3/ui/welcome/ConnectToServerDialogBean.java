@@ -18,6 +18,9 @@
 
 package me.bokov.prog3.ui.welcome;
 
+import me.bokov.prog3.command.client.LoginCommand;
+import me.bokov.prog3.command.client.RegisterCommand;
+import me.bokov.prog3.command.response.Response;
 import me.bokov.prog3.service.ChatClient;
 import me.bokov.prog3.service.client.ConnectionConfiguration;
 import me.bokov.prog3.ui.ChatUIBean;
@@ -63,18 +66,95 @@ public class ConnectToServerDialogBean {
 
                     if (connectToServerResult == JOptionPane.OK_OPTION) {
 
-                        System.err.println("WARNING: Remove the comments from these lines because connection is disabled temporarily!");
-
-/*
                         ConnectionConfiguration connectionConfiguration = new ConnectionConfiguration();
                         connectionConfiguration.setUsername(usernameTextField.getText());
                         connectionConfiguration.setHost(serverHostnameTextField.getText());
                         connectionConfiguration.setPort(((Number) serverPortTextField.getValue()).intValue());
 
-                        chatClient.connect(connectionConfiguration);
-*/
-                        chatUIBean.initialize();
-                        chatUIBean.activate();
+                        ChatClient.ConnectResult connectResult = chatClient.connect(connectionConfiguration);
+
+                        JPasswordField passwordField = new JPasswordField(20);
+
+                        switch (connectResult) {
+
+                            case PROCEED_WITH_LOGIN:
+
+                                int loginPromptResult = JOptionPane.showConfirmDialog(
+                                        null,
+                                        passwordField,
+                                        i18n.getText("connect-to-server.login-with-your-password"),
+                                        JOptionPane.OK_CANCEL_OPTION
+                                );
+
+                                if (loginPromptResult == JOptionPane.OK_OPTION) {
+
+                                    Response loginResponse = chatClient.getServerEndpoint().login()
+                                            .password(new String(passwordField.getPassword()))
+                                            .execute();
+
+                                    if (loginResponse.getCode() == LoginCommand.SUCCESS) {
+
+                                        chatUIBean.initialize();
+                                        chatUIBean.activate();
+
+                                    } else if (loginResponse.getCode() == LoginCommand.INVALID_PASSWORD) {
+
+                                        JOptionPane.showMessageDialog(
+                                                null,
+                                                i18n.getText("connect-to-server.invalid-password"),
+                                                i18n.getText("connect-to-server.invalid-password-title"),
+                                                JOptionPane.ERROR_MESSAGE
+                                        );
+
+                                    }
+
+                                    if (loginResponse.getCode() != LoginCommand.SUCCESS) {
+                                        chatClient.disconnect();
+                                    }
+
+                                }
+
+                                break;
+                            case PROCEED_WITH_REGISTRATION:
+
+                                int registrationPromptResult = JOptionPane.showConfirmDialog(
+                                        null,
+                                        passwordField,
+                                        i18n.getText("connect-to-server.create-a-password"),
+                                        JOptionPane.OK_CANCEL_OPTION
+                                );
+
+                                if (registrationPromptResult == JOptionPane.OK_OPTION) {
+
+                                    Response registerResponse = chatClient.getServerEndpoint().register()
+                                            .password(new String(passwordField.getPassword()))
+                                            .execute();
+
+                                    if (registerResponse.getCode() == RegisterCommand.SUCCESS) {
+
+                                        chatUIBean.initialize();
+                                        chatUIBean.activate();
+
+                                    } else {
+                                        chatClient.disconnect();
+                                    }
+
+                                }
+
+                                break;
+                            case BANNED:
+
+                                JOptionPane.showMessageDialog(
+                                        null,
+                                        i18n.getText("connect-to-server.you-are-banned"),
+                                        i18n.getText("connect-to-server.you-are-banned-title"),
+                                        JOptionPane.ERROR_MESSAGE
+                                );
+
+                                chatClient.disconnect();
+
+                                break;
+                        }
 
                     }
 

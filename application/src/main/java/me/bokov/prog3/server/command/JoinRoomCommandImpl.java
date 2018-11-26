@@ -16,13 +16,37 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.bokov.prog3.command.client;
+package me.bokov.prog3.server.command;
 
+import me.bokov.prog3.command.server.JoinRoomCommand;
+import me.bokov.prog3.common.ClientBase;
+import me.bokov.prog3.common.CommandBase;
 
-import me.bokov.prog3.command.Command;
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonValue;
 
-public interface ClientCommand extends Command {
+public class JoinRoomCommandImpl extends CommandBase implements JoinRoomCommand {
 
-    ClientCommand userId(String userId);
+    private JsonObject room;
 
+    public JoinRoomCommandImpl(ClientBase chatClient) {
+        super(chatClient);
+    }
+
+    @Override
+    public JoinRoomCommand room(JsonObject roomObject) {
+        this.room = roomObject;
+        return this;
+    }
+
+    @Override
+    protected String getCommand() {
+        return "JOIN-ROOM";
+    }
+
+    @Override
+    protected JsonValue getData() {
+        return Json.createObjectBuilder().add("room", this.room).build();
+    }
 }

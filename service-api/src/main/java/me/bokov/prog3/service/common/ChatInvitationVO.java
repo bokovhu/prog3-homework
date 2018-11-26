@@ -22,42 +22,52 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import java.io.Serializable;
 
-public class ChatUserVO implements Serializable {
+public class ChatInvitationVO implements Serializable {
 
-    private Long id;
-    private String username;
-    private String banState;
+    private ChatUserVO invitor;
+    private ChatUserVO invitedUser;
+    private ChatRoomVO room;
+    private String invitationId;
 
-    public Long getId() {
-        return id;
+    public ChatUserVO getInvitor() {
+        return invitor;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setInvitor(ChatUserVO invitor) {
+        this.invitor = invitor;
     }
 
-    public String getUsername() {
-        return username;
+    public ChatUserVO getInvitedUser() {
+        return invitedUser;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setInvitedUser(ChatUserVO invitedUser) {
+        this.invitedUser = invitedUser;
     }
 
-    public String getBanState() {
-        return banState;
+    public ChatRoomVO getRoom() {
+        return room;
     }
 
-    public void setBanState(String banState) {
-        this.banState = banState;
+    public void setRoom(ChatRoomVO room) {
+        this.room = room;
+    }
+
+    public String getInvitationId() {
+        return invitationId;
+    }
+
+    public void setInvitationId(String invitationId) {
+        this.invitationId = invitationId;
     }
 
     public JsonObject toJson () {
 
         return Json.createObjectBuilder()
-                .add("id", getId())
-                .add("username", getUsername())
-                .add("banState", getBanState())
+                .add("invitor", getInvitor().toJson())
+                .add("invitedUser", getInvitedUser().toJson())
+                .add("room", getRoom().toJson())
+                .add("invitationId", getInvitationId())
                 .build();
 
     }

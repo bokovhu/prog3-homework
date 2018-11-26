@@ -32,6 +32,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
+/**
+ * This @ApplicationScoped CDI bean stores configuration for the application
+ */
 @ApplicationScoped
 public class Config {
 
@@ -46,6 +49,9 @@ public class Config {
 
     private Map<String, String> configurationMap = new HashMap<>();
 
+    /**
+     * Resets configurable options to their default values
+     */
     public void resetToDefaults() {
 
         userLocale = new Locale("en");
@@ -53,6 +59,10 @@ public class Config {
 
     }
 
+    /**
+     * Parses configuration options from a Properties object
+     * @param properties the parse source
+     */
     private void parseProperties(Properties properties) {
 
         userLocale = new Locale(properties.getProperty("user-locale"));
@@ -63,6 +73,10 @@ public class Config {
 
     }
 
+    /**
+     * Converts the configuration options to a Properties object
+     * @return the result of the conversion
+     */
     private Properties toProperties() {
 
         Properties properties = new Properties();
@@ -76,6 +90,13 @@ public class Config {
 
     }
 
+    /**
+     * This method ensures that the application configuration directory is a valid directory, and exists. If the
+     * configuration directory does not exist, it attempts to create it. Failing to do so will result in an
+     * IllegalStateException being thrown
+     *
+     * @throws IllegalStateException when the application configuration directory could not be created
+     */
     private void ensureAppConfigDirectory() {
 
         if (!appConfigDirectoryInitialized) {
@@ -105,11 +126,20 @@ public class Config {
 
     }
 
+    /**
+     * This method can be used to retrieve the current application configuration directory. The method first ensures
+     * that this directory exists, so that caller can safely use it given the method returns without throwing an
+     * exception
+     * @return the application configuration directory
+     */
     public File getAppConfigDirectory() {
         ensureAppConfigDirectory();
         return appConfigDirectory;
     }
 
+    /**
+     * Loads the configuration options from the file system
+     */
     public void load() {
 
         logger.info("Loading configuration from file system");
@@ -145,6 +175,9 @@ public class Config {
 
     }
 
+    /**
+     * Saves the configuration options to the file system
+     */
     public void save() {
 
         logger.info("Saving configuration to file system");
