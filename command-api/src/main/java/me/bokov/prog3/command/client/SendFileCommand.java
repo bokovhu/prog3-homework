@@ -16,29 +16,14 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.bokov.prog3.service;
+package me.bokov.prog3.command.client;
 
-import com.j256.ormlite.support.ConnectionSource;
-import me.bokov.prog3.service.db.dao.*;
+import me.bokov.prog3.command.Command;
 
-public interface Database {
+public interface SendFileCommand extends Command {
 
-    void start();
-
-    boolean isRunning();
-
-    void stop();
-
-    ConnectionSource getConnectionSource();
-
-    ChatUserDao getChatUserDao();
-
-    ChatRoomDao getChatRoomDao();
-
-    ChatRoomMembershipDao getChatRoomMembershipDao();
-
-    ChatInvitationDao getChatInvitationDao ();
-
-    ChatMessageDao getChatMessageDao ();
+    SendFileCommand fileName (String fileName);
+    SendFileCommand roomId (Long roomId);
+    SendFileCommand fileContent (String contentBase64);
 
 }

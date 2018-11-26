@@ -75,4 +75,34 @@ public class ChatServerEndpointImpl extends EndpointBase implements ChatServerEn
     public InviteUserCommand inviteUser() {
         return new InviteUserCommandImpl(client);
     }
+
+    @Override
+    public DownloadCommand download() {
+        return new DownloadCommandImpl(client);
+    }
+
+    @Override
+    public SendMessageCommand sendMessage() {
+        return new SendMessageCommandImpl(client);
+    }
+
+    @Override
+    public SendImageCommand sendImage() {
+        return new SendImageCommandImpl(client);
+    }
+
+    @Override
+    public SendFileCommand sendFile() {
+        return new SendFileCommandImpl(client);
+    }
+
+    @Override
+    public LeaveRoomCommand leaveRoom() {
+        return new LeaveRoomCommandImpl(client);
+    }
+
+    @Override
+    public DeleteRoomCommand deleteRoom() {
+        return new DeleteRoomCommandImpl(client);
+    }
 }

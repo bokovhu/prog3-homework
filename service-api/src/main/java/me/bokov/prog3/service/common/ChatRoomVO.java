@@ -24,7 +24,6 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import java.io.Serializable;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class ChatRoomVO implements Serializable {
 
@@ -32,7 +31,7 @@ public class ChatRoomVO implements Serializable {
     private String name;
     private Boolean isLobby;
     private ChatUserVO owner;
-    private List <ChatUserVO> members;
+    private List<ChatUserVO> members;
 
     public Long getId() {
         return id;
@@ -74,12 +73,15 @@ public class ChatRoomVO implements Serializable {
         this.members = members;
     }
 
-    public JsonObject toJson () {
+    public JsonObject toJson() {
 
         JsonObjectBuilder job = Json.createObjectBuilder()
-                .add("id", getId())
-                .add("name", getName())
-                .add("isLobby", getLobby());
+                .add("id", getId());
+
+        if (getName() != null) {
+            job.add("name", getName());
+        }
+        if (getLobby() != null) job.add("isLobby", getLobby());
 
         if (getOwner() != null) job.add("owner", getOwner().toJson());
         if (getMembers() != null) {

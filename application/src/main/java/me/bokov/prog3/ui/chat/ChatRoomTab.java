@@ -102,4 +102,8 @@ public class ChatRoomTab extends JPanel {
     public ChatRoomControlsPanel getControlsPanel() {
         return controlsPanel;
     }
+
+    public Long getRoomId() {
+        return roomId;
+    }
 }

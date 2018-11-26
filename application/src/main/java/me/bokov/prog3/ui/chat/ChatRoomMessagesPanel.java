@@ -44,25 +44,20 @@ public class ChatRoomMessagesPanel extends JPanel {
 
     private I18N i18n;
 
-    private List <MessageItem> messageItems = new ArrayList<>();
+    private List<MessageItem> messageItems = new ArrayList<>();
 
-    private void initPanel () {
+    private void initPanel() {
 
         // TODO: Should retrieve the messages from the chat room
         // TODO: Should update when a NewMessageEvent is fired
 
         setBackground(Color.WHITE);
 
-        messageItems.add(MessageItem.text(new Date(), "John", "Hi there!"));
-        messageItems.add(MessageItem.text(new Date(), "John Doe", "Oh, hi! What's up?"));
-        messageItems.add(MessageItem.image(new Date(), "Someone", CAT_1_IMAGE));
-        messageItems.add(MessageItem.file(new Date(), "Jack", "totally-not-a-virus.exe", 1_876_791L));
-
         updateMessages();
 
     }
 
-    public ChatRoomMessagesPanel () {
+    public ChatRoomMessagesPanel() {
 
         i18n = CDI.current().select(I18N.class).get();
 
@@ -70,7 +65,14 @@ public class ChatRoomMessagesPanel extends JPanel {
 
     }
 
-    public void updateMessages () {
+    public void addMessage(MessageItem mi) {
+
+        messageItems.add(mi);
+        updateMessages();
+
+    }
+
+    public void updateMessages() {
 
         removeAll();
 
@@ -92,7 +94,9 @@ public class ChatRoomMessagesPanel extends JPanel {
             mi.modifyDocument(jTextPane, sd);
         }
 
-        add(jTextPane);
+        add(
+                new JScrollPane(jTextPane)
+        );
 
     }
 
@@ -118,7 +122,9 @@ public class ChatRoomMessagesPanel extends JPanel {
 
         private String messageText;
 
-        public static MessageItem text (Date date, String by, String text) {
+        private String fileId;
+
+        public static MessageItem text(Date date, String by, String text) {
 
             MessageItem item = new MessageItem();
 
@@ -131,7 +137,7 @@ public class ChatRoomMessagesPanel extends JPanel {
 
         }
 
-        public static MessageItem file (Date date, String by, String fileName, Long fileSize) {
+        public static MessageItem file(Date date, String by, String fileName, Long fileSize, String fileId) {
 
             MessageItem item = new MessageItem();
 
@@ -140,12 +146,13 @@ public class ChatRoomMessagesPanel extends JPanel {
             item.type = Type.FILE;
             item.fileName = fileName;
             item.fileSize = fileSize;
+            item.fileId = fileId;
 
             return item;
 
         }
 
-        public static MessageItem image (Date date, String by, ImageIcon img) {
+        public static MessageItem image(Date date, String by, ImageIcon img) {
 
             MessageItem item = new MessageItem();
 
@@ -158,7 +165,7 @@ public class ChatRoomMessagesPanel extends JPanel {
 
         }
 
-        private String getDateText () {
+        private String getDateText() {
 
             Date currentDate = new Date();
 
@@ -187,7 +194,7 @@ public class ChatRoomMessagesPanel extends JPanel {
             }
 
             sb.append(" ")
-                    .append(currentDate.toInstant().atOffset(ZoneOffset.UTC).toLocalTime().format(DateTimeFormatter.ofPattern("HH:mm:ss")));
+                    .append(sentDate.toInstant().atOffset(ZoneOffset.UTC).toLocalTime().format(DateTimeFormatter.ofPattern("HH:mm:ss")));
 
             return sb.toString();
 
@@ -209,7 +216,6 @@ public class ChatRoomMessagesPanel extends JPanel {
             } catch (BadLocationException e) {
                 e.printStackTrace();
             }
-
 
 
         }
@@ -272,7 +278,7 @@ public class ChatRoomMessagesPanel extends JPanel {
 
         }
 
-        public void modifyDocument (JTextPane pane, StyledDocument sd) {
+        public void modifyDocument(JTextPane pane, StyledDocument sd) {
 
             switch (this.type) {
 

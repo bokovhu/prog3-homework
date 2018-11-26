@@ -95,7 +95,7 @@ public class RegisterCommandHandlerProviderBean implements ServerChatClientComma
             for (ChatRoomMembershipEntity m : memberships) {
                 context.getChatClient().getClientEndpoint()
                         .joinRoom().roomId(m.getChatRoom().getId())
-                        .execute();
+                        .executeWithoutAnswer();
             }
 
 

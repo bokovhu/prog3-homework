@@ -59,7 +59,7 @@ public abstract class CommandBase implements Command {
 
     @Override
     public Response execute() throws CommandException {
-        return chatClient.readResponse(send(), 1000L);
+        return chatClient.readResponse(send(), 5000L);
     }
 
     @Override

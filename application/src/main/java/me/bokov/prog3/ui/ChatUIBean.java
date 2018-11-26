@@ -20,13 +20,19 @@ package me.bokov.prog3.ui;
 
 import me.bokov.prog3.AsyncHelper;
 import me.bokov.prog3.service.ChatClient;
+import me.bokov.prog3.ui.chat.ChatRoomMessagesPanel;
 import me.bokov.prog3.ui.chat.ChatRoomTab;
 import me.bokov.prog3.ui.chat.MessageComposerPanel;
+import me.bokov.prog3.ui.common.PanelList;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.json.JsonObject;
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @ApplicationScoped
 public class ChatUIBean extends ScreenBase {
@@ -34,7 +40,11 @@ public class ChatUIBean extends ScreenBase {
     @Inject
     private ChatClient chatClient;
 
+    @Inject
+    private ImageStoreBean imageStoreBean;
+
     JTabbedPane chatRoomsTabbedPane;
+    private List<ChatRoomTab> chatRoomTabs = new ArrayList<>();
     MessageComposerPanel messageComposerPanel;
 
     private void initChatRoomTabs () {
@@ -114,6 +124,7 @@ public class ChatUIBean extends ScreenBase {
 
                     ChatRoomTab tab = new ChatRoomTab(roomId);
                     chatRoomsTabbedPane.addTab(tab.getRoomName(), tab);
+                    chatRoomTabs.add(tab);
                     tab.getMessagesPanel().updateMessages();
 
                     if (chatRoomsTabbedPane.getTabCount() == 2) {
@@ -122,6 +133,78 @@ public class ChatUIBean extends ScreenBase {
 
                 }
         );
+
+    }
+
+    public void handleNewMessage (Long roomId, JsonObject messageObject) {
+
+        SwingUtilities.invokeLater(
+                () -> {
+
+                    chatRoomTabs.stream().filter(t -> t.getRoomId().equals(roomId))
+                            .findFirst()
+                            .ifPresent(
+                                    chatRoomTab -> {
+
+                                        if (messageObject.getBoolean("isTextMessage")) {
+
+                                            chatRoomTab.getMessagesPanel()
+                                                    .addMessage(
+                                                            ChatRoomMessagesPanel.MessageItem.text(
+                                                                    new Date(messageObject.getJsonNumber("sentDate").longValue()),
+                                                                    messageObject.getJsonObject("sentBy").getString("username"),
+                                                                    messageObject.getString("messageText")
+                                                            )
+                                                    );
+
+                                        }
+
+                                        if (messageObject.getBoolean("isFileMessage")) {
+
+                                            chatRoomTab.getMessagesPanel()
+                                                    .addMessage(
+                                                            ChatRoomMessagesPanel.MessageItem.file(
+                                                                    new Date(messageObject.getJsonNumber("sentDate").longValue()),
+                                                                    messageObject.getJsonObject("sentBy").getString("username"),
+                                                                    messageObject.getString("fileName"),
+                                                                    messageObject.getJsonNumber("fileSize").longValue(),
+                                                                    messageObject.getString("fileId")
+                                                            )
+                                                    );
+
+                                        }
+
+                                        if (messageObject.getBoolean("isImageMessage")) {
+
+                                            chatRoomTab.getMessagesPanel()
+                                                    .addMessage(
+                                                            ChatRoomMessagesPanel.MessageItem.image(
+                                                                    new Date(messageObject.getJsonNumber("sentDate").longValue()),
+                                                                    messageObject.getJsonObject("sentBy").getString("username"),
+                                                                    imageStoreBean.getImageIconByFileId(
+                                                                            messageObject.getString("fileId"),
+                                                                            messageObject.getString("imageExtension")
+                                                                    )
+                                                            )
+                                                    );
+
+                                        }
+
+                                        chatRoomTab.invalidate();
+                                        chatRoomTab.revalidate();
+                                        chatRoomTab.repaint();
+
+                                    }
+                            );
+
+                }
+        );
+
+    }
+
+    public ChatRoomTab getActiveChatRoomTab () {
+
+        return (ChatRoomTab) chatRoomsTabbedPane.getSelectedComponent();
 
     }
 

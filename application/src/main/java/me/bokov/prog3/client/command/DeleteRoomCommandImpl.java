@@ -16,29 +16,36 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.bokov.prog3.service;
+package me.bokov.prog3.client.command;
 
-import com.j256.ormlite.support.ConnectionSource;
-import me.bokov.prog3.service.db.dao.*;
+import me.bokov.prog3.command.client.DeleteRoomCommand;
+import me.bokov.prog3.common.ClientBase;
+import me.bokov.prog3.common.CommandBase;
 
-public interface Database {
+import javax.json.Json;
+import javax.json.JsonValue;
 
-    void start();
+public class DeleteRoomCommandImpl extends CommandBase implements DeleteRoomCommand {
 
-    boolean isRunning();
+    private Long roomId;
 
-    void stop();
+    public DeleteRoomCommandImpl(ClientBase chatClient) {
+        super(chatClient);
+    }
 
-    ConnectionSource getConnectionSource();
+    @Override
+    public DeleteRoomCommand roomId(Long roomId) {
+        this.roomId = roomId;
+        return this;
+    }
 
-    ChatUserDao getChatUserDao();
+    @Override
+    protected String getCommand() {
+        return "DELETE-ROOM";
+    }
 
-    ChatRoomDao getChatRoomDao();
-
-    ChatRoomMembershipDao getChatRoomMembershipDao();
-
-    ChatInvitationDao getChatInvitationDao ();
-
-    ChatMessageDao getChatMessageDao ();
-
+    @Override
+    protected JsonValue getData() {
+        return Json.createObjectBuilder().add("roomId", roomId).build();
+    }
 }

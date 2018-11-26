@@ -40,4 +40,16 @@ public interface ChatServerEndpoint extends Endpoint {
 
     InviteUserCommand inviteUser ();
 
+    DownloadCommand download ();
+
+    SendMessageCommand sendMessage ();
+
+    SendImageCommand sendImage ();
+
+    SendFileCommand sendFile ();
+
+    LeaveRoomCommand leaveRoom ();
+
+    DeleteRoomCommand deleteRoom ();
+
 }

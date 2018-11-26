@@ -181,6 +181,14 @@ public class Application {
         );
 
 
+        cliOptions.addOption(
+                Option.builder()
+                        .longOpt("no-database")
+                        .hasArg(false)
+                        .build()
+        );
+
+
     }
 
     /**
@@ -298,8 +306,12 @@ public class Application {
             // Load config
             CDI.current().select(Config.class).get().load();
 
-            // Initialize database
-            CDI.current().select(Database.class).get().start();
+            if (!commandLine.hasOption("no-database")) {
+
+                // Initialize database
+                CDI.current().select(Database.class).get().start();
+
+            }
 
             if (enableGui) {
 

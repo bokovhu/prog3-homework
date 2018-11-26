@@ -18,11 +18,18 @@
 
 package me.bokov.prog3.ui.chat;
 
+import me.bokov.prog3.service.ChatClient;
+import me.bokov.prog3.ui.ChatUIBean;
 import me.bokov.prog3.util.I18N;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 
 import javax.enterprise.inject.spi.CDI;
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
+import java.io.File;
+import java.util.Base64;
 
 public class MessageComposerPanel extends JPanel {
 
@@ -38,16 +45,71 @@ public class MessageComposerPanel extends JPanel {
     private JTextField messageTextField;
     private JButton sendButton;
 
-    private void initButtons () {
+    private void initButtons() {
 
         sendFileButton = new JButton(i18n.getText("chat.message-composer.send-file"));
         sendImageButton = new JButton(i18n.getText("chat.message-composer.send-image"));
 
+        sendImageButton.addActionListener(
+                e -> {
+
+                    JFileChooser fileChooser = new JFileChooser();
+                    fileChooser.addChoosableFileFilter(
+                            new FileNameExtensionFilter("Images", "png", "jpg", "jpeg", "gif", "bmp")
+                    );
+                    int fileChooserResult = fileChooser.showOpenDialog(null);
+
+                    if (fileChooserResult == JFileChooser.APPROVE_OPTION) {
+
+                        try {
+
+                            File imageFile = fileChooser.getSelectedFile();
+                            String imageContentBase64 = Base64.getEncoder().encodeToString(
+                                    FileUtils.readFileToByteArray(imageFile)
+                            );
+                            String imageExtension = FilenameUtils.getExtension(imageFile.getName());
+
+                            CDI.current().select(ChatClient.class).get()
+                                    .getServerEndpoint()
+                                    .sendImage()
+                                    .roomId(
+                                            CDI.current().select(ChatUIBean.class).get()
+                                                    .getActiveChatRoomTab().getRoomId()
+                                    )
+                                    .imageContent(imageContentBase64)
+                                    .extension(imageExtension)
+                                    .executeWithoutAnswer();
+
+                        } catch (Exception exc) {
+                            exc.printStackTrace();
+                        }
+
+                    }
+
+                }
+        );
+
         sendButton = new JButton(i18n.getText("chat.message-composer.send"));
+
+        sendButton.addActionListener(
+                e -> {
+
+                    ChatClient chatClient = CDI.current().select(ChatClient.class).get();
+
+                    chatClient.getServerEndpoint()
+                            .sendMessage()
+                            .messageText(messageTextField.getText())
+                            .roomId(
+                                    CDI.current().select(ChatUIBean.class).get()
+                                            .getActiveChatRoomTab().getRoomId()
+                            ).executeWithoutAnswer();
+
+                }
+        );
 
     }
 
-    private void initUpperPart () {
+    private void initUpperPart() {
 
         JPanel buttonsContainerPanel = new JPanel();
         buttonsContainerPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 4, 4));
@@ -61,7 +123,7 @@ public class MessageComposerPanel extends JPanel {
 
     }
 
-    private void initBottomPart () {
+    private void initBottomPart() {
 
         JPanel messageInputAndSendContainerPanel = new JPanel();
 
@@ -85,7 +147,7 @@ public class MessageComposerPanel extends JPanel {
 
     }
 
-    private void initPanel () {
+    private void initPanel() {
 
         setLayout(new GridBagLayout());
 
@@ -96,7 +158,7 @@ public class MessageComposerPanel extends JPanel {
 
     }
 
-    public MessageComposerPanel () {
+    public MessageComposerPanel() {
 
         i18n = CDI.current().select(I18N.class).get();
 

@@ -24,6 +24,8 @@ import javax.json.JsonObject;
 
 public interface NewMessageCommand extends Command {
 
+    int SUCCESS = 200;
+
     NewMessageCommand roomId(String roomId);
 
     NewMessageCommand message(JsonObject message);

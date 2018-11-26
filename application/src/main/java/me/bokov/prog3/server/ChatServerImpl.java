@@ -171,7 +171,7 @@ public class ChatServerImpl implements ChatServer {
         try {
 
             List <Long> userIdsInRoom = database.getChatRoomMembershipDao()
-                    .queryBuilder().where().eq("room_id", roomId)
+                    .queryBuilder().where().eq("chat_room_id", roomId)
                     .query()
                     .stream().map(ChatRoomMembershipEntity::getChatUser)
                     .map(BaseEntity::getId)

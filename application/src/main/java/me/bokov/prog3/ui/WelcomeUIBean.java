@@ -18,6 +18,7 @@
 
 package me.bokov.prog3.ui;
 
+import me.bokov.prog3.Application;
 import me.bokov.prog3.ui.welcome.ConnectToServerDialogBean;
 import me.bokov.prog3.ui.welcome.StartNewServerDialogBean;
 
@@ -67,7 +68,10 @@ public class WelcomeUIBean extends ScreenBase {
         createConnectToServerButton();
 
         panel.add(connectToServerButton);
-        panel.add(startNewServerButton);
+
+        if (!Application.getInstance().getCommandLine().hasOption("no-database")) {
+            panel.add(startNewServerButton);
+        }
 
     }
 

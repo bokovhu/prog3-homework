@@ -16,29 +16,19 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.bokov.prog3.service;
+package me.bokov.prog3.db.dao;
 
+import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.support.ConnectionSource;
-import me.bokov.prog3.service.db.dao.*;
+import me.bokov.prog3.service.db.dao.ChatMessageDao;
+import me.bokov.prog3.service.db.entity.ChatMessageEntity;
 
-public interface Database {
+import java.sql.SQLException;
 
-    void start();
+public class ChatMessageDaoImpl extends BaseDaoImpl <ChatMessageEntity, Long> implements ChatMessageDao {
 
-    boolean isRunning();
-
-    void stop();
-
-    ConnectionSource getConnectionSource();
-
-    ChatUserDao getChatUserDao();
-
-    ChatRoomDao getChatRoomDao();
-
-    ChatRoomMembershipDao getChatRoomMembershipDao();
-
-    ChatInvitationDao getChatInvitationDao ();
-
-    ChatMessageDao getChatMessageDao ();
+    public ChatMessageDaoImpl (ConnectionSource connectionSource) throws SQLException {
+        super (connectionSource, ChatMessageEntity.class);
+    }
 
 }

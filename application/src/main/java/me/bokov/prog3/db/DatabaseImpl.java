@@ -23,19 +23,10 @@ import com.j256.ormlite.db.H2DatabaseType;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
-import me.bokov.prog3.db.dao.ChatInvitationDaoImpl;
-import me.bokov.prog3.db.dao.ChatRoomDaoImpl;
-import me.bokov.prog3.db.dao.ChatRoomMembershipDaoImpl;
-import me.bokov.prog3.db.dao.ChatUserDaoImpl;
+import me.bokov.prog3.db.dao.*;
 import me.bokov.prog3.service.Database;
-import me.bokov.prog3.service.db.dao.ChatInvitationDao;
-import me.bokov.prog3.service.db.dao.ChatRoomDao;
-import me.bokov.prog3.service.db.dao.ChatRoomMembershipDao;
-import me.bokov.prog3.service.db.dao.ChatUserDao;
-import me.bokov.prog3.service.db.entity.ChatInvitationEntity;
-import me.bokov.prog3.service.db.entity.ChatRoomEntity;
-import me.bokov.prog3.service.db.entity.ChatRoomMembershipEntity;
-import me.bokov.prog3.service.db.entity.ChatUserEntity;
+import me.bokov.prog3.service.db.dao.*;
+import me.bokov.prog3.service.db.entity.*;
 import me.bokov.prog3.util.Config;
 import me.bokov.prog3.util.DatabaseConnectionConfig;
 import org.slf4j.Logger;
@@ -67,6 +58,7 @@ public class DatabaseImpl implements Database {
     private ChatRoomDao chatRoomDao;
     private ChatRoomMembershipDao chatRoomMembershipDao;
     private ChatInvitationDao chatInvitationDao;
+    private ChatMessageDao chatMessageDao;
 
     private ConnectionSource connectionSource;
 
@@ -78,6 +70,7 @@ public class DatabaseImpl implements Database {
             TableUtils.createTableIfNotExists(connectionSource, ChatRoomEntity.class);
             TableUtils.createTableIfNotExists(connectionSource, ChatRoomMembershipEntity.class);
             TableUtils.createTableIfNotExists(connectionSource, ChatInvitationEntity.class);
+            TableUtils.createTableIfNotExists(connectionSource, ChatMessageEntity.class);
 
         } catch (Exception e) {
             throw new IllegalStateException("Could not migrate database", e);
@@ -93,11 +86,13 @@ public class DatabaseImpl implements Database {
             chatRoomDao = new ChatRoomDaoImpl(connectionSource);
             chatRoomMembershipDao = new ChatRoomMembershipDaoImpl(connectionSource);
             chatInvitationDao = new ChatInvitationDaoImpl(connectionSource);
+            chatMessageDao = new ChatMessageDaoImpl(connectionSource);
 
             DaoManager.registerDao(connectionSource, chatUserDao);
             DaoManager.registerDao(connectionSource, chatRoomDao);
             DaoManager.registerDao(connectionSource, chatRoomMembershipDao);
             DaoManager.registerDao(connectionSource, chatInvitationDao);
+            DaoManager.registerDao(connectionSource, chatMessageDao);
 
         } catch (Exception e) {
 
@@ -224,4 +219,8 @@ public class DatabaseImpl implements Database {
         return chatInvitationDao;
     }
 
+    @Override
+    public ChatMessageDao getChatMessageDao() {
+        return chatMessageDao;
+    }
 }

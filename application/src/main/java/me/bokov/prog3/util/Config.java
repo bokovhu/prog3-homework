@@ -43,6 +43,10 @@ public class Config {
 
     private boolean appConfigDirectoryInitialized = false;
     private File appConfigDirectory;
+    private boolean uploadsDirectoryInitialized = false;
+    private File uploadsDirectory;
+    private boolean imageStoreDirectoryInitialized = false;
+    private File imageStoreDirectory;
 
     private Locale userLocale;
     private String lastDatabaseMigration;
@@ -232,4 +236,45 @@ public class Config {
 
     }
 
+    private void ensureUploadsDirectory () {
+        if (!uploadsDirectoryInitialized) {
+
+            uploadsDirectory = new File(getAppConfigDirectory(), "uploads");
+
+            if (!uploadsDirectory.exists()) {
+                if (!uploadsDirectory.mkdir()) {
+                    throw new IllegalStateException("Could not create uploads directory!");
+                }
+            }
+
+            uploadsDirectoryInitialized = true;
+
+        }
+    }
+
+    public File getUploadsDirectory() {
+        ensureUploadsDirectory();
+        return uploadsDirectory;
+    }
+
+    private void ensureImageStoreDirectory () {
+        if (!imageStoreDirectoryInitialized) {
+
+            imageStoreDirectory = new File(getAppConfigDirectory(), "image-store");
+
+            if (!imageStoreDirectory.exists()) {
+                if (!imageStoreDirectory.mkdir()) {
+                    throw new IllegalStateException("Could not create image store directory!");
+                }
+            }
+
+            imageStoreDirectoryInitialized = true;
+
+        }
+    }
+
+    public File getImageStoreDirectory() {
+        ensureImageStoreDirectory();
+        return imageStoreDirectory;
+    }
 }
