@@ -27,6 +27,9 @@ import javax.enterprise.context.ApplicationScoped;
 import java.util.Arrays;
 import java.util.Collection;
 
+/**
+ * Provides a command handler for the {@code PING} command
+ */
 @ApplicationScoped
 public class PingCommandHandlerProviderBean implements ChatClientCommandHandlerProviderBean {
 

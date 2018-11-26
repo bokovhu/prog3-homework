@@ -18,6 +18,9 @@
 
 package me.bokov.prog3;
 
+/**
+ * Contains the entrypoint to the application
+ */
 public class Main {
 
     /**

@@ -22,15 +22,27 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import me.bokov.prog3.service.db.BaseEntity;
 
+/**
+ * Database representation of a chat room
+ */
 @DatabaseTable(tableName = "chat_room")
 public class ChatRoomEntity extends BaseEntity {
 
+    /**
+     * The name of the chat room
+     */
     @DatabaseField(columnName = "name", canBeNull = false)
     private String name;
 
+    /**
+     * True, if this room is the lobby room, false otherwise (false in case of all user created rooms)
+     */
     @DatabaseField (columnName = "is_lobby", canBeNull = false, columnDefinition = "BOOLEAN")
     private Boolean isLobby;
 
+    /**
+     * The owner of the chat room
+     */
     @DatabaseField(columnName = "owner_chat_user_id", foreign = true, canBeNull = true)
     private ChatUserEntity ownerChatUser;
 

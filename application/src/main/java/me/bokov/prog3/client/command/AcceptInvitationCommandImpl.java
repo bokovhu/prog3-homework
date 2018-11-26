@@ -25,6 +25,9 @@ import me.bokov.prog3.common.CommandBase;
 import javax.json.Json;
 import javax.json.JsonValue;
 
+/**
+ * The default {@code ACCEPT-INVITATION} command implementation
+ */
 public class AcceptInvitationCommandImpl extends CommandBase implements AcceptInvitationCommand {
 
     private String invitationId = null;

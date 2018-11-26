@@ -36,6 +36,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * Provides a command handler for the {@code LOGIN} command
+ */
 @ApplicationScoped
 public class LoginCommandHandlerProviderBean implements ServerChatClientCommandHandlerProviderBean {
 

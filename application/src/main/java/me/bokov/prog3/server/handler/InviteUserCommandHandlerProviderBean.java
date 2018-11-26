@@ -40,6 +40,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.UUID;
 
+/**
+ * Provides a command handler for the {@code INVITE-USER} command
+ */
 @ApplicationScoped
 public class InviteUserCommandHandlerProviderBean implements ServerChatClientCommandHandlerProviderBean {
 

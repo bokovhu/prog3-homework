@@ -26,6 +26,9 @@ import me.bokov.prog3.command.response.Response;
 import javax.json.JsonValue;
 import java.util.UUID;
 
+/**
+ * Abstract base class for all command implementations
+ */
 public abstract class CommandBase implements Command {
 
     private final ClientBase chatClient;

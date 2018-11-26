@@ -36,6 +36,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * Provides a command handler for the {@code REGISTER} command
+ */
 @ApplicationScoped
 public class RegisterCommandHandlerProviderBean implements ServerChatClientCommandHandlerProviderBean {
 

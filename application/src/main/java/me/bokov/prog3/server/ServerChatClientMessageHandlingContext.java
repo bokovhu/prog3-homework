@@ -20,6 +20,9 @@ package me.bokov.prog3.server;
 
 import me.bokov.prog3.service.server.ServerChatClient;
 
+/**
+ * Server-side command handling context
+ */
 public class ServerChatClientMessageHandlingContext {
 
     private final ServerChatClient chatClient;

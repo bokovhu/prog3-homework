@@ -26,6 +26,9 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
 
+/**
+ * The default {@code NEW-INVITATION} command implementation
+ */
 public class NewInvitationCommandImpl extends CommandBase implements NewInvitationCommand {
 
     private JsonObject invitation;

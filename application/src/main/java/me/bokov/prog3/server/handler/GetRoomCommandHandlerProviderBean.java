@@ -42,6 +42,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Provides a command handler for the {@code GET-ROOM} command
+ */
 @ApplicationScoped
 public class GetRoomCommandHandlerProviderBean implements ServerChatClientCommandHandlerProviderBean {
 

@@ -25,6 +25,9 @@ import me.bokov.prog3.common.CommandBase;
 import javax.json.Json;
 import javax.json.JsonValue;
 
+/**
+ * The default {@code SEND-MESSAGE} command implementation
+ */
 public class SendMessageCommandImpl extends CommandBase implements SendMessageCommand {
 
     private String messageText = null;

@@ -22,12 +22,21 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import me.bokov.prog3.service.db.BaseEntity;
 
+/**
+ * Database representation of a user-chat room association (membership)
+ */
 @DatabaseTable(tableName = "chat_room_membership")
 public class ChatRoomMembershipEntity extends BaseEntity {
 
+    /**
+     * The user-end of the association
+     */
     @DatabaseField(columnName = "chat_user_id", foreign = true, canBeNull = false)
     private ChatUserEntity chatUser;
 
+    /**
+     * The room-end of the association
+     */
     @DatabaseField(columnName = "chat_room_id", foreign = true, canBeNull = false)
     private ChatRoomEntity chatRoom;
 

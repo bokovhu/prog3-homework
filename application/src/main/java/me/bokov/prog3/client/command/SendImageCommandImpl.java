@@ -25,6 +25,9 @@ import me.bokov.prog3.common.CommandBase;
 import javax.json.Json;
 import javax.json.JsonValue;
 
+/**
+ * The default {@code SEND-IMAGE} command implementation
+ */
 public class SendImageCommandImpl extends CommandBase implements SendImageCommand {
 
     private String extension = null;

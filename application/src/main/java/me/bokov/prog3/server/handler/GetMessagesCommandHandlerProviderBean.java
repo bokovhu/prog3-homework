@@ -43,6 +43,9 @@ import javax.json.JsonValue;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Provides a command handler for the {@code GET-MESSAGES} command
+ */
 @ApplicationScoped
 public class GetMessagesCommandHandlerProviderBean implements ServerChatClientCommandHandlerProviderBean {
 

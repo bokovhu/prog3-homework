@@ -37,6 +37,9 @@ import javax.json.JsonValue;
 import java.util.Arrays;
 import java.util.Collection;
 
+/**
+ * Provides a command handler for the {@code HELLO} command
+ */
 @ApplicationScoped
 public class HelloCommandHandlerProviderBean implements ServerChatClientCommandHandlerProviderBean {
 

@@ -38,6 +38,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * Provides a command handler for the {@code DELETE-ROOM} command
+ */
 @ApplicationScoped
 public class DeleteRoomCommandHandlerProviderBean implements ServerChatClientCommandHandlerProviderBean {
 

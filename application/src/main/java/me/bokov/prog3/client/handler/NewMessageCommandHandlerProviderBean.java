@@ -32,6 +32,9 @@ import javax.json.JsonObject;
 import java.util.Arrays;
 import java.util.Collection;
 
+/**
+ * Provides a command handler for the {@code NEW-MESSAGE} command
+ */
 @ApplicationScoped
 public class NewMessageCommandHandlerProviderBean implements ChatClientCommandHandlerProviderBean {
 

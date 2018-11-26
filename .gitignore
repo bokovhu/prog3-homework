@@ -25,3 +25,5 @@ coverage-aggregator/target/
 
 # This directory is only on my local machine, it contains pictures of cats
 .test-images/
+
+.javadoc/

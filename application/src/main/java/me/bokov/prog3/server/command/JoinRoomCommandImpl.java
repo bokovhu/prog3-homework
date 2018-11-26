@@ -26,6 +26,9 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
 
+/**
+ * The default {@code JOIN-ROOM} command implementation
+ */
 public class JoinRoomCommandImpl extends CommandBase implements JoinRoomCommand {
 
     private Long roomId;

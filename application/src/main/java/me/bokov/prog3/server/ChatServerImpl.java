@@ -45,6 +45,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+/**
+ * The default chat server implementation
+ */
 @ApplicationScoped
 public class ChatServerImpl implements ChatServer {
 

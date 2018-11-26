@@ -24,39 +24,76 @@ import me.bokov.prog3.service.db.BaseEntity;
 
 import java.util.Date;
 
+/**
+ * Database representation of a chat message
+ *
+ */
 @DatabaseTable (tableName = "chat_message")
 public class ChatMessageEntity extends BaseEntity {
 
+    /**
+     * The user that sent the message
+     */
     @DatabaseField (columnName = "sent_by_user_id", foreign = true, canBeNull = false)
     private ChatUserEntity sentBy;
 
+    /**
+     * The room that this message was sent to
+     */
     @DatabaseField (columnName = "room_id", foreign = true, canBeNull = false)
     private ChatRoomEntity room;
 
+    /**
+     * The exact timestamp this message was sent at
+     */
     @DatabaseField (columnName = "sent_date", canBeNull = false)
     private Date sentDate;
 
+    /**
+     * True, if this is a text message, false otherwise
+     */
     @DatabaseField (columnName = "is_text_message", canBeNull = false)
     private boolean isTextMessage;
 
+    /**
+     * True, if this is a file message, false otherwise
+     */
     @DatabaseField (columnName = "is_file_message", canBeNull = false)
     private boolean isFileMessage;
 
+    /**
+     * True, if this is an image message, false otherwise
+     */
     @DatabaseField (columnName = "is_image_message")
     private boolean isImageMessage;
 
+    /**
+     * The text of the message in case of text messages
+     */
     @DatabaseField (columnName = "message_text", canBeNull = true)
     private String messageText;
 
+    /**
+     * The file ID in case of file and image messages
+     */
     @DatabaseField (columnName = "file_id", canBeNull = true)
     private String fileId;
 
+    /**
+     * The name of the sent file in case of file messages
+     */
     @DatabaseField (columnName = "file_name", canBeNull = true)
     private String fileName;
 
+    /**
+     * The size of the sent file in bytes in case of file messages
+     */
     @DatabaseField (columnName = "file_size", canBeNull = true)
     private Long fileSize;
 
+    /**
+     * The file extension of the sent image in case of image messages
+     */
     @DatabaseField (columnName = "image_extension", canBeNull = true)
     private String imageExtension;
 

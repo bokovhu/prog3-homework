@@ -25,6 +25,9 @@ import me.bokov.prog3.common.CommandBase;
 import javax.json.Json;
 import javax.json.JsonValue;
 
+/**
+ * The default {@code LEAVE-ROOM} command implementation
+ */
 public class LeaveRoomCommandImpl extends CommandBase implements LeaveRoomCommand {
 
     private Long roomId;

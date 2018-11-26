@@ -25,6 +25,9 @@ import me.bokov.prog3.common.ClientBase;
 import me.bokov.prog3.common.EndpointBase;
 import me.bokov.prog3.server.command.*;
 
+/**
+ * The default chat client endpoint implementation
+ */
 public class ChatClientEndpointImpl extends EndpointBase implements ChatClientEndpoint {
 
     public ChatClientEndpointImpl(ClientBase client, ConnectionInformation connectionInformation) {

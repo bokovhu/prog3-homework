@@ -25,6 +25,9 @@ import me.bokov.prog3.common.CommandBase;
 import javax.json.Json;
 import javax.json.JsonValue;
 
+/**
+ * The default {@code ROOM-CHANGED} command implementation
+ */
 public class RoomChangedCommandImpl extends CommandBase implements RoomChangedCommand {
 
     private Long roomId;

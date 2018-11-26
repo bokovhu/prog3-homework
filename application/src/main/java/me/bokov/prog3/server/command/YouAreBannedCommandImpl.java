@@ -24,6 +24,9 @@ import me.bokov.prog3.common.CommandBase;
 
 import javax.json.JsonValue;
 
+/**
+ * The default {@code YOU-ARE-BANNED} command implementation
+ */
 public class YouAreBannedCommandImpl extends CommandBase implements YouAreBannedCommand {
 
     public YouAreBannedCommandImpl(ClientBase chatClient) {

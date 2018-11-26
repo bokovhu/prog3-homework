@@ -34,6 +34,10 @@ import java.net.Socket;
 import java.util.*;
 import java.util.concurrent.*;
 
+/**
+ * An abstract base class for {@link me.bokov.prog3.service.ChatClient}, and {@link me.bokov.prog3.service.server.ServerChatClient}
+ * @param <CTX> the type of the context to use for command handlers
+ */
 public abstract class ClientBase<CTX> implements CommunicationCapableService, SessionCapableService {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -53,23 +57,46 @@ public abstract class ClientBase<CTX> implements CommunicationCapableService, Se
 
     // Abstract methods
 
+    /**
+     * Creates the command handler for invalid messages
+     * @return the invalid command handler
+     */
     protected abstract CommandHandler<CTX> createInvalidCommandHandler();
 
+    /**
+     * The type of the CDI beans that provide the command handlers
+     */
     protected abstract Class<? extends CommandHandlerProviderBean<CTX>> getCommandHandlerProviderBeanClass();
 
+    /**
+     * Produces a command handling context
+     * @return
+     */
     protected abstract CTX getCommandHandlingContext();
 
     // Other methods
 
+    /**
+     * This method is called at the beginning of the {@code start} function
+     */
     protected void preStart() {
     }
 
+    /**
+     * This method is called at the end of the {@code start} function
+     */
     protected void postStart() {
     }
 
+    /**
+     * This method is called at the beginning of the {@code stop} function
+     */
     protected void preStop() {
     }
 
+    /**
+     * This method is called at the end of the {@code start} function
+     */
     protected void postStop() {
     }
 
@@ -261,6 +288,11 @@ public abstract class ClientBase<CTX> implements CommunicationCapableService, Se
 
     }
 
+    /**
+     * Tries to handle a single incoming request with an adequate {@link CommandHandler}
+     * @param request the request to handle
+     * @return the {@link Response} created by the command handler
+     */
     Response handleRequest(Request request) throws Exception {
 
         if (commandHandlerMap.containsKey(request.getCommand())) {
@@ -286,6 +318,9 @@ public abstract class ClientBase<CTX> implements CommunicationCapableService, Se
         return running;
     }
 
+    /**
+     * Adds an incoming {@link Response} to the incoming responses queue
+     */
     void addIncomingResponse(Response r) {
 
         synchronized (incomingResponses) {
@@ -294,6 +329,9 @@ public abstract class ClientBase<CTX> implements CommunicationCapableService, Se
 
     }
 
+    /**
+     * Adds an outgoing {@link Response} to the outgoing responses queue
+     */
     void addOutgoingResponse(Response r) {
 
         synchronized (outgoingResponses) {
@@ -302,6 +340,10 @@ public abstract class ClientBase<CTX> implements CommunicationCapableService, Se
 
     }
 
+    /**
+     * Checks whether an outgoing {@link Request} is currently available
+     * @return true, if a response is available, false otherwise
+     */
     boolean hasOutgoingRequest() {
 
         synchronized (outgoingRequests) {
@@ -310,6 +352,10 @@ public abstract class ClientBase<CTX> implements CommunicationCapableService, Se
 
     }
 
+    /**
+     * Checks whether an outgoing {@link Response} is currently available
+     * @return true, if a response is available, false otherwise
+     */
     boolean hasOutgoingResponse() {
 
         synchronized (outgoingResponses) {
@@ -318,6 +364,10 @@ public abstract class ClientBase<CTX> implements CommunicationCapableService, Se
 
     }
 
+    /**
+     * Waits for and takes a single outgoing {@link Request} from the outgoingRequests queue
+     * @return the popped response
+     */
     Request takeOutgoingRequest() {
 
         synchronized (outgoingRequests) {
@@ -330,6 +380,10 @@ public abstract class ClientBase<CTX> implements CommunicationCapableService, Se
 
     }
 
+    /**
+     * Waits for and takes a single outgoing {@link Response} from the outgoingResponses queue
+     * @return the popped response
+     */
     Response takeOutgoingResponse() {
 
         synchronized (outgoingResponses) {
@@ -342,6 +396,10 @@ public abstract class ClientBase<CTX> implements CommunicationCapableService, Se
 
     }
 
+    /**
+     * Retrieves the {@link InputStream} of the socket
+     * @return the {@link InputStream} of the socket
+     */
     InputStream getInputStream() {
         try {
             return socket.getInputStream();
@@ -350,6 +408,10 @@ public abstract class ClientBase<CTX> implements CommunicationCapableService, Se
         }
     }
 
+    /**
+     * Retrieves the {@link OutputStream} of the socket
+     * @return the {@link OutputStream} of the socket
+     */
     OutputStream getOutputStream() {
         try {
             return socket.getOutputStream();

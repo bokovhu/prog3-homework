@@ -30,6 +30,9 @@ import javax.inject.Inject;
 import java.util.Arrays;
 import java.util.Collection;
 
+/**
+ * Provides a command handler for the {@code DISCONNECT} command
+ */
 @ApplicationScoped
 public class DisconnectCommandHandlerProviderBean implements ServerChatClientCommandHandlerProviderBean {
 

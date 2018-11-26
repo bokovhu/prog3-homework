@@ -25,12 +25,34 @@ import javax.json.JsonObjectBuilder;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * Value object for chat rooms
+ */
 public class ChatRoomVO implements Serializable {
 
+    /**
+     * The database ID of the chat room
+     */
     private Long id;
+
+    /**
+     * The name of the chat room
+     */
     private String name;
+
+    /**
+     * Defines whether this chat room is a (the) lobby
+     */
     private Boolean isLobby;
+
+    /**
+     * The owner user of this chat room
+     */
     private ChatUserVO owner;
+
+    /**
+     * The members of the chat room
+     */
     private List<ChatUserVO> members;
 
     public Long getId() {
@@ -73,6 +95,10 @@ public class ChatRoomVO implements Serializable {
         this.members = members;
     }
 
+    /**
+     * Converts this value object to a {@link JsonObject}
+     * @return the created {@link JsonObject}
+     */
     public JsonObject toJson() {
 
         JsonObjectBuilder job = Json.createObjectBuilder()

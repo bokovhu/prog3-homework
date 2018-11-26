@@ -21,8 +21,15 @@ package me.bokov.prog3.service.db.dao;
 import com.j256.ormlite.dao.Dao;
 import me.bokov.prog3.service.db.entity.ChatRoomEntity;
 
+/**
+ * The DAO interface that is used to access chat room entities
+ */
 public interface ChatRoomDao extends Dao<ChatRoomEntity, Long> {
 
+    /**
+     * Finds the (only) lobby chat room entity
+     * @return the lobby chat room
+     */
     ChatRoomEntity getLobby ();
 
 }

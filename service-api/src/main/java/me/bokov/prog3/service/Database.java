@@ -21,24 +21,61 @@ package me.bokov.prog3.service;
 import com.j256.ormlite.support.ConnectionSource;
 import me.bokov.prog3.service.db.dao.*;
 
+/**
+ * Interface for database access
+ */
 public interface Database {
 
+    /**
+     * Initializes the database connection, and creates DAOs and tables
+     */
     void start();
 
+    /**
+     * Checks if the database is set up and running
+     * @return true, if the database is running, false otherwise
+     */
     boolean isRunning();
 
+    /**
+     * Destroys the database connection and stops the database service
+     */
     void stop();
 
+    /**
+     * Retrieve the ORMLite connection source
+     * @return the ORMLite connection source
+     */
     ConnectionSource getConnectionSource();
 
+    /**
+     * Retrieve the database access object used to access chat users
+     * @return the DAO for chat users
+     */
     ChatUserDao getChatUserDao();
 
+    /**
+     * Retrieve the database access object used to access chat rooms
+     * @return the DAO for chat rooms
+     */
     ChatRoomDao getChatRoomDao();
 
+    /**
+     * Retrieve the database access object used to access chat room memberships
+     * @return the DAO for chat room memberships
+     */
     ChatRoomMembershipDao getChatRoomMembershipDao();
 
+    /**
+     * Retrieve the database access object used to access chat invitations
+     * @return the DAO for chat invitations
+     */
     ChatInvitationDao getChatInvitationDao ();
 
+    /**
+     * Retrieve the database access object used to access chat messages
+     * @return the DAO for chat messages
+     */
     ChatMessageDao getChatMessageDao ();
 
 }

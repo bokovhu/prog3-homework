@@ -41,6 +41,9 @@ import javax.json.JsonValue;
 import java.util.Arrays;
 import java.util.Collection;
 
+/**
+ * Provides a command handler for the {@code ADMIN} command
+ */
 @ApplicationScoped
 public class AdminCommandHandlerProviderBean implements ServerChatClientCommandHandlerProviderBean {
 

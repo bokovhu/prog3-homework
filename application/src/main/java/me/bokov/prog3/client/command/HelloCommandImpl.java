@@ -25,6 +25,9 @@ import me.bokov.prog3.common.CommandBase;
 import javax.json.Json;
 import javax.json.JsonValue;
 
+/**
+ * The default {@code HELLO} command implementation
+ */
 public class HelloCommandImpl extends CommandBase implements HelloCommand {
 
     private String username = null;

@@ -22,11 +22,29 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import java.io.Serializable;
 
+/**
+ * Value object for chat invitations
+ */
 public class ChatInvitationVO implements Serializable {
 
+    /**
+     * The user that sent the invitation
+     */
     private ChatUserVO invitor;
+
+    /**
+     * The user that was invited
+     */
     private ChatUserVO invitedUser;
+
+    /**
+     * The room that the user was invited to
+     */
     private ChatRoomVO room;
+
+    /**
+     * The invitation ID
+     */
     private String invitationId;
 
     public ChatUserVO getInvitor() {
@@ -61,6 +79,10 @@ public class ChatInvitationVO implements Serializable {
         this.invitationId = invitationId;
     }
 
+    /**
+     * Converts this value object to a {@link JsonObject}
+     * @return the created {@link JsonObject}
+     */
     public JsonObject toJson () {
 
         return Json.createObjectBuilder()

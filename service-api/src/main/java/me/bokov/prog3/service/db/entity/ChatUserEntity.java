@@ -23,21 +23,32 @@ import com.j256.ormlite.table.DatabaseTable;
 import me.bokov.prog3.service.common.ChatUserVO;
 import me.bokov.prog3.service.db.BaseEntity;
 
+/**
+ * Database representation of a user
+ */
 @DatabaseTable(tableName = "chat_user")
 public class ChatUserEntity extends BaseEntity {
 
+    /**
+     * The username of the user
+     */
     @DatabaseField(columnName = "username", unique = true, canBeNull = false)
     private String username;
 
-    // VERY, VERY, VERY BAD PRACTICE!!!!!!!! DON'T EVER DO THIS!!!!
+    /**
+     * The password of the user.
+     *
+     * <b>NOTE: This is a homework project, no security considerations were made at all regarding safe password storage!
+     * Use with caution!</b>
+     */
     @DatabaseField (columnName = "password", canBeNull = false)
     private String password;
 
+    /**
+     * True, if the user is banned, false otherwise
+     */
     @DatabaseField(columnName = "is_banned", canBeNull = false)
     private boolean isBanned;
-
-    @DatabaseField(columnName = "banned_ip")
-    private String bannedIp;
 
     public String getUsername() {
         return username;
@@ -55,14 +66,6 @@ public class ChatUserEntity extends BaseEntity {
         isBanned = banned;
     }
 
-    public String getBannedIp() {
-        return bannedIp;
-    }
-
-    public void setBannedIp(String bannedIp) {
-        this.bannedIp = bannedIp;
-    }
-
     public String getPassword() {
         return password;
     }
@@ -71,6 +74,10 @@ public class ChatUserEntity extends BaseEntity {
         this.password = password;
     }
 
+    /**
+     * Converts this chat user to a value object
+     * @return the created value object
+     */
     public ChatUserVO toVo() {
 
         ChatUserVO vo = new ChatUserVO();

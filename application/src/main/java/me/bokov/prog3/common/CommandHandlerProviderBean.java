@@ -22,6 +22,10 @@ import me.bokov.prog3.command.CommandHandler;
 
 import java.util.Collection;
 
+/**
+ * Base interface for command handler provider CDI beans
+ * @param <CTX> the command handling context type
+ */
 public interface CommandHandlerProviderBean<CTX> {
 
     Collection<String> getHandledCommands();

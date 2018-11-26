@@ -25,6 +25,9 @@ import me.bokov.prog3.common.CommandBase;
 import javax.json.Json;
 import javax.json.JsonValue;
 
+/**
+ * The default {@code INVITE-USER} command implementation
+ */
 public class InviteUserCommandImpl extends CommandBase implements InviteUserCommand {
 
     private String invitedUsername;

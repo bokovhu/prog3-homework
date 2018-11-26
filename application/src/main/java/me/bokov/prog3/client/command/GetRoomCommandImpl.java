@@ -25,6 +25,9 @@ import me.bokov.prog3.common.CommandBase;
 import javax.json.Json;
 import javax.json.JsonValue;
 
+/**
+ * The default {@code GET-ROOM} command implementation
+ */
 public class GetRoomCommandImpl extends CommandBase implements GetRoomCommand {
 
     private Long roomId = null;

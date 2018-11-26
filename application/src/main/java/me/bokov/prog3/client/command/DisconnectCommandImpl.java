@@ -24,6 +24,9 @@ import me.bokov.prog3.common.CommandBase;
 
 import javax.json.JsonValue;
 
+/**
+ * The default {@code DISCONNECT} command implementation
+ */
 public class DisconnectCommandImpl extends CommandBase implements DisconnectCommand {
 
     public DisconnectCommandImpl(ClientBase chatClient) {

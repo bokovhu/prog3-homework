@@ -25,6 +25,9 @@ import me.bokov.prog3.common.CommandBase;
 import javax.json.Json;
 import javax.json.JsonValue;
 
+/**
+ * The default {@code CREATE-ROOM} command implementation
+ */
 public class CreateRoomCommandImpl extends CommandBase implements CreateRoomCommand {
 
     private String roomName;

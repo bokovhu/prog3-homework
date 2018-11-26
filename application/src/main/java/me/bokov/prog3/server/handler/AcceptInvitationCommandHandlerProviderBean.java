@@ -37,6 +37,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * Provides a command handler for the {@code ACCEPT-INVITATION} command
+ */
 @ApplicationScoped
 public class AcceptInvitationCommandHandlerProviderBean implements ServerChatClientCommandHandlerProviderBean {
 

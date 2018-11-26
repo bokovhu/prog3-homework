@@ -31,6 +31,9 @@ import javax.inject.Inject;
 import java.util.Arrays;
 import java.util.Collection;
 
+/**
+ * Provides a command handler for the {@code NEW-INVITATION} command
+ */
 @ApplicationScoped
 public class NewInvitationCommandHandlerProviderBean implements ChatClientCommandHandlerProviderBean {
 

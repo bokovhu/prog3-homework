@@ -34,6 +34,9 @@ import javax.json.JsonObject;
 import java.util.Arrays;
 import java.util.Collection;
 
+/**
+ * Provides a command handler for the {@code LEAVE-ROOM} command
+ */
 @ApplicationScoped
 public class LeaveRoomCommandHandlerProviderBean implements ServerChatClientCommandHandlerProviderBean {
 

@@ -22,18 +22,33 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import me.bokov.prog3.service.db.BaseEntity;
 
+/**
+ * Database representation of a chat invitation
+ */
 @DatabaseTable (tableName = "chat_invitation")
 public class ChatInvitationEntity extends BaseEntity {
 
+    /**
+     * The chat user that sent the invitation
+     */
     @DatabaseField (columnName = "invitor_id", foreign = true, canBeNull = false)
     private ChatUserEntity invitor;
 
+    /**
+     * The chat user that was invited
+     */
     @DatabaseField (columnName = "invited_user_id", foreign = true, canBeNull = false)
     private ChatUserEntity invitedUser;
 
+    /**
+     * The room that the user was invited to
+     */
     @DatabaseField (columnName = "room_id", foreign = true, canBeNull = false)
     private ChatRoomEntity room;
 
+    /**
+     * A random-generated, unique ID
+     */
     @DatabaseField (columnName = "invitation_id", unique = true, canBeNull = false)
     private String invitationId;
 

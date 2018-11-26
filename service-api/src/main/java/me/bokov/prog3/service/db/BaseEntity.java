@@ -22,16 +22,31 @@ import com.j256.ormlite.field.DatabaseField;
 
 import java.io.Serializable;
 
-
+/**
+ * Base class for all database entities
+ */
 public abstract class BaseEntity implements Serializable {
 
+    /**
+     * The ID (primary key) of this entity.
+     *
+     * This is an auto generated number, where values are supplied by the underlying database implementation
+     */
     @DatabaseField(columnName = "id", generatedId = true)
     private Long id;
 
+    /**
+     * Retrieves the ID of this entity
+     * @return the ID of this entity
+     */
     public Long getId() {
         return id;
     }
 
+    /**
+     * Sets the ID of this entity
+     * @param id the new ID
+     */
     public void setId(Long id) {
         this.id = id;
     }

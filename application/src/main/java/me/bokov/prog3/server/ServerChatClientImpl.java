@@ -32,6 +32,9 @@ import me.bokov.prog3.service.server.ServerChatClient;
 import javax.enterprise.inject.spi.CDI;
 import java.util.Date;
 
+/**
+ * The default connected chat client (server-side chat client) implementation
+ */
 public class ServerChatClientImpl extends ClientBase<ServerChatClientMessageHandlingContext> implements ServerChatClient {
 
     private final ChatServerImpl chatServer;

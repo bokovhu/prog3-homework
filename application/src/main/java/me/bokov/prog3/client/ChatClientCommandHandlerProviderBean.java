@@ -20,5 +20,8 @@ package me.bokov.prog3.client;
 
 import me.bokov.prog3.common.CommandHandlerProviderBean;
 
+/**
+ * Beans that implement this interface are discovered by the chat client, in order to register command handlers
+ */
 public interface ChatClientCommandHandlerProviderBean extends CommandHandlerProviderBean<ChatClientMessageHandlingContext> {
 }

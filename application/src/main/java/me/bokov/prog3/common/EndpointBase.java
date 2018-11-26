@@ -22,6 +22,9 @@ import me.bokov.prog3.command.PingCommand;
 import me.bokov.prog3.command.endpoint.ConnectionInformation;
 import me.bokov.prog3.command.endpoint.Endpoint;
 
+/**
+ * Abstract base class for both the client and server endpoints
+ */
 public abstract class EndpointBase implements Endpoint {
 
     protected final ClientBase client;

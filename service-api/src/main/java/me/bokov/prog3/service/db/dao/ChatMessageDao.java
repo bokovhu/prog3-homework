@@ -21,5 +21,8 @@ package me.bokov.prog3.service.db.dao;
 import com.j256.ormlite.dao.Dao;
 import me.bokov.prog3.service.db.entity.ChatMessageEntity;
 
+/**
+ * The DAO interface that is used to access chat message entities
+ */
 public interface ChatMessageDao extends Dao <ChatMessageEntity, Long> {
 }

@@ -26,6 +26,9 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
 
+/**
+ * The default {@code NEW-MESSAGE} command implementation
+ */
 public class NewMessageCommandImpl extends CommandBase implements NewMessageCommand {
 
     private String roomId = null;

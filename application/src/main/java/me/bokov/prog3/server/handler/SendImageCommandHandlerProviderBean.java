@@ -41,6 +41,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.*;
 
+/**
+ * Provides a command handler for the {@code SEND-IMAGE} command
+ */
 @ApplicationScoped
 public class SendImageCommandHandlerProviderBean implements ServerChatClientCommandHandlerProviderBean {
 

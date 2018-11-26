@@ -24,19 +24,69 @@ import javax.json.JsonObjectBuilder;
 import java.io.Serializable;
 import java.util.Date;
 
+/**
+ * Value object for chat messages
+ */
 public class ChatMessageVO implements Serializable {
 
+    /**
+     * The database ID of this message
+     */
     private Long id;
+
+    /**
+     * The user that sent the message
+     */
     private ChatUserVO sentBy;
+
+    /**
+     * The room this message was sent to
+     */
     private ChatRoomVO room;
+
+    /**
+     * The date this message was sent at
+     */
     private Date sentDate;
+
+    /**
+     * True, if this is a text message, false otherwise
+     */
     private boolean isTextMessage;
+
+    /**
+     * True, if this is a file message, false otherwise
+     */
     private boolean isFileMessage;
+
+    /**
+     * True, if this is an image message, false otherwise
+     */
     private boolean isImageMessage;
+
+    /**
+     * The name of the sent file in case of file messages
+     */
     private String fileName;
+
+    /**
+     * The file ID in case of file and image messages
+     */
     private String fileId;
+
+    /**
+     * The size of the sent file in bytes in case of file messages
+     */
     private Long fileSize;
+
+    /**
+     * The file extension of the sent image in case of image messages
+     */
     private String imageExtension;
+
+    /**
+     * The text of the message in case of text messages
+     */
     private String messageText;
 
     public Long getId() {
@@ -135,6 +185,10 @@ public class ChatMessageVO implements Serializable {
         this.messageText = messageText;
     }
 
+    /**
+     * Converts this message value object to a {@link JsonObject}
+     * @return the created {@link JsonObject}
+     */
     public JsonObject toJson () {
 
         JsonObjectBuilder job = Json.createObjectBuilder()

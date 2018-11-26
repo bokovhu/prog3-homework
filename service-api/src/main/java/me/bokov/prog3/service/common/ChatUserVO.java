@@ -23,11 +23,29 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import java.io.Serializable;
 
+/**
+ * Value object for chat users
+ */
 public class ChatUserVO implements Serializable {
 
+    /**
+     * The database ID of the chat user
+     */
     private Long id;
+
+    /**
+     * The username of the chat user
+     */
     private String username;
+
+    /**
+     * Defines whether this user is currently banned
+     */
     private Boolean isBanned;
+
+    /**
+     * Defines whether this user is currently online
+     */
     private Boolean isOnline;
 
     public Long getId() {
@@ -62,6 +80,10 @@ public class ChatUserVO implements Serializable {
         isOnline = online;
     }
 
+    /**
+     * Converts this value object to a {@link JsonObject}
+     * @return the created {@link JsonObject}
+     */
     public JsonObject toJson () {
 
         JsonObjectBuilder job = Json.createObjectBuilder()

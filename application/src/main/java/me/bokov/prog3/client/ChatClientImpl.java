@@ -39,6 +39,9 @@ import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.CDI;
 import java.net.Socket;
 
+/**
+ * The default chat client implementation
+ */
 @ApplicationScoped
 public class ChatClientImpl extends ClientBase<ChatClientMessageHandlingContext> implements ChatClient {
 

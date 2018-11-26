@@ -27,6 +27,9 @@ import javax.json.JsonValue;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * The default {@code ADMIN} command implementation
+ */
 public class AdminCommandImpl extends CommandBase implements AdminCommand {
 
     private String method = null;

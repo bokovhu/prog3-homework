@@ -25,6 +25,9 @@ import me.bokov.prog3.common.CommandBase;
 import javax.json.Json;
 import javax.json.JsonValue;
 
+/**
+ * The default {@code REGISTER} command implementation
+ */
 public class RegisterCommandImpl extends CommandBase implements RegisterCommand {
 
     private String password = null;

@@ -38,6 +38,9 @@ import javax.json.JsonValue;
 import java.util.Arrays;
 import java.util.Collection;
 
+/**
+ * Provides a command handler for the {@code CREATE-ROOM} command
+ */
 @ApplicationScoped
 public class CreateRoomCommandHandlerProviderBean implements ServerChatClientCommandHandlerProviderBean {
 

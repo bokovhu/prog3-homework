@@ -24,12 +24,37 @@ import me.bokov.prog3.command.response.Response;
 import java.net.Socket;
 import java.util.UUID;
 
+/**
+ * Base interface for all services that are capable of network communication
+ */
 public interface CommunicationCapableService {
 
+    /**
+     * Starts the communication on a given socket
+     * @param socket the socket to start the communication on
+     */
     void start(Socket socket);
+
+    /**
+     * Stops the communication service
+     */
     void stop();
+
+    /**
+     * Sends a given request over the network
+     * @param request the request to send
+     */
     void send(Request request);
+
+    /**
+     * Reads the response to a given message ID, waiting and blocking if necessary while it becomes
+     * availble
+     * @param messageId the message ID to read
+     * @param timeoutInMillisec the read timeout in milliseconds
+     * @return the response
+     */
     Response readResponse(String messageId, long timeoutInMillisec);
+
     UUID getId ();
 
 }

@@ -39,6 +39,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 
+/**
+ * Provides a command handler for the {@code SEND-MESSAGE} command
+ */
 @ApplicationScoped
 public class SendMessageCommandHandlerProviderBean implements ServerChatClientCommandHandlerProviderBean {
 

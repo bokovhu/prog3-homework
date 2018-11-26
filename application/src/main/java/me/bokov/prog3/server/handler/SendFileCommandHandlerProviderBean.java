@@ -40,6 +40,9 @@ import javax.json.JsonObject;
 import java.io.File;
 import java.util.*;
 
+/**
+ * Provides a command handler for the {@code SEND-FILE} command
+ */
 @ApplicationScoped
 public class SendFileCommandHandlerProviderBean implements ServerChatClientCommandHandlerProviderBean {
 

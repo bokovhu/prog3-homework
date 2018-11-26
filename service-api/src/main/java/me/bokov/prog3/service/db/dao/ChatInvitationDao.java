@@ -21,8 +21,16 @@ package me.bokov.prog3.service.db.dao;
 import com.j256.ormlite.dao.Dao;
 import me.bokov.prog3.service.db.entity.ChatInvitationEntity;
 
+/**
+ * The DAO interface that is used to access invitation entities
+ */
 public interface ChatInvitationDao extends Dao <ChatInvitationEntity, Long> {
 
+    /**
+     * Finds an invitation by its invitationId field
+     * @param invitationId the invitation ID to look for
+     * @return the result of the search
+     */
     ChatInvitationEntity getByInvitationId (String invitationId);
 
 }

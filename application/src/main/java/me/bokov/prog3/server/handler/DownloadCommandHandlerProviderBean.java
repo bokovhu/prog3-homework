@@ -40,6 +40,9 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collection;
 
+/**
+ * Provides a command handler for the {@code DOWNLOAD} command
+ */
 @ApplicationScoped
 public class DownloadCommandHandlerProviderBean implements ServerChatClientCommandHandlerProviderBean {
 

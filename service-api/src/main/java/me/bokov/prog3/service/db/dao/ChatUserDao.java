@@ -23,10 +23,28 @@ import me.bokov.prog3.service.db.entity.ChatUserEntity;
 
 import java.sql.SQLException;
 
+/**
+ * The DAO interface that is used to access chat user entities
+ */
 public interface ChatUserDao extends Dao<ChatUserEntity, Long> {
 
+    /**
+     * Ensures the existence of a given username.
+     *
+     * If the user exists, the function returns that already existing user.
+     * If the user did not exist before, it gets created, and the newly created user is returned.
+     * @param username the username to ensure
+     * @return the user
+     * @throws SQLException
+     */
     ChatUserEntity ensureUserByUsername(String username) throws SQLException;
 
+    /**
+     * Checks whether a given user is banned.
+     * @param id the ID of the user to check
+     * @return True, if the user is banned, false otherwise
+     * @throws SQLException
+     */
     boolean isUserBanned(Long id) throws SQLException;
 
 }

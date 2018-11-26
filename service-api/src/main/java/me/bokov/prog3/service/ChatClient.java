@@ -23,8 +23,14 @@ import me.bokov.prog3.service.client.ConnectionConfiguration;
 import me.bokov.prog3.service.common.CommunicationCapableService;
 import me.bokov.prog3.service.common.SessionCapableService;
 
+/**
+ * Interface for chat client management
+ */
 public interface ChatClient extends SessionCapableService, CommunicationCapableService {
 
+    /**
+     * Result of the connection
+     */
     enum ConnectResult {
 
         PROCEED_WITH_LOGIN,
@@ -33,12 +39,31 @@ public interface ChatClient extends SessionCapableService, CommunicationCapableS
 
     }
 
+    /**
+     * Attempts to connect to a chat server using a supplied connection configuration, and returns the outcome of the
+     * attempt
+     * @param configuration the connection configuration
+     * @return the outcome of the attempt
+     * @throws IllegalStateException if the chat client is already connected to a server
+     */
     ConnectResult connect(ConnectionConfiguration configuration);
 
+    /**
+     * Checks whether the chat client is currently connected
+     * @return true, if the chat client is currently connected to a chat server, false otherwise
+     */
     boolean isConnected();
 
+    /**
+     * Disconnects the chat client from the server
+     * @throws IllegalStateException if the client is currently not connected to a chat server
+     */
     void disconnect();
 
+    /**
+     * Retrieve the endpoint of the server the client is connected to
+     * @return the server {@link me.bokov.prog3.command.endpoint.Endpoint}
+     */
     ChatServerEndpoint getServerEndpoint();
 
 }

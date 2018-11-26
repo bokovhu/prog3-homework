@@ -18,16 +18,43 @@
 
 package me.bokov.prog3.service.common;
 
+/**
+ * Base interface for all services that are capable of handling session data.
+ *
+ * Sessions can be though of simple maps, with {@link String} keys and {@link Object} values
+ */
 public interface SessionCapableService {
 
+    /**
+     * Sets a given session value
+     * @param key the key in the session
+     * @param value the value to set
+     */
     void setSessionValue(String key, Object value);
 
+    /**
+     * Retrieves a given session value
+     * @param key the key in the session
+     * @return the value in the session, identified by the key
+     */
     Object getSessionValue(String key);
 
+    /**
+     * Checks whether a given session value is set
+     * @param key the key in the session
+     * @return true, if a session entry is found using the key, false otherwise
+     */
     boolean isSessionValueSet(String key);
 
+    /**
+     * Removes a given session value
+     * @param key the key in the session
+     */
     void removeSessionValue(String key);
 
+    /**
+     * Completely clears the session, removing all entries
+     */
     void clearSession();
 
 }

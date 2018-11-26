@@ -25,6 +25,9 @@ import me.bokov.prog3.service.db.entity.ChatRoomMembershipEntity;
 
 import java.sql.SQLException;
 
+/**
+ * The implementation of the DAO responsible for accessing chat room membership entities
+ */
 public class ChatRoomMembershipDaoImpl extends BaseDaoImpl<ChatRoomMembershipEntity, Long> implements ChatRoomMembershipDao {
 
     public ChatRoomMembershipDaoImpl(ConnectionSource connectionSource) throws SQLException {

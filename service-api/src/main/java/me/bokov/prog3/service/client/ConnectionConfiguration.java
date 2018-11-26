@@ -20,6 +20,9 @@ package me.bokov.prog3.service.client;
 
 import java.io.Serializable;
 
+/**
+ * Holds connection configuration data for client connection
+ */
 public class ConnectionConfiguration implements Serializable {
 
     private String host;

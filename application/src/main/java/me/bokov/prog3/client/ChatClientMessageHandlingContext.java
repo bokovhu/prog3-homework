@@ -18,6 +18,9 @@
 
 package me.bokov.prog3.client;
 
+/**
+ * The message handling context, that is used for client-side command handling
+ */
 public class ChatClientMessageHandlingContext {
 
     private final ChatClientImpl client;

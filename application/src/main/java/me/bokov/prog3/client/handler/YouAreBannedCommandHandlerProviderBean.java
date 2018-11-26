@@ -31,6 +31,9 @@ import javax.inject.Inject;
 import java.util.Arrays;
 import java.util.Collection;
 
+/**
+ * Provides a command handler for the {@code YOU-ARE-BANNED} command
+ */
 @ApplicationScoped
 public class YouAreBannedCommandHandlerProviderBean implements ChatClientCommandHandlerProviderBean {
 

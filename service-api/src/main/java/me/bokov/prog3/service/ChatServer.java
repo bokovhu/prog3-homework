@@ -26,22 +26,67 @@ import me.bokov.prog3.service.server.ServerConfiguration;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Interface for chat server management
+ */
 public interface ChatServer {
 
+    /**
+     * Starts the chat server using the supplied server configuration
+     * @param configuration the server configuration
+     * @throws IllegalStateException if the server is already running
+     */
     void start(ServerConfiguration configuration);
 
+    /**
+     * Checks whether the chat server is currently running
+     * @return true, if the chat server is running, false otherwise
+     */
     boolean isRunning();
 
+    /**
+     * Retrieves the server configuration that was used to start the server
+     * @return the server configuration of the currently running chat server
+     */
     ServerConfiguration getServerConfiguration();
 
+    /**
+     * Stops the currently running chat server, if it's running
+     * @throws IllegalStateException if the server is not running
+     */
     void stop();
 
+    /**
+     * Retrieves a list of the currently connected chat users
+     * @return the list of the connected users
+     */
     List<ChatUserVO> getConnectedUsers();
 
+    /**
+     * Retrieves the endpoints for the currently connected chat users, that are members of a given room
+     * @param roomId the ID of the room
+     * @return a list of the client endpoints
+     */
     List <ChatClientEndpoint> clientsInRoom (Long roomId);
+
+    /**
+     * Retrieves (if connected) the endpoint of a chat user
+     * @param userId the ID of the user
+     * @return an {@link Optional}, that contains the endpoint if the user is connected, or an empty {@link Optional} if
+     * the user is currently offline
+     */
     Optional <ChatClientEndpoint> clientByUserId (Long userId);
 
+    /**
+     * Bans a given user from the server
+     * @param userId the ID of the user to ban
+     */
     void banUser (Long userId);
+
+    /**
+     * Unbans a given user from the server
+     * @param userId the ID of the user to unban
+     */
     void unbanUser (Long userId);
 
 }
