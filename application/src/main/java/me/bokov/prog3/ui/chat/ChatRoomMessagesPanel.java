@@ -45,11 +45,6 @@ import java.util.List;
 
 public class ChatRoomMessagesPanel extends JPanel {
 
-    private static final ImageIcon CAT_1_IMAGE = new ImageIcon(".test-images/cat-1.jpg");
-    private static final ImageIcon CAT_2_IMAGE = new ImageIcon(".test-images/cat-2.jpg");
-    private static final ImageIcon CAT_3_IMAGE = new ImageIcon(".test-images/cat-3.jpg");
-    private static final ImageIcon CAT_4_IMAGE = new ImageIcon(".test-images/cat-4.jpg");
-
     private I18N i18n;
 
     private JTextPane chatTextPane;
