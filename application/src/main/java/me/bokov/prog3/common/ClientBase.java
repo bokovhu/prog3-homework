@@ -204,7 +204,7 @@ public abstract class ClientBase<CTX> implements CommunicationCapableService, Se
             Response r = future.get(timeoutInMillisec, TimeUnit.MILLISECONDS);
 
             executorService.shutdown();
-            executorService.awaitTermination(1000L, TimeUnit.MILLISECONDS);
+            executorService.awaitTermination(5000L, TimeUnit.MILLISECONDS);
 
             return r;
 

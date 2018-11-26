@@ -18,28 +18,52 @@
 
 package me.bokov.prog3.ui;
 
+import me.bokov.prog3.AsyncHelper;
+import me.bokov.prog3.service.ChatClient;
 import me.bokov.prog3.ui.chat.ChatRoomTab;
 import me.bokov.prog3.ui.chat.MessageComposerPanel;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import javax.swing.*;
 import java.awt.*;
 
 @ApplicationScoped
 public class ChatUIBean extends ScreenBase {
 
+    @Inject
+    private ChatClient chatClient;
+
     JTabbedPane chatRoomsTabbedPane;
     MessageComposerPanel messageComposerPanel;
 
     private void initChatRoomTabs () {
 
-        // TODO: Retrieve list of user's rooms and create tabs accordingly
         // TODO: The tabs must be updated when a JoinedRoomEvent or LeftRoomEvent is fired
 
         chatRoomsTabbedPane = new JTabbedPane();
-        chatRoomsTabbedPane.addTab("Lobby", new ChatRoomTab());
-        chatRoomsTabbedPane.addTab("Create room", new JPanel());
-        chatRoomsTabbedPane.setTabComponentAt(chatRoomsTabbedPane.getTabCount() - 1, new JButton("Hello"));
+        chatRoomsTabbedPane.addTab("", new JPanel());
+
+        JButton createRoomButton = new JButton(i18n.getText("chat.create-room"));
+        createRoomButton.setBorder(BorderFactory.createEmptyBorder());
+        createRoomButton.addActionListener(
+                e -> {
+
+                    AsyncHelper.runAsync(
+                            () -> {
+
+                                String roomName = JOptionPane.showInputDialog(null, i18n.getText("chat.room-name"));
+                                chatClient.getServerEndpoint().createRoom()
+                                        .roomName(roomName)
+                                        .execute();
+
+                            }
+                    );
+
+                }
+        );
+
+        chatRoomsTabbedPane.setTabComponentAt(0, createRoomButton);
 
     }
 
@@ -80,6 +104,24 @@ public class ChatUIBean extends ScreenBase {
         composerGbc.fill = GridBagConstraints.HORIZONTAL;
 
         panel.add(messageComposerPanel, composerGbc);
+
+    }
+
+    public void addRoomTab (Long roomId) {
+
+        SwingUtilities.invokeLater(
+                () -> {
+
+                    ChatRoomTab tab = new ChatRoomTab(roomId);
+                    chatRoomsTabbedPane.addTab(tab.getRoomName(), tab);
+                    tab.getMessagesPanel().updateMessages();
+
+                    if (chatRoomsTabbedPane.getTabCount() == 2) {
+                        chatRoomsTabbedPane.setSelectedIndex(1);
+                    }
+
+                }
+        );
 
     }
 

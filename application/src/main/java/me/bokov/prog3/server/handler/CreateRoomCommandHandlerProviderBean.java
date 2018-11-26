@@ -67,8 +67,8 @@ public class CreateRoomCommandHandlerProviderBean implements ServerChatClientCom
             database.getChatRoomMembershipDao().create(membership);
 
             context.getChatClient().getClientEndpoint().joinRoom()
-                    .room(Json.createObjectBuilder().add("roomId", newRoom.getId()).build())
-                    .execute();
+                    .roomId(newRoom.getId())
+                    .executeWithoutAnswer();
 
             return ResponseBuilder.create()
                     .messageId(request.getMessageId())

@@ -18,10 +18,20 @@
 
 package me.bokov.prog3.ui.chat;
 
+import me.bokov.prog3.command.response.Response;
+import me.bokov.prog3.service.ChatClient;
+import me.bokov.prog3.service.common.ChatRoomVO;
+
+import javax.enterprise.inject.spi.CDI;
+import javax.json.JsonObject;
 import javax.swing.*;
 import java.awt.*;
 
 public class ChatRoomTab extends JPanel {
+
+    private final Long roomId;
+
+    private ChatRoomVO roomData;
 
     private ChatRoomMessagesPanel messagesPanel;
     private ChatRoomControlsPanel controlsPanel;
@@ -59,10 +69,37 @@ public class ChatRoomTab extends JPanel {
 
     }
 
-    public ChatRoomTab () {
+    private void fetchRoom () {
 
+        ChatClient chatClient = CDI.current().select(ChatClient.class).get();
+
+        Response response = chatClient.getServerEndpoint().getRoom().roomId(this.roomId).execute();
+
+        JsonObject roomObject = response.getData().asJsonObject().getJsonObject("room");
+
+        roomData = new ChatRoomVO();
+        roomData.setName(roomObject.getString("name"));
+
+    }
+
+    public ChatRoomTab(Long roomId) {
+
+        this.roomId = roomId;
+
+        fetchRoom();
         initPanel();
 
     }
 
+    public String getRoomName () {
+        return roomData.getName();
+    }
+
+    public ChatRoomMessagesPanel getMessagesPanel() {
+        return messagesPanel;
+    }
+
+    public ChatRoomControlsPanel getControlsPanel() {
+        return controlsPanel;
+    }
 }

@@ -87,7 +87,10 @@ public class ChatRoomMessagesPanel extends JPanel {
 
         StyledDocument sd = jTextPane.getStyledDocument();
 
-        messageItems.forEach(mi -> mi.modifyDocument(jTextPane, sd));
+        // messageItems.forEach(mi -> mi.modifyDocument(jTextPane, sd));
+        for (MessageItem mi : messageItems) {
+            mi.modifyDocument(jTextPane, sd);
+        }
 
         add(jTextPane);
 

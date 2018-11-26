@@ -24,6 +24,8 @@ import me.bokov.prog3.command.response.ResponseBuilder;
 import me.bokov.prog3.server.ServerChatClientCommandHandlerProviderBean;
 import me.bokov.prog3.server.ServerChatClientMessageHandlingContext;
 import me.bokov.prog3.service.Database;
+import me.bokov.prog3.service.db.dao.ChatRoomMembershipDao;
+import me.bokov.prog3.service.db.entity.ChatRoomMembershipEntity;
 import me.bokov.prog3.service.db.entity.ChatUserEntity;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -31,6 +33,7 @@ import javax.inject.Inject;
 import javax.json.Json;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 @ApplicationScoped
 public class RegisterCommandHandlerProviderBean implements ServerChatClientCommandHandlerProviderBean {
@@ -76,6 +79,25 @@ public class RegisterCommandHandlerProviderBean implements ServerChatClientComma
 
             context.getChatClient().setSessionValue("authenticated", true);
             context.getChatClient().setSessionValue("userId", user.getId());
+
+
+            // Add user to lobby
+            ChatRoomMembershipEntity membership = new ChatRoomMembershipEntity();
+            membership.setChatUser(user);
+            membership.setChatRoom(database.getChatRoomDao().getLobby());
+            database.getChatRoomMembershipDao().create(membership);
+
+
+            // Send JOIN-ROOM messages
+            List <ChatRoomMembershipEntity> memberships = database.getChatRoomMembershipDao()
+                    .queryBuilder().where().eq("chat_user_id", user.getId()).query();
+
+            for (ChatRoomMembershipEntity m : memberships) {
+                context.getChatClient().getClientEndpoint()
+                        .joinRoom().roomId(m.getChatRoom().getId())
+                        .execute();
+            }
+
 
             return ResponseBuilder.create()
                     .messageId(request.getMessageId())

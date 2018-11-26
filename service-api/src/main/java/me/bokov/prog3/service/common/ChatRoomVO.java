@@ -19,6 +19,7 @@
 package me.bokov.prog3.service.common;
 
 import javax.json.Json;
+import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import java.io.Serializable;
@@ -81,8 +82,13 @@ public class ChatRoomVO implements Serializable {
                 .add("isLobby", getLobby());
 
         if (getOwner() != null) job.add("owner", getOwner().toJson());
-        if (getMembers() != null)
-            job.add("members", Json.createArrayBuilder(getMembers().stream().map(ChatUserVO::toJson).collect(Collectors.toList())));
+        if (getMembers() != null) {
+            JsonArrayBuilder jab = Json.createArrayBuilder();
+            for (ChatUserVO u : getMembers()) {
+                jab.add(u.toJson());
+            }
+            job.add("members", jab.build());
+        }
 
         return job.build();
 

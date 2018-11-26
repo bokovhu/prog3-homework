@@ -24,6 +24,7 @@ import me.bokov.prog3.command.response.ResponseBuilder;
 import me.bokov.prog3.server.ServerChatClientCommandHandlerProviderBean;
 import me.bokov.prog3.server.ServerChatClientMessageHandlingContext;
 import me.bokov.prog3.service.Database;
+import me.bokov.prog3.service.db.entity.ChatRoomMembershipEntity;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -31,6 +32,7 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 @ApplicationScoped
 public class LoginCommandHandlerProviderBean implements ServerChatClientCommandHandlerProviderBean {
@@ -80,6 +82,18 @@ public class LoginCommandHandlerProviderBean implements ServerChatClientCommandH
                         .queryForFirst().getId();
 
                 context.getChatClient().setSessionValue("userId", userId);
+
+
+                // Send JOIN-ROOM messages
+                List<ChatRoomMembershipEntity> memberships = database.getChatRoomMembershipDao()
+                        .queryBuilder().where().eq("chat_user_id", userId).query();
+
+                for (ChatRoomMembershipEntity m : memberships) {
+                    context.getChatClient().getClientEndpoint()
+                            .joinRoom().roomId(m.getChatRoom().getId())
+                            .executeWithoutAnswer();
+                }
+
 
                 return ResponseBuilder.create()
                         .messageId(request.getMessageId())

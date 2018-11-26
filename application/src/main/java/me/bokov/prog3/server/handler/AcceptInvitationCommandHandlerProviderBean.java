@@ -63,7 +63,7 @@ public class AcceptInvitationCommandHandlerProviderBean implements ServerChatCli
             database.getChatInvitationDao().delete(invitation);
 
             context.getChatClient().getClientEndpoint().joinRoom()
-                    .room(Json.createObjectBuilder().add("roomId", invitation.getRoom().getId()).build())
+                    .roomId(invitation.getRoom().getId())
                     .execute();
 
             return ResponseBuilder.create()

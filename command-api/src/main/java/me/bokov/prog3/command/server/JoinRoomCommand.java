@@ -24,6 +24,8 @@ import javax.json.JsonObject;
 
 public interface JoinRoomCommand extends Command {
 
-    JoinRoomCommand room (JsonObject roomObject);
+    int SUCCESS = 200;
+
+    JoinRoomCommand roomId (Long roomId);
 
 }

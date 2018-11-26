@@ -25,7 +25,7 @@ import me.bokov.prog3.service.db.BaseEntity;
 @DatabaseTable(tableName = "chat_room")
 public class ChatRoomEntity extends BaseEntity {
 
-    @DatabaseField(columnName = "name", unique = true, canBeNull = false)
+    @DatabaseField(columnName = "name", canBeNull = false)
     private String name;
 
     @DatabaseField (columnName = "is_lobby", canBeNull = false, columnDefinition = "BOOLEAN")

@@ -28,15 +28,15 @@ import javax.json.JsonValue;
 
 public class JoinRoomCommandImpl extends CommandBase implements JoinRoomCommand {
 
-    private JsonObject room;
+    private Long roomId;
 
     public JoinRoomCommandImpl(ClientBase chatClient) {
         super(chatClient);
     }
 
     @Override
-    public JoinRoomCommand room(JsonObject roomObject) {
-        this.room = roomObject;
+    public JoinRoomCommand roomId(Long roomId) {
+        this.roomId = roomId;
         return this;
     }
 
@@ -47,6 +47,6 @@ public class JoinRoomCommandImpl extends CommandBase implements JoinRoomCommand 
 
     @Override
     protected JsonValue getData() {
-        return Json.createObjectBuilder().add("room", this.room).build();
+        return Json.createObjectBuilder().add("roomId", this.roomId).build();
     }
 }
