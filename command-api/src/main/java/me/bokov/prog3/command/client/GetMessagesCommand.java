@@ -23,6 +23,7 @@ import me.bokov.prog3.command.Command;
 public interface GetMessagesCommand extends Command {
 
     int SUCCESS = 200;
+    int INVALID_ROOM_ID = 400;
 
     GetMessagesCommand roomId (Long roomId);
 

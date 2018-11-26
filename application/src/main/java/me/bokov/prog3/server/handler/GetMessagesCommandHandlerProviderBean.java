@@ -18,6 +18,7 @@
 
 package me.bokov.prog3.server.handler;
 
+import me.bokov.prog3.command.Command;
 import me.bokov.prog3.command.CommandHandler;
 import me.bokov.prog3.command.client.GetMessagesCommand;
 import me.bokov.prog3.command.response.ResponseBuilder;
@@ -38,6 +39,7 @@ import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
+import javax.json.JsonValue;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -56,11 +58,29 @@ public class GetMessagesCommandHandlerProviderBean implements ServerChatClientCo
     public CommandHandler<ServerChatClientMessageHandlingContext> getCommandHandler() {
         return (context, request) -> {
 
+            if (context.getChatClient().isBanned()) {
+                return ResponseBuilder.create().messageId(request.getMessageId())
+                        .code(Command.BANNED)
+                        .build();
+            }
+
+            if (request.getData() == null || request.getData().getValueType() != JsonValue.ValueType.OBJECT) {
+                return ResponseBuilder.create().messageId(request.getMessageId())
+                        .code(Command.INVALID)
+                        .build();
+            }
+
             JsonObject json = request.getData().asJsonObject();
 
             ChatRoomEntity room = database.getChatRoomDao().queryForId(
                     json.getJsonNumber("roomId").longValue()
             );
+
+            if (room == null) {
+                return ResponseBuilder.create().messageId(request.getMessageId())
+                        .code(GetMessagesCommand.INVALID_ROOM_ID)
+                        .build();
+            }
 
             List<Long> members = database.getChatRoomMembershipDao().queryBuilder()
                     .where().eq("chat_room_id", room.getId())
@@ -82,6 +102,12 @@ public class GetMessagesCommandHandlerProviderBean implements ServerChatClientCo
 
                 ChatMessageVO vo = new ChatMessageVO();
                 vo.setId(message.getId());
+                if (!userMap.containsKey(message.getSentBy().getId())) {
+                    userMap.put(
+                            message.getSentBy().getId(),
+                            database.getChatUserDao().queryForId(message.getSentBy().getId()).toVo()
+                    );
+                }
                 vo.setSentBy(userMap.get(message.getSentBy().getId()));
                 vo.setRoom(roomVo);
                 vo.setTextMessage(message.isTextMessage());

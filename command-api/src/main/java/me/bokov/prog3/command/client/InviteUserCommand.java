@@ -23,6 +23,10 @@ import me.bokov.prog3.command.Command;
 public interface InviteUserCommand extends Command {
 
     int SUCCESS = 200;
+    int USER_NOT_FOUND = 400;
+    int INVALID_ROOM_ID = 401;
+    int INVITED_USERNAME_REQUIRED = 402;
+    int ROOM_ID_REQUIRED = 403;
 
     InviteUserCommand invitedUsername (String username);
     InviteUserCommand roomId (Long roomId);

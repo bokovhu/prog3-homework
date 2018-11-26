@@ -24,6 +24,8 @@ public interface GetRoomCommand extends Command {
 
     // TODO: Errors
     int SUCCESS = 200;
+    int ROOM_ID_REQUIRED = 400;
+    int INVALID_ROOM_ID = 401;
 
     GetRoomCommand roomId (Long roomId);
 

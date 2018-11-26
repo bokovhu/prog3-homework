@@ -18,6 +18,7 @@
 
 package me.bokov.prog3.server.handler;
 
+import me.bokov.prog3.command.Command;
 import me.bokov.prog3.command.CommandHandler;
 import me.bokov.prog3.command.client.CreateRoomCommand;
 import me.bokov.prog3.command.response.ResponseBuilder;
@@ -27,10 +28,13 @@ import me.bokov.prog3.service.Database;
 import me.bokov.prog3.service.db.entity.ChatRoomEntity;
 import me.bokov.prog3.service.db.entity.ChatRoomMembershipEntity;
 import me.bokov.prog3.service.db.entity.ChatUserEntity;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonValue;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -49,13 +53,33 @@ public class CreateRoomCommandHandlerProviderBean implements ServerChatClientCom
     public CommandHandler<ServerChatClientMessageHandlingContext> getCommandHandler() {
         return (context, request) -> {
 
+            if (context.getChatClient().isBanned()) {
+                return ResponseBuilder.create().messageId(request.getMessageId())
+                        .code(Command.BANNED)
+                        .build();
+            }
+
+            if (request.getData() == null || request.getData().getValueType() != JsonValue.ValueType.OBJECT) {
+                return ResponseBuilder.create().messageId(request.getMessageId())
+                        .code(Command.INVALID)
+                        .build();
+            }
+
+            JsonObject json = request.getData().asJsonObject();
+
+            if (!json.containsKey("roomName") || json.isNull("roomName") || json.getString("roomName").isEmpty()) {
+                return ResponseBuilder.create().messageId(request.getMessageId())
+                        .code(CreateRoomCommand.ROOM_NAME_REQUIRED)
+                        .build();
+            }
+
             ChatRoomEntity newRoom = new ChatRoomEntity();
 
             ChatUserEntity user = database.getChatUserDao().queryForId((Long) context.getChatClient().getSessionValue("userId"));
 
             newRoom.setOwnerChatUser(user);
             newRoom.setIsLobby(false);
-            newRoom.setName(request.getData().asJsonObject().getString("roomName"));
+            newRoom.setName(json.getString("roomName"));
 
             database.getChatRoomDao().create(newRoom);
 

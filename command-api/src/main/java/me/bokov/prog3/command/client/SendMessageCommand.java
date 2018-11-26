@@ -23,6 +23,8 @@ import me.bokov.prog3.command.Command;
 public interface SendMessageCommand extends Command {
 
     int SUCCESS = 200;
+    int INVALID_ROOM_ID = 400;
+    int MESSAGE_TEXT_REQUIRED = 401;
 
     SendMessageCommand messageText (String messageText);
     SendMessageCommand roomId (Long roomId);

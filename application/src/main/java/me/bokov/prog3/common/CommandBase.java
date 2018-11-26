@@ -59,7 +59,11 @@ public abstract class CommandBase implements Command {
 
     @Override
     public Response execute() throws CommandException {
-        return chatClient.readResponse(send(), 5000L);
+        Response response = chatClient.readResponse(send(), 5000L);
+        if (response.getCode() > 399) {
+            throw new CommandException("Error during command execution, got error code: " + response.getCode(), response.getCode());
+        }
+        return response;
     }
 
     @Override

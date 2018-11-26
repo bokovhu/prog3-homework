@@ -18,6 +18,7 @@
 
 package me.bokov.prog3.server.handler;
 
+import me.bokov.prog3.command.Command;
 import me.bokov.prog3.command.CommandHandler;
 import me.bokov.prog3.command.client.HelloCommand;
 import me.bokov.prog3.command.response.ResponseBuilder;
@@ -32,9 +33,9 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.json.JsonObject;
+import javax.json.JsonValue;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
 
 @ApplicationScoped
 public class HelloCommandHandlerProviderBean implements ServerChatClientCommandHandlerProviderBean {
@@ -60,19 +61,19 @@ public class HelloCommandHandlerProviderBean implements ServerChatClientCommandH
 
         return (ctx, req) -> {
 
-            if (!(req.getData() instanceof JsonObject)) {
+            if (req.getData() == null || req.getData().getValueType() != JsonValue.ValueType.OBJECT) {
                 return ResponseBuilder.create()
                         .messageId(req.getMessageId())
-                        .code(999)
+                        .code(Command.INVALID)
                         .build();
             }
 
             JsonObject json = req.getData().asJsonObject();
 
-            if (!json.containsKey("username")) {
+            if (!json.containsKey("username") || json.isNull("username") || json.getString("username").isEmpty()) {
                 return ResponseBuilder.create()
                         .messageId(req.getMessageId())
-                        .code(999)
+                        .code(HelloCommand.USERNAME_REQUIRED)
                         .build();
             }
 
@@ -93,7 +94,7 @@ public class HelloCommandHandlerProviderBean implements ServerChatClientCommandH
             if (isUserBanned) {
                 return ResponseBuilder.create()
                         .messageId(req.getMessageId())
-                        .code(HelloCommand.BANNED)
+                        .code(Command.BANNED)
                         .build();
             }
 

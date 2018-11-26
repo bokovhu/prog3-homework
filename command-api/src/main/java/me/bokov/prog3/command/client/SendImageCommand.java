@@ -22,6 +22,12 @@ import me.bokov.prog3.command.Command;
 
 public interface SendImageCommand extends Command {
 
+    int SUCCESS = 200;
+    int INVALID_ROOM_ID = 400;
+    int EXTENSION_REQUIRED = 401;
+    int INVALID_EXTENSION = 402;
+    int IMAGE_CONTENT_REQUIRED = 403;
+
     SendImageCommand extension (String extension);
     SendImageCommand roomId (Long roomId);
     SendImageCommand imageContent (String contentBase64);

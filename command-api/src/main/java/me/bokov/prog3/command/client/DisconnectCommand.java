@@ -21,4 +21,7 @@ package me.bokov.prog3.command.client;
 import me.bokov.prog3.command.Command;
 
 public interface DisconnectCommand extends Command {
+
+    int SUCCESS = 200;
+
 }

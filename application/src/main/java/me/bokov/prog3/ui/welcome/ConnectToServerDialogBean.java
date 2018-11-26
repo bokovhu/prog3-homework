@@ -18,12 +18,14 @@
 
 package me.bokov.prog3.ui.welcome;
 
+import me.bokov.prog3.command.CommandException;
 import me.bokov.prog3.command.client.LoginCommand;
 import me.bokov.prog3.command.client.RegisterCommand;
 import me.bokov.prog3.command.response.Response;
 import me.bokov.prog3.service.ChatClient;
 import me.bokov.prog3.service.client.ConnectionConfiguration;
 import me.bokov.prog3.ui.ChatUIBean;
+import me.bokov.prog3.ui.ErrorUIBean;
 import me.bokov.prog3.ui.common.InputGroup;
 import me.bokov.prog3.util.Config;
 import me.bokov.prog3.util.I18N;
@@ -50,6 +52,9 @@ public class ConnectToServerDialogBean {
 
     @Inject
     private Config config;
+
+    @Inject
+    private ErrorUIBean errorUIBean;
 
     public void show() {
 
@@ -120,30 +125,27 @@ public class ConnectToServerDialogBean {
 
                                 if (loginPromptResult == JOptionPane.OK_OPTION) {
 
-                                    Response loginResponse = chatClient.getServerEndpoint().login()
-                                            .password(new String(passwordField.getPassword()))
-                                            .execute();
+                                    try {
 
-                                    if (loginResponse.getCode() == LoginCommand.SUCCESS) {
+                                        Response loginResponse = chatClient.getServerEndpoint().login()
+                                                .password(new String(passwordField.getPassword()))
+                                                .execute();
 
                                         chatClient.setSessionValue("userId", loginResponse.getData().asJsonObject().getJsonNumber("userId").longValue());
 
                                         chatUIBean.initialize();
                                         chatUIBean.activate();
 
-                                    } else if (loginResponse.getCode() == LoginCommand.INVALID_PASSWORD) {
+                                    } catch (CommandException ce) {
 
-                                        JOptionPane.showMessageDialog(
-                                                null,
-                                                i18n.getText("connect-to-server.invalid-password"),
-                                                i18n.getText("connect-to-server.invalid-password-title"),
-                                                JOptionPane.ERROR_MESSAGE
-                                        );
+                                        switch (ce.getErrorCode()) {
+                                            case LoginCommand.INVALID_PASSWORD:
+                                                errorUIBean.showErrorMessage(i18n.getText("connect-to-server.invalid-password"));
+                                                break;
+                                        }
 
-                                    }
-
-                                    if (loginResponse.getCode() != LoginCommand.SUCCESS) {
                                         chatClient.disconnect();
+
                                     }
 
                                 }
@@ -160,32 +162,28 @@ public class ConnectToServerDialogBean {
 
                                 if (registrationPromptResult == JOptionPane.OK_OPTION) {
 
-                                    Response registerResponse = chatClient.getServerEndpoint().register()
-                                            .password(new String(passwordField.getPassword()))
-                                            .execute();
+                                    try {
 
-                                    if (registerResponse.getCode() == RegisterCommand.SUCCESS) {
+                                        Response registerResponse = chatClient.getServerEndpoint().register()
+                                                .password(new String(passwordField.getPassword()))
+                                                .execute();
 
                                         chatClient.setSessionValue("userId", registerResponse.getData().asJsonObject().getJsonNumber("userId").longValue());
 
                                         chatUIBean.initialize();
                                         chatUIBean.activate();
 
-                                    } else {
+                                    } catch (CommandException ce) {
+
                                         chatClient.disconnect();
+
                                     }
 
                                 }
 
                                 break;
                             case BANNED:
-
-                                JOptionPane.showMessageDialog(
-                                        null,
-                                        i18n.getText("connect-to-server.you-are-banned"),
-                                        i18n.getText("connect-to-server.you-are-banned-title"),
-                                        JOptionPane.ERROR_MESSAGE
-                                );
+                                errorUIBean.showErrorMessage(i18n.getText("connect-to-server.you-are-banned"));
 
                                 chatClient.disconnect();
 

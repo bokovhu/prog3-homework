@@ -22,6 +22,9 @@ import me.bokov.prog3.command.response.Response;
 
 public interface Command {
 
+    int BANNED = 998;
+    int INVALID = 999;
+
     Response execute() throws CommandException;
 
     void executeWithoutAnswer() throws CommandException;

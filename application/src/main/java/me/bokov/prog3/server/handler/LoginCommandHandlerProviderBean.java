@@ -18,6 +18,7 @@
 
 package me.bokov.prog3.server.handler;
 
+import me.bokov.prog3.command.Command;
 import me.bokov.prog3.command.CommandHandler;
 import me.bokov.prog3.command.client.LoginCommand;
 import me.bokov.prog3.command.response.ResponseBuilder;

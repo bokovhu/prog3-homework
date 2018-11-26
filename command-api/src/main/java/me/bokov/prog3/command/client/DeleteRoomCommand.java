@@ -22,6 +22,10 @@ import me.bokov.prog3.command.Command;
 
 public interface DeleteRoomCommand extends Command {
 
+    int SUCCESS = 200;
+    int INVALID_ROOM_ID = 400;
+    int NOT_OWNER = 401;
+
     DeleteRoomCommand roomId (Long roomId);
 
 }

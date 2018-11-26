@@ -364,13 +364,43 @@ public class ChatRoomMessagesPanel extends JPanel {
 
         }
 
+        private ImageIcon createPreviewIcon () {
+
+            double aspect = (1.0 * image.getIconWidth()) / (1.0 * image.getIconHeight());
+
+            double factor = 1.0;
+
+            if (aspect < 1) {
+                // height is bigger
+                factor = image.getIconWidth() * 1.0 / 128.0;
+
+            } else {
+
+                factor = image.getIconHeight() * 1.0 / 128.0;
+
+            }
+
+            return new ImageIcon(
+                    image.getImage().getScaledInstance(
+                            Math.max(128, (int) (1.0 * image.getIconWidth() / factor)),
+                            Math.max(128, (int) (1.0 * image.getIconHeight() / factor)),
+                            Image.SCALE_SMOOTH
+                    )
+            );
+
+        }
+
         private void addImageToDocument(JTextPane pane, StyledDocument sd) {
 
             addDateAndSentBy(sd);
 
-            JLabel imageLabel = new JLabel(image);
-            imageLabel.setPreferredSize(new Dimension(128, 128));
-            imageLabel.setMaximumSize(new Dimension(128, 128));
+            ImageIcon preview = createPreviewIcon();
+
+            JLabel imageLabel = new JLabel(
+                    preview
+            );
+            imageLabel.setPreferredSize(new Dimension(preview.getIconWidth(), preview.getIconHeight()));
+            imageLabel.setMaximumSize(new Dimension(preview.getIconWidth(), preview.getIconHeight()));
 
             imageLabel.addMouseListener(
                     new MouseAdapter() {

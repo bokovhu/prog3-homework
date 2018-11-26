@@ -24,6 +24,7 @@ public interface CreateRoomCommand extends Command {
 
     // TODO: Errors
     int SUCCESS = 200;
+    int ROOM_NAME_REQUIRED = 400;
 
     CreateRoomCommand roomName(String roomName);
 

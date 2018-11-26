@@ -18,9 +18,13 @@
 
 package me.bokov.prog3.ui.chat;
 
+import me.bokov.prog3.command.CommandException;
+import me.bokov.prog3.command.client.InviteUserCommand;
+import me.bokov.prog3.command.response.Response;
 import me.bokov.prog3.service.ChatClient;
 import me.bokov.prog3.service.common.ChatRoomVO;
 import me.bokov.prog3.ui.ChatUIBean;
+import me.bokov.prog3.ui.ErrorUIBean;
 import me.bokov.prog3.ui.common.PanelList;
 import me.bokov.prog3.util.I18N;
 
@@ -46,8 +50,27 @@ public class ChatRoomControlsPanel extends JPanel {
 
         String username = JOptionPane.showInputDialog(i18n.getText("chat.chat-room-controls.invite-prompt"));
 
-        chatClient.getServerEndpoint()
-                .inviteUser().roomId(roomId).invitedUsername(username).execute();
+        // Cancel
+        if (username == null) return;
+
+        try {
+
+            Response response = chatClient.getServerEndpoint()
+                    .inviteUser().roomId(roomId).invitedUsername(username).execute();
+
+        } catch (CommandException ce) {
+
+            switch (ce.getErrorCode()) {
+                case InviteUserCommand
+                        .USER_NOT_FOUND:
+                    CDI.current().select(ErrorUIBean.class).get().showErrorMessage(i18n.getText("chat.chat-room-controls.invited-user-not-found"));
+                    break;
+                case InviteUserCommand.INVITED_USERNAME_REQUIRED:
+                    CDI.current().select(ErrorUIBean.class).get().showErrorMessage(i18n.getText("chat.chat-room-controls.invited-username-required"));
+                    break;
+            }
+
+        }
 
     }
 

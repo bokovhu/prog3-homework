@@ -26,6 +26,7 @@ import me.bokov.prog3.command.response.ResponseBuilder;
 import me.bokov.prog3.common.ClientBase;
 import me.bokov.prog3.common.CommandHandlerProviderBean;
 import me.bokov.prog3.event.UserDisconnectedEvent;
+import me.bokov.prog3.service.Database;
 import me.bokov.prog3.service.server.ServerChatClient;
 
 import javax.enterprise.inject.spi.CDI;
@@ -42,6 +43,25 @@ public class ServerChatClientImpl extends ClientBase<ServerChatClientMessageHand
 
     public ChatClientEndpoint getClientEndpoint() {
         return chatClientEndpoint;
+    }
+
+    @Override
+    public boolean isBanned() {
+
+        if (!isSessionValueSet("userId")) return false;
+
+        try {
+
+            return CDI.current().select(Database.class)
+                    .get().getChatUserDao()
+                    .isUserBanned((Long) getSessionValue("userId"));
+
+        } catch (Exception exc) {
+
+            throw new IllegalStateException(exc);
+
+        }
+
     }
 
     @Override

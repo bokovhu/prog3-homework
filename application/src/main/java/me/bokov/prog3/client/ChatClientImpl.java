@@ -18,6 +18,8 @@
 
 package me.bokov.prog3.client;
 
+import me.bokov.prog3.command.Command;
+import me.bokov.prog3.command.CommandException;
 import me.bokov.prog3.command.CommandHandler;
 import me.bokov.prog3.command.client.HelloCommand;
 import me.bokov.prog3.command.endpoint.ChatServerEndpoint;
@@ -75,16 +77,24 @@ public class ChatClientImpl extends ClientBase<ChatClientMessageHandlingContext>
 
             this.chatServerEndpoint = new ChatServerEndpointImpl(this, connectionInformation);
 
-            Response helloResponse = getServerEndpoint().hello().username(configuration.getUsername())
-                    .execute();
+            try {
 
-            logger.info("Got hello response from server: {}", helloResponse.toString());
+                Response helloResponse = getServerEndpoint().hello().username(configuration.getUsername())
+                        .execute();
 
-            connected = true;
+                logger.info("Got hello response from server: {}", helloResponse.toString());
 
-            if (helloResponse.getCode() == HelloCommand.CONTINUE) return ConnectResult.PROCEED_WITH_LOGIN;
-            else if (helloResponse.getCode() == HelloCommand.FIRST_TIME) return ConnectResult.PROCEED_WITH_REGISTRATION;
-            else if (helloResponse.getCode() == HelloCommand.BANNED) return ConnectResult.BANNED;
+                connected = true;
+
+                if (helloResponse.getCode() == HelloCommand.CONTINUE) return ConnectResult.PROCEED_WITH_LOGIN;
+                else if (helloResponse.getCode() == HelloCommand.FIRST_TIME)
+                    return ConnectResult.PROCEED_WITH_REGISTRATION;
+
+            } catch (CommandException ce) {
+
+                if (ce.getErrorCode() == Command.BANNED) return ConnectResult.BANNED;
+
+            }
 
             disconnect();
 

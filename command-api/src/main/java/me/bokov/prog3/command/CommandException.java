@@ -20,19 +20,28 @@ package me.bokov.prog3.command;
 
 public class CommandException extends RuntimeException {
 
-    public CommandException() {
+    private final int errorCode;
+
+    public CommandException(int errorCode) {
+        this.errorCode = errorCode;
     }
 
-    public CommandException(String message) {
+    public CommandException(String message, int errorCode) {
         super(message);
+        this.errorCode = errorCode;
     }
 
-    public CommandException(String message, Throwable cause) {
+    public CommandException(String message, Throwable cause, int errorCode) {
         super(message, cause);
+        this.errorCode = errorCode;
     }
 
-    public CommandException(Throwable cause) {
+    public CommandException(Throwable cause, int errorCode) {
         super(cause);
+        this.errorCode = errorCode;
     }
 
+    public int getErrorCode() {
+        return errorCode;
+    }
 }

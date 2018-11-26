@@ -18,6 +18,7 @@
 
 package me.bokov.prog3.server.handler;
 
+import me.bokov.prog3.command.Command;
 import me.bokov.prog3.command.CommandHandler;
 import me.bokov.prog3.command.client.InviteUserCommand;
 import me.bokov.prog3.command.response.ResponseBuilder;
@@ -34,6 +35,7 @@ import me.bokov.prog3.service.db.entity.ChatUserEntity;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.json.JsonObject;
+import javax.json.JsonValue;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.UUID;
@@ -56,11 +58,41 @@ public class InviteUserCommandHandlerProviderBean implements ServerChatClientCom
     public CommandHandler<ServerChatClientMessageHandlingContext> getCommandHandler() {
         return (context, request) -> {
 
+            if (context.getChatClient().isBanned()) {
+                return ResponseBuilder.create().messageId(request.getMessageId())
+                        .code(Command.BANNED)
+                        .build();
+            }
+
+            if (request.getData() == null || request.getData().getValueType() != JsonValue.ValueType.OBJECT) {
+                return ResponseBuilder.create().messageId(request.getMessageId())
+                        .code(Command.INVALID)
+                        .build();
+            }
+
             JsonObject json = request.getData().asJsonObject();
+
+            if (!json.containsKey("roomId") || json.isNull("roomId")) {
+                return ResponseBuilder.create().messageId(request.getMessageId())
+                        .code(InviteUserCommand.ROOM_ID_REQUIRED)
+                        .build();
+            }
+
+            if (!json.containsKey("invitedUsername") || json.isNull("invitedUsername")) {
+                return ResponseBuilder.create().messageId(request.getMessageId())
+                        .code(InviteUserCommand.INVITED_USERNAME_REQUIRED)
+                        .build();
+            }
 
             ChatUserEntity invitedUser = database.getChatUserDao().queryBuilder()
                     .where().eq("username", json.getString("invitedUsername"))
                     .queryForFirst();
+
+            if (invitedUser == null) {
+                return ResponseBuilder.create().messageId(request.getMessageId())
+                        .code(InviteUserCommand.USER_NOT_FOUND)
+                        .build();
+            }
 
             ChatUserEntity invitorUser = database.getChatUserDao().queryForId(
                     (Long) context.getChatClient().getSessionValue("userId")
@@ -68,6 +100,11 @@ public class InviteUserCommandHandlerProviderBean implements ServerChatClientCom
 
             ChatRoomEntity room = database.getChatRoomDao().queryForId(json.getJsonNumber("roomId").longValue());
 
+            if (room == null) {
+                return ResponseBuilder.create().messageId(request.getMessageId())
+                        .code(InviteUserCommand.INVALID_ROOM_ID)
+                        .build();
+            }
 
             ChatInvitationEntity invitation = new ChatInvitationEntity();
             invitation.setRoom(room);

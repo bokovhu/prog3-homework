@@ -18,6 +18,7 @@
 
 package me.bokov.prog3.server.handler;
 
+import me.bokov.prog3.command.Command;
 import me.bokov.prog3.command.CommandHandler;
 import me.bokov.prog3.command.client.SendMessageCommand;
 import me.bokov.prog3.command.response.ResponseBuilder;
@@ -55,6 +56,12 @@ public class SendMessageCommandHandlerProviderBean implements ServerChatClientCo
     @Override
     public CommandHandler<ServerChatClientMessageHandlingContext> getCommandHandler() {
         return (context, request) -> {
+
+            if (context.getChatClient().isBanned()) {
+                return ResponseBuilder.create().messageId(request.getMessageId())
+                        .code(Command.BANNED)
+                        .build();
+            }
 
             JsonObject json = request.getData().asJsonObject();
 

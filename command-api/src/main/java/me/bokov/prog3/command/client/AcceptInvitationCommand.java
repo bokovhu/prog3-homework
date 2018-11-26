@@ -24,6 +24,8 @@ public interface AcceptInvitationCommand extends Command {
 
     // TODO: Errors
     int SUCCESS = 200;
+    int INVALID_INVITATION_ID = 400;
+    int ALREADY_MEMBER = 401;
 
     AcceptInvitationCommand invitationId(String invitationId);
 

@@ -18,6 +18,7 @@
 
 package me.bokov.prog3.server.handler;
 
+import me.bokov.prog3.command.Command;
 import me.bokov.prog3.command.CommandHandler;
 import me.bokov.prog3.command.client.DownloadCommand;
 import me.bokov.prog3.command.response.ResponseBuilder;
@@ -33,6 +34,7 @@ import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
+import javax.json.JsonValue;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Base64;
@@ -56,11 +58,35 @@ public class DownloadCommandHandlerProviderBean implements ServerChatClientComma
     public CommandHandler<ServerChatClientMessageHandlingContext> getCommandHandler() {
         return (context, request) -> {
 
+            if (context.getChatClient().isBanned()) {
+                return ResponseBuilder.create().messageId(request.getMessageId())
+                        .code(Command.BANNED)
+                        .build();
+            }
+
+            if (request.getData() == null || request.getData().getValueType() != JsonValue.ValueType.OBJECT) {
+                return ResponseBuilder.create().messageId(request.getMessageId())
+                        .code(Command.INVALID)
+                        .build();
+            }
+
             JsonObject json = request.getData().asJsonObject();
+
+            if (!json.containsKey("fileId") || json.isNull("fileId")) {
+                return ResponseBuilder.create().messageId(request.getMessageId())
+                        .code(DownloadCommand.FILE_ID_REQUIRED)
+                        .build();
+            }
 
             ChatMessageEntity message = database.getChatMessageDao()
                     .queryBuilder().where().eq("file_id", json.getString("fileId"))
                     .queryForFirst();
+
+            if (message == null) {
+                return ResponseBuilder.create().messageId(request.getMessageId())
+                        .code(DownloadCommand.INVALID_FILE_ID)
+                        .build();
+            }
 
             JsonObjectBuilder respJson = Json.createObjectBuilder();
 

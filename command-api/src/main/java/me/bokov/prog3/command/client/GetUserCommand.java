@@ -24,6 +24,7 @@ public interface GetUserCommand extends Command {
 
     // TODO: Errors
     int SUCCESS = 200;
+    int INVALID_USER_ID = 400;
 
     GetUserCommand userId (Long userId);
 

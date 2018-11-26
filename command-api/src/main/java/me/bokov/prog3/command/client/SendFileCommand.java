@@ -22,6 +22,11 @@ import me.bokov.prog3.command.Command;
 
 public interface SendFileCommand extends Command {
 
+    int SUCCESS = 200;
+    int INVALID_ROOM_ID = 400;
+    int FILE_NAME_REQUIRED = 401;
+    int FILE_CONTENT_REQUIRED = 402;
+
     SendFileCommand fileName (String fileName);
     SendFileCommand roomId (Long roomId);
     SendFileCommand fileContent (String contentBase64);

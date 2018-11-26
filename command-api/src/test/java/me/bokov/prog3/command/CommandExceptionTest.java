@@ -29,12 +29,13 @@ public class CommandExceptionTest {
 
         try {
 
-            throw new CommandException();
+            throw new CommandException(400);
 
         } catch (CommandException ex) {
 
             assertNull(ex.getMessage());
             assertNull(ex.getCause());
+            assertEquals(400, ex.getErrorCode());
 
         } catch (Throwable th) {
             assertFalse(true);
@@ -47,11 +48,12 @@ public class CommandExceptionTest {
 
         try {
 
-            throw new CommandException("My test message");
+            throw new CommandException("My test message", 401);
 
         } catch (CommandException ex) {
 
             assertEquals("My test message", ex.getMessage());
+            assertEquals(401, ex.getErrorCode());
             assertNull(ex.getCause());
 
         } catch (Throwable th) {
@@ -65,7 +67,7 @@ public class CommandExceptionTest {
 
         try {
 
-            throw new CommandException("My test message", new IllegalArgumentException("Hello"));
+            throw new CommandException("My test message", new IllegalArgumentException("Hello"), 402);
 
         } catch (CommandException ex) {
 
@@ -73,6 +75,7 @@ public class CommandExceptionTest {
             assertNotNull(ex.getCause());
             assertTrue(ex.getCause() instanceof IllegalArgumentException);
             assertEquals("Hello", ex.getCause().getMessage());
+            assertEquals(402, ex.getErrorCode());
 
         } catch (Throwable th) {
             assertFalse(true);
@@ -85,12 +88,13 @@ public class CommandExceptionTest {
 
         try {
 
-            throw new CommandException(new IllegalArgumentException("Hello there"));
+            throw new CommandException(new IllegalArgumentException("Hello there"), 403);
 
         } catch (CommandException ex) {
 
             assertTrue(ex.getCause() instanceof IllegalArgumentException);
             assertEquals("Hello there", ex.getCause().getMessage());
+            assertEquals(403, ex.getErrorCode());
 
         } catch (Throwable th) {
             assertFalse(true);

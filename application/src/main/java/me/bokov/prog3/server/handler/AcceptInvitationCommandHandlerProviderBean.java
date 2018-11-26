@@ -18,6 +18,7 @@
 
 package me.bokov.prog3.server.handler;
 
+import me.bokov.prog3.command.Command;
 import me.bokov.prog3.command.CommandHandler;
 import me.bokov.prog3.command.client.AcceptInvitationCommand;
 import me.bokov.prog3.command.response.ResponseBuilder;
@@ -31,6 +32,7 @@ import me.bokov.prog3.service.db.entity.ChatRoomMembershipEntity;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.json.JsonObject;
+import javax.json.JsonValue;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -53,9 +55,41 @@ public class AcceptInvitationCommandHandlerProviderBean implements ServerChatCli
     public CommandHandler<ServerChatClientMessageHandlingContext> getCommandHandler() {
         return (context, request) -> {
 
+            if (context.getChatClient().isBanned()) {
+                return ResponseBuilder.create().messageId(request.getMessageId())
+                        .code(Command.BANNED)
+                        .build();
+            }
+
+            if (request.getData() == null || request.getData().getValueType() != JsonValue.ValueType.OBJECT) {
+                return ResponseBuilder.create().messageId(request.getMessageId())
+                        .code(Command.INVALID)
+                        .build();
+            }
+
             JsonObject json = request.getData().asJsonObject();
 
+            if (!json.containsKey("invitationId") || json.isNull("invitationId")) {
+                return ResponseBuilder.create().messageId(request.getMessageId())
+                        .code(Command.INVALID)
+                        .build();
+            }
+
             ChatInvitationEntity invitation = database.getChatInvitationDao().getByInvitationId(json.getString("invitationId"));
+
+            if (invitation == null) {
+                return ResponseBuilder.create().messageId(request.getMessageId())
+                        .code(AcceptInvitationCommand.INVALID_INVITATION_ID)
+                        .build();
+            }
+
+            if (database.getChatRoomMembershipDao().queryBuilder().where().eq("chat_room_id", invitation.getRoom().getId())
+                    .and().eq("chat_user_id", invitation.getInvitedUser().getId()).countOf() > 0L) {
+                return ResponseBuilder.create()
+                        .messageId(request.getMessageId())
+                        .code(AcceptInvitationCommand.ALREADY_MEMBER)
+                        .build();
+            }
 
             ChatRoomMembershipEntity newMembership = new ChatRoomMembershipEntity();
 

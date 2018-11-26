@@ -23,8 +23,8 @@ import me.bokov.prog3.command.Command;
 public interface HelloCommand extends Command {
 
     int CONTINUE = 200;
-    int FIRST_TIME = 300;
-    int BANNED = 400;
+    int FIRST_TIME = 201;
+    int USERNAME_REQUIRED = 400;
     int ALREADY_SAID_HELLO = 401;
 
     HelloCommand username(String username);

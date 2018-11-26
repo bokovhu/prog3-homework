@@ -23,6 +23,8 @@ import me.bokov.prog3.command.Command;
 public interface DownloadCommand extends Command {
 
     int SUCCESS = 200;
+    int FILE_ID_REQUIRED = 400;
+    int INVALID_FILE_ID = 401;
 
     DownloadCommand fileId (String fileId);
 

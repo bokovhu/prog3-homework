@@ -18,6 +18,7 @@
 
 package me.bokov.prog3.server.handler;
 
+import me.bokov.prog3.command.Command;
 import me.bokov.prog3.command.CommandHandler;
 import me.bokov.prog3.command.client.GetRoomCommand;
 import me.bokov.prog3.command.response.ResponseBuilder;
@@ -35,6 +36,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonObject;
+import javax.json.JsonValue;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -58,9 +60,34 @@ public class GetRoomCommandHandlerProviderBean implements ServerChatClientComman
     public CommandHandler<ServerChatClientMessageHandlingContext> getCommandHandler() {
         return (context, request) -> {
 
+            if (context.getChatClient().isBanned()) {
+                return ResponseBuilder.create().messageId(request.getMessageId())
+                        .code(Command.BANNED)
+                        .build();
+            }
+
+            if (request.getData() == null || request.getData().getValueType() != JsonValue.ValueType.OBJECT) {
+                return ResponseBuilder.create().messageId(request.getMessageId())
+                        .code(Command.INVALID)
+                        .build();
+            }
+
             JsonObject requestJson = request.getData().asJsonObject();
 
+            if (!requestJson.containsKey("roomId") || requestJson.isNull("roomId")) {
+                return ResponseBuilder.create().messageId(request.getMessageId())
+                        .code(GetRoomCommand.ROOM_ID_REQUIRED)
+                        .build();
+            }
+
             ChatRoomEntity room = database.getChatRoomDao().queryForId(requestJson.getJsonNumber("roomId").longValue());
+
+            if (room == null) {
+                return ResponseBuilder.create().messageId(request.getMessageId())
+                        .code(GetRoomCommand.INVALID_ROOM_ID)
+                        .build();
+            }
+
             ChatUserEntity roomOwner = null;
 
             if (room.getOwnerChatUser() != null && room.getOwnerChatUser().getId() != null) {

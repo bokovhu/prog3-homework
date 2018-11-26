@@ -19,11 +19,16 @@
 package me.bokov.prog3.ui;
 
 import me.bokov.prog3.AsyncHelper;
+import me.bokov.prog3.command.CommandException;
+import me.bokov.prog3.command.client.AcceptInvitationCommand;
+import me.bokov.prog3.command.client.CreateRoomCommand;
+import me.bokov.prog3.command.response.Response;
 import me.bokov.prog3.service.ChatClient;
 import me.bokov.prog3.ui.chat.ChatRoomTab;
 import me.bokov.prog3.ui.chat.MessageComposerPanel;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.spi.CDI;
 import javax.inject.Inject;
 import javax.json.JsonObject;
 import javax.swing.*;
@@ -40,6 +45,9 @@ public class ChatUIBean extends ScreenBase {
 
     @Inject
     private ImageStoreBean imageStoreBean;
+
+    @Inject
+    private ErrorUIBean errorUIBean;
 
     JButton createRoomButton;
     JTabbedPane chatRoomsTabbedPane;
@@ -58,9 +66,23 @@ public class ChatUIBean extends ScreenBase {
                             () -> {
 
                                 String roomName = JOptionPane.showInputDialog(null, i18n.getText("chat.room-name"));
-                                chatClient.getServerEndpoint().createRoom()
-                                        .roomName(roomName)
-                                        .execute();
+
+                                try {
+
+                                    chatClient.getServerEndpoint().createRoom()
+                                            .roomName(roomName)
+                                            .execute();
+
+                                } catch (CommandException ce) {
+
+                                    switch (ce.getErrorCode()) {
+                                        case CreateRoomCommand
+                                                .ROOM_NAME_REQUIRED:
+                                            errorUIBean.showErrorMessage(i18n.getText("chat.room-name-required"));
+                                            break;
+                                    }
+
+                                }
 
                             }
                     );
@@ -244,8 +266,6 @@ public class ChatUIBean extends ScreenBase {
         SwingUtilities.invokeLater(
                 () -> {
 
-                    System.out.println("handleNewInvitation: " + newInvitationObject.toString());
-
                     JsonObject invitation = newInvitationObject.getJsonObject("invitation");
 
                     int acceptResult = JOptionPane.showConfirmDialog(
@@ -261,9 +281,28 @@ public class ChatUIBean extends ScreenBase {
 
                     if (acceptResult == JOptionPane.YES_OPTION) {
 
-                        chatClient.getServerEndpoint().acceptInvitation()
-                                .invitationId(invitation.getString("invitationId"))
-                                .executeWithoutAnswer();
+                        AsyncHelper.runAsync(
+                                () -> {
+
+                                    try {
+
+                                        chatClient.getServerEndpoint().acceptInvitation()
+                                                .invitationId(invitation.getString("invitationId"))
+                                                .execute();
+
+                                    } catch (CommandException ce) {
+
+                                        switch (ce.getErrorCode()) {
+                                            case AcceptInvitationCommand
+                                                    .INVALID_INVITATION_ID:
+                                                errorUIBean.showErrorMessage(i18n.getText("chat.invalid-invitation-id"));
+                                                break;
+                                        }
+
+                                    }
+
+                                }
+                        );
 
                     }
 

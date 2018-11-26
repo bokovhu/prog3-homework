@@ -25,5 +25,6 @@ import me.bokov.prog3.service.common.SessionCapableService;
 public interface ServerChatClient extends SessionCapableService, CommunicationCapableService {
 
     ChatClientEndpoint getClientEndpoint();
+    boolean isBanned ();
 
 }
