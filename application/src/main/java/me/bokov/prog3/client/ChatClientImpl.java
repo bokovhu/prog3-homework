@@ -124,7 +124,7 @@ public class ChatClientImpl extends ClientBase<ChatClientMessageHandlingContext>
         if (!connected) throw new IllegalStateException("Not yet connected!");
 
         try {
-            getServerEndpoint().disconnect().execute();
+            getServerEndpoint().disconnect().executeWithoutAnswer();
         } catch (Exception e) {
             e.printStackTrace();
         }

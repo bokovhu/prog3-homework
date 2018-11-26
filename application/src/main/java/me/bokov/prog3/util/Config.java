@@ -74,7 +74,9 @@ public class Config {
         userLocale = new Locale(properties.getProperty("user-locale"));
         lastConnectionHostname = properties.getProperty("last-connection-hostname");
         if (properties.containsKey("last-connection-port")) {
-            lastConnectionPort = Integer.parseInt(properties.getProperty("last-connection-port"));
+            try {
+                lastConnectionPort = Integer.parseInt(properties.getProperty("last-connection-port"));
+            } catch (NumberFormatException nfe) {}
         }
         lastConnectionUsername = properties.getProperty("last-connection-username");
 
