@@ -121,13 +121,17 @@ public class ChatUIBean extends ScreenBase {
         SwingUtilities.invokeLater(
                 () -> {
 
-                    ChatRoomTab tab = new ChatRoomTab(roomId);
-                    chatRoomsTabbedPane.addTab(tab.getRoomName(), tab);
-                    chatRoomTabs.add(tab);
-                    tab.getMessagesPanel().updateMessages();
+                    if (chatRoomTabs.stream().noneMatch(t -> t.getRoomId().equals(roomId))) {
 
-                    if (chatRoomsTabbedPane.getTabCount() == 2) {
-                        chatRoomsTabbedPane.setSelectedIndex(1);
+                        ChatRoomTab tab = new ChatRoomTab(roomId);
+                        chatRoomsTabbedPane.addTab(tab.getRoomName(), tab);
+                        chatRoomTabs.add(tab);
+                        tab.getMessagesPanel().updateMessages();
+
+                        if (chatRoomsTabbedPane.getTabCount() == 2) {
+                            chatRoomsTabbedPane.setSelectedIndex(1);
+                        }
+
                     }
 
                 }
@@ -177,6 +181,39 @@ public class ChatUIBean extends ScreenBase {
 
                                     }
                             );
+
+                }
+        );
+
+    }
+
+    public void handleNewInvitation (JsonObject newInvitationObject) {
+
+        SwingUtilities.invokeLater(
+                () -> {
+
+                    System.out.println("handleNewInvitation: " + newInvitationObject.toString());
+
+                    JsonObject invitation = newInvitationObject.getJsonObject("invitation");
+
+                    int acceptResult = JOptionPane.showConfirmDialog(
+                            null,
+                            i18n.getText(
+                                    "chat.new-invitation",
+                                    invitation.getJsonObject("invitor").getString("username"),
+                                    invitation.getJsonObject("room").getString("name")
+                            ),
+                            i18n.getText("chat.new-invitation-title"),
+                            JOptionPane.YES_NO_OPTION
+                    );
+
+                    if (acceptResult == JOptionPane.YES_OPTION) {
+
+                        chatClient.getServerEndpoint().acceptInvitation()
+                                .invitationId(invitation.getString("invitationId"))
+                                .executeWithoutAnswer();
+
+                    }
 
                 }
         );

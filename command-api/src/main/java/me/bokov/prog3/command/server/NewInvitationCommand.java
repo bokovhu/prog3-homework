@@ -24,6 +24,8 @@ import javax.json.JsonObject;
 
 public interface NewInvitationCommand extends Command {
 
+    int SUCCESS = 200;
+
     NewInvitationCommand invitation (JsonObject invitationObject);
 
 }

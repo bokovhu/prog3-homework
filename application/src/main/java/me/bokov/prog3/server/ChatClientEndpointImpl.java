@@ -24,6 +24,7 @@ import me.bokov.prog3.command.server.*;
 import me.bokov.prog3.common.ClientBase;
 import me.bokov.prog3.common.EndpointBase;
 import me.bokov.prog3.server.command.JoinRoomCommandImpl;
+import me.bokov.prog3.server.command.NewInvitationCommandImpl;
 import me.bokov.prog3.server.command.NewMessageCommandImpl;
 import me.bokov.prog3.server.command.RoomChangedCommandImpl;
 
@@ -52,7 +53,7 @@ public class ChatClientEndpointImpl extends EndpointBase implements ChatClientEn
 
     @Override
     public NewInvitationCommand newInvitation() {
-        throw new UnsupportedOperationException("Not yet supported!");
+        return new NewInvitationCommandImpl(client);
     }
 
     @Override

@@ -68,7 +68,7 @@ public class AcceptInvitationCommandHandlerProviderBean implements ServerChatCli
 
             context.getChatClient().getClientEndpoint().joinRoom()
                     .roomId(invitation.getRoom().getId())
-                    .execute();
+                    .executeWithoutAnswer();
 
             // Send JOIN-ROOM messages
             List<ChatRoomMembershipEntity> memberships = database.getChatRoomMembershipDao()

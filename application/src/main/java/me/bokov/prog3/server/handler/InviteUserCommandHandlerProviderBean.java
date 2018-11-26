@@ -59,7 +59,7 @@ public class InviteUserCommandHandlerProviderBean implements ServerChatClientCom
             JsonObject json = request.getData().asJsonObject();
 
             ChatUserEntity invitedUser = database.getChatUserDao().queryBuilder()
-                    .where().eq("username", json.getString("username"))
+                    .where().eq("username", json.getString("invitedUsername"))
                     .queryForFirst();
 
             ChatUserEntity invitorUser = database.getChatUserDao().queryForId(

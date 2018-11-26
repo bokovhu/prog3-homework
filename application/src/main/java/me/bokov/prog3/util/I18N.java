@@ -49,7 +49,11 @@ public class I18N {
             String format = resourceBundle.getString(key);
 
             if (args != null && args.length > 0) {
-                return MessageFormat.format(format, args);
+                try {
+                    return MessageFormat.format(format, args);
+                } catch (IllegalArgumentException iae) {
+                    return "??{illegal-format}??" + format;
+                }
             }
 
             return format;

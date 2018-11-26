@@ -39,11 +39,24 @@ public class ChatRoomControlsPanel extends JPanel {
 
     private final Long roomId;
 
+    private void doInviteUser () {
+
+        ChatClient chatClient = CDI.current().select(ChatClient.class).get();
+
+        String username = JOptionPane.showInputDialog(i18n.getText("chat.chat-room-controls.invite-prompt"));
+
+        chatClient.getServerEndpoint()
+                .inviteUser().roomId(roomId).invitedUsername(username).execute();
+
+    }
+
     private void initButtons () {
 
         inviteUserButton = new JButton(i18n.getText("chat.chat-room-controls.invite-user"));
         inviteUserButton.setBackground(Color.GREEN);
-        inviteUserButton.addActionListener(e -> JOptionPane.showMessageDialog(null, "Invite user"));
+        inviteUserButton.addActionListener(
+                e -> doInviteUser()
+        );
 
         leaveRoomButton = new JButton(i18n.getText("chat.chat-room-controls.leave-room"));
         leaveRoomButton.setBackground(Color.RED);
