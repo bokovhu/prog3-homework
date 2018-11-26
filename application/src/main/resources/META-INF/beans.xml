@@ -24,5 +24,8 @@
 
     <scan>
         <exclude name="org.slf4j.**"/>
+        <exclude name="org.jboss.weld.**" />
+        <exclude name="org.h2.**" />
+        <exclude name="com.j256.ormlite.**" />
     </scan>
 </beans>

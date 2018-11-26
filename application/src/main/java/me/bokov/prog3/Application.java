@@ -51,6 +51,7 @@ public class Application {
 
     private boolean serverMode = false;
     private boolean enableGui = false;
+    private boolean enableDatabase = false;
 
     /**
      * Creates the singleton instance
@@ -223,6 +224,7 @@ public class Application {
 
             serverMode = false;
             enableGui = true;
+            enableDatabase = true;
 
             if (commandLine.hasOption("server")) {
                 serverMode = true;
@@ -231,6 +233,10 @@ public class Application {
 
             if (commandLine.hasOption("no-gui")) {
                 enableGui = false;
+            }
+
+            if (commandLine.hasOption("no-database")) {
+                enableDatabase = false;
             }
 
         } catch (ParseException e) {
@@ -306,10 +312,19 @@ public class Application {
             // Load config
             CDI.current().select(Config.class).get().load();
 
-            if (!commandLine.hasOption("no-database")) {
+            if (isEnableDatabase()) {
 
-                // Initialize database
-                CDI.current().select(Database.class).get().start();
+                try {
+
+                    // Initialize database
+                    CDI.current().select(Database.class).get().start();
+
+                } catch (Exception exc) {
+
+                    exc.printStackTrace();
+                    enableDatabase = false;
+
+                }
 
             }
 
@@ -382,4 +397,7 @@ public class Application {
         return commandLine;
     }
 
+    public boolean isEnableDatabase() {
+        return enableDatabase;
+    }
 }

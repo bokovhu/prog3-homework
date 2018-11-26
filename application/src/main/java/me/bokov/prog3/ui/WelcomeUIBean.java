@@ -89,7 +89,7 @@ public class WelcomeUIBean extends ScreenBase {
                 )
         );
 
-        if (!Application.getInstance().getCommandLine().hasOption("no-database")) {
+        if (Application.getInstance().isEnableDatabase()) {
             panel.add(
                     startNewServerButton,
                     new GridBagConstraints(
