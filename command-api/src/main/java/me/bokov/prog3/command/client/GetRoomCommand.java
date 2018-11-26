@@ -20,6 +20,11 @@ package me.bokov.prog3.command.client;
 
 import me.bokov.prog3.command.Command;
 
+/**
+ * Represents a {@code GET-ROOM} command.
+ *
+ * This command can be used to retrieve base information, and members list of chat rooms
+ */
 public interface GetRoomCommand extends Command {
 
     // TODO: Errors
@@ -27,6 +32,11 @@ public interface GetRoomCommand extends Command {
     int ROOM_ID_REQUIRED = 400;
     int INVALID_ROOM_ID = 401;
 
+    /**
+     * Sets the ID of the room in the command whose data is to be returned
+     * @param roomId the ID of the room
+     * @return this command instance
+     */
     GetRoomCommand roomId (Long roomId);
 
 }

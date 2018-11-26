@@ -18,30 +18,5 @@
 
 package me.bokov.prog3.event;
 
-import java.util.Date;
-
-public class UserBannedEvent extends BaseEvent {
-
-    private final String username;
-    private final boolean bannedByIp;
-    private final boolean bannedByUsername;
-
-    public UserBannedEvent(Date eventTimestamp, String eventType, String username, boolean bannedByIp, boolean bannedByUsername) {
-        super(eventTimestamp, eventType);
-        this.username = username;
-        this.bannedByIp = bannedByIp;
-        this.bannedByUsername = bannedByUsername;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public boolean isBannedByIp() {
-        return bannedByIp;
-    }
-
-    public boolean isBannedByUsername() {
-        return bannedByUsername;
-    }
+public class UserAdministrationEvent {
 }

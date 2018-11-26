@@ -27,7 +27,7 @@ public class ChatUserVO implements Serializable {
 
     private Long id;
     private String username;
-    private String banState;
+    private Boolean isBanned;
     private Boolean isOnline;
 
     public Long getId() {
@@ -46,12 +46,12 @@ public class ChatUserVO implements Serializable {
         this.username = username;
     }
 
-    public String getBanState() {
-        return banState;
+    public Boolean getBanned() {
+        return isBanned;
     }
 
-    public void setBanState(String banState) {
-        this.banState = banState;
+    public void setBanned(Boolean banned) {
+        isBanned = banned;
     }
 
     public Boolean getOnline() {
@@ -67,7 +67,7 @@ public class ChatUserVO implements Serializable {
         JsonObjectBuilder job = Json.createObjectBuilder()
                 .add("id", getId())
                 .add("username", getUsername())
-                .add("banState", getBanState());
+                .add("isBanned", getBanned());
 
         if (getOnline() != null) job.add("isOnline", getOnline());
 

@@ -19,6 +19,7 @@
 package me.bokov.prog3.ui;
 
 import me.bokov.prog3.Application;
+import me.bokov.prog3.ui.chat.MenuBean;
 import me.bokov.prog3.ui.welcome.ConnectToServerDialogBean;
 import me.bokov.prog3.ui.welcome.StartNewServerDialogBean;
 
@@ -38,6 +39,9 @@ public class WelcomeUIBean extends ScreenBase {
 
     @Inject
     private ConnectToServerDialogBean connectToServerDialogBean;
+
+    @Inject
+    private MenuBean menuBean;
 
     private void createStartNewServerButton() {
 
@@ -100,6 +104,8 @@ public class WelcomeUIBean extends ScreenBase {
                     )
             );
         }
+
+        menuBean.init();
 
     }
 

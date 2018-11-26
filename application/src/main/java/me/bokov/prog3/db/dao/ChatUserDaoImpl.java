@@ -41,7 +41,7 @@ public class ChatUserDaoImpl extends BaseDaoImpl<ChatUserEntity, Long> implement
         ChatUserEntity user = new ChatUserEntity();
 
         user.setUsername(username);
-        user.setBanState("NOT_BANNED");
+        user.setBanned(false);
 
         create(user);
 
@@ -50,6 +50,6 @@ public class ChatUserDaoImpl extends BaseDaoImpl<ChatUserEntity, Long> implement
 
     @Override
     public boolean isUserBanned(Long id) throws SQLException {
-        return queryBuilder().where().eq("id", id).and().ne("ban_state", "NOT_BANNED").countOf() > 0L;
+        return queryBuilder().where().eq("id", id).and().eq("is_banned", true).countOf() > 0L;
     }
 }

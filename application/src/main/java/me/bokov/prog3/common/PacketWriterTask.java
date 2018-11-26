@@ -49,7 +49,7 @@ public class PacketWriterTask<CTX> implements Runnable {
         while (this.client.hasOutgoingRequest() && this.client.isRunning()) {
 
             Request r = this.client.takeOutgoingRequest();
-            logger.info("Outgoing request is ready to be sent: {}", r);
+            logger.info("[ ID = {} ] Outgoing request is ready to be sent", client.getId());
             this.outputPrintStream.println(r.toString());
 
         }
@@ -58,7 +58,7 @@ public class PacketWriterTask<CTX> implements Runnable {
         while (this.client.hasOutgoingResponse()) {
 
             Response r = this.client.takeOutgoingResponse();
-            logger.info("Outgoing response is ready to be sent: {}", r);
+            logger.info("[ ID = {} ] Outgoing response is ready to be sent", client.getId(), r);
             this.outputPrintStream.println(r.toString());
 
         }
@@ -91,7 +91,7 @@ public class PacketWriterTask<CTX> implements Runnable {
     @Override
     public void run() {
 
-        logger.info("Packet writer started");
+        logger.info("[ ID = {} ] Packet writer started", client.getId());
 
         setUp();
         performWriteLoop();
@@ -102,7 +102,7 @@ public class PacketWriterTask<CTX> implements Runnable {
             exc.printStackTrace();
         }
 
-        logger.info("Packet writer finished");
+        logger.info("[ ID = {} ] Packet writer finished", client.getId());
 
     }
 }

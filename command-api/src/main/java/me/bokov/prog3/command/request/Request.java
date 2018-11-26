@@ -20,12 +20,32 @@ package me.bokov.prog3.command.request;
 
 import javax.json.JsonValue;
 
+/**
+ * Represents a single request that is sent through the network.
+ *
+ * In its string representation, requests take the form <code>A &lt;COMMAND&gt; &lt;MESSAGE-ID&gt; [DATA]</code>,
+ * with the <code>DATA</code> part being optional.
+ */
 public interface Request {
 
+    /**
+     * Get the message ID of this request
+     * @return the message ID of this request
+     */
     String getMessageId();
 
+    /**
+     * Get the command of this request
+     * @return the command of this request
+     */
     String getCommand();
 
+    /**
+     * Get the JSON data of this request.
+     *
+     * If the request has no JSON data, this method will return {@code null}
+     * @return the JSON data of this request, or {@code null}
+     */
     JsonValue getData();
 
 }

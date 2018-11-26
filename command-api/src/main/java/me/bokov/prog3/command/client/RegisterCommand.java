@@ -20,11 +20,21 @@ package me.bokov.prog3.command.client;
 
 import me.bokov.prog3.command.Command;
 
+/**
+ * Represents a {@code REGISTER} command.
+ *
+ * This command is used to set the password for the (<b>non-existing</b>) users.
+ */
 public interface RegisterCommand extends Command {
 
     int SUCCESS = 200;
     int ALREADY_REGISTERED = 400;
 
+    /**
+     * Sets the new password of the newly registered user in the command
+     * @param password the new password of the user
+     * @return this command instance
+     */
     RegisterCommand password (String password);
 
 }

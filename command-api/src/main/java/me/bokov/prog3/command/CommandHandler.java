@@ -21,9 +21,19 @@ package me.bokov.prog3.command;
 import me.bokov.prog3.command.request.Request;
 import me.bokov.prog3.command.response.Response;
 
+/**
+ * CommandHandlers may be used to handle incoming commands
+ * @param <CTX> The type of the command handling context
+ */
 @FunctionalInterface
 public interface CommandHandler<CTX> {
 
+    /**
+     * Handles a single request of a given command
+     * @param context the command handling context
+     * @param request the request
+     * @return the response of the command to send back to the remote client
+     */
     Response handleCommand(CTX context, Request request) throws Exception;
 
 }

@@ -24,6 +24,9 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.UUID;
 
+/**
+ * A builder-pattern-style object for creating {@link Request} objects
+ */
 public final class RequestBuilder {
 
     private String messageId = UUID.randomUUID().toString();
@@ -34,10 +37,20 @@ public final class RequestBuilder {
 
     }
 
+    /**
+     * Creates a new request builder
+     * @return
+     */
     public static RequestBuilder create() {
         return new RequestBuilder();
     }
 
+    /**
+     * Parser a message line into a {@link Request}
+     * @param rawMessage the message line that was received on the network
+     * @return the parsed {@link Request}
+     * @throws IllegalArgumentException if the rawMessage parameter is null, or is an invalid message line
+     */
     public static Request requestFromMessage(String rawMessage) {
 
         if (rawMessage == null) {
@@ -71,6 +84,10 @@ public final class RequestBuilder {
 
     }
 
+    /**
+     * Creates the {@link Request} object from the builder's current state
+     * @return the created {@link Request} object
+     */
     public Request build() {
 
         if (command == null) {
@@ -81,16 +98,31 @@ public final class RequestBuilder {
 
     }
 
+    /**
+     * Sets the messageId field in the {@link Request}
+     * @param messageId the message ID to set
+     * @return this builder instance
+     */
     public RequestBuilder messageId(String messageId) {
         this.messageId = messageId;
         return this;
     }
 
+    /**
+     * Sets the command field in the {@link Request}
+     * @param command the command to use in the request
+     * @return this builder instance
+     */
     public RequestBuilder command(String command) {
         this.command = command;
         return this;
     }
 
+    /**
+     * Sets the JSON data in the {@link Request}
+     * @param data the JSON data to use in the request
+     * @return this builder instance
+     */
     public RequestBuilder data(JsonValue data) {
         this.data = data;
         return this;

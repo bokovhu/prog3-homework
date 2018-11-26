@@ -20,10 +20,21 @@ package me.bokov.prog3.command.server;
 
 import me.bokov.prog3.command.Command;
 
+/**
+ * Represents a {@code ROOM-CHANGED} command.
+ *
+ * This command indicates to the client that it should refetch data (using the {@code GET-ROOM} command) of a given
+ * chat room, because something has changed in it
+ */
 public interface RoomChangedCommand extends Command {
 
     int SUCCESS = 200;
 
+    /**
+     * Sets the ID of the room that changed in the command
+     * @param roomId the ID of the room that changed
+     * @return this command instance
+     */
     RoomChangedCommand roomId (Long roomId);
 
 }

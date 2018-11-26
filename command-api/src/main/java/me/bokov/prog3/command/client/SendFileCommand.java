@@ -20,6 +20,11 @@ package me.bokov.prog3.command.client;
 
 import me.bokov.prog3.command.Command;
 
+/**
+ * Represents a {@code SEND-FILE} command.
+ *
+ * This command is used to send a file message to a chat room
+ */
 public interface SendFileCommand extends Command {
 
     int SUCCESS = 200;
@@ -27,8 +32,25 @@ public interface SendFileCommand extends Command {
     int FILE_NAME_REQUIRED = 401;
     int FILE_CONTENT_REQUIRED = 402;
 
+    /**
+     * Sets the name of the file to be sent in the command
+     * @param fileName the name of the file to be sent
+     * @return this command instance
+     */
     SendFileCommand fileName (String fileName);
+
+    /**
+     * Sets the ID of the room to which this message is sent in the command
+     * @param roomId the ID of the room to which this message is sent
+     * @return this command instance
+     */
     SendFileCommand roomId (Long roomId);
+
+    /**
+     * Sets the binary content of the file to be sent, encoded in Base64 in the command
+     * @param contentBase64 the binary content of the file, encoded in Base64
+     * @return this command instance
+     */
     SendFileCommand fileContent (String contentBase64);
 
 }

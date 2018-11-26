@@ -19,22 +19,42 @@
 package me.bokov.prog3.command.endpoint;
 
 
-import me.bokov.prog3.command.client.GetRoomCommand;
-import me.bokov.prog3.command.client.GetUserCommand;
 import me.bokov.prog3.command.server.*;
 
+/**
+ * The callable endpoint service of a chat client, connected to a chat server. Using commands found in this interface,
+ * the server can initiate messaging to any of its clients.
+ */
 public interface ChatClientEndpoint extends Endpoint {
 
+    /**
+     * Create a new {@code YOU-ARE-BANNED} command
+     * @return the created command
+     */
     YouAreBannedCommand youAreBanned();
 
-    RoomDeletedCommand roomDeleted();
-
+    /**
+     * Create a new {@code NEW-MESSAGE} command
+     * @return the created command
+     */
     NewMessageCommand newMessage();
 
+    /**
+     * Create a new {@code NEW-INVITATION} command
+     * @return the created command
+     */
     NewInvitationCommand newInvitation();
 
+    /**
+     * Create a new {@code JOIN-ROOM} command
+     * @return the created command
+     */
     JoinRoomCommand joinRoom ();
 
+    /**
+     * Create a new {@code ROOM-CHANGED} command
+     * @return the created command
+     */
     RoomChangedCommand roomChanged ();
 
 }

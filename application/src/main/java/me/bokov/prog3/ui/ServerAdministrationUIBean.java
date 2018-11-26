@@ -18,10 +18,9 @@
 
 package me.bokov.prog3.ui;
 
-import me.bokov.prog3.event.UserBannedEvent;
+import me.bokov.prog3.event.UserAdministrationEvent;
 import me.bokov.prog3.event.UserConnectedEvent;
 import me.bokov.prog3.event.UserDisconnectedEvent;
-import me.bokov.prog3.event.UserUnbannedEvent;
 import me.bokov.prog3.service.ChatServer;
 import me.bokov.prog3.service.Database;
 import me.bokov.prog3.service.common.ChatUserVO;
@@ -57,37 +56,39 @@ public class ServerAdministrationUIBean extends ScreenBase {
 
         panel.setLayout(new GridBagLayout());
 
-        GridBagConstraints titleGbc = new GridBagConstraints();
-        titleGbc.gridx = 0;
-        titleGbc.gridy = 0;
-        titleGbc.gridwidth = 3;
-        titleGbc.gridheight = 1;
+        GridBagConstraints titleGbc = new GridBagConstraints(
+                0, 0, 3, 1,
+                1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                new Insets(16, 16, 16, 16),
+                0, 0
+        );
 
-        panel.add(new JLabel("Server is running!"), titleGbc);
+        panel.add(
+                new JLabel("Server is running on port " + chatServer.getServerConfiguration().getPort() + ", admin password: " + chatServer.getServerConfiguration().getAdminPassword()),
+                titleGbc
+        );
 
-        GridBagConstraints usersListGbc = new GridBagConstraints();
-        usersListGbc.gridx = 0;
-        usersListGbc.gridy = 1;
-        usersListGbc.gridwidth = 1;
-        usersListGbc.gridheight = 1;
-        usersListGbc.anchor = GridBagConstraints.NORTH;
+        GridBagConstraints usersListGbc = new GridBagConstraints(
+                0, 1, 1, 1,
+                1.0, 1.0, GridBagConstraints.NORTH, 0,
+                new Insets(16, 16, 16, 16),
+                0, 0
+        );
 
         usersList = new PanelList<>();
         usersList.enableTitle("Users");
-        usersList.setBackground(Color.LIGHT_GRAY);
 
         panel.add(usersList, usersListGbc);
 
-        GridBagConstraints bannedUsersListGbc = new GridBagConstraints();
-        bannedUsersListGbc.gridx = 1;
-        bannedUsersListGbc.gridy = 1;
-        bannedUsersListGbc.gridwidth = 1;
-        bannedUsersListGbc.gridheight = 1;
-        bannedUsersListGbc.anchor = GridBagConstraints.NORTH;
+        GridBagConstraints bannedUsersListGbc = new GridBagConstraints(
+                1, 1, 1, 1,
+                1.0, 1.0, GridBagConstraints.NORTH, 0,
+                new Insets(16, 16, 16, 16),
+                0, 0
+        );
 
         bannedUsersList = new PanelList<>();
         bannedUsersList.enableTitle("Banned users");
-        bannedUsersList.setBackground(Color.LIGHT_GRAY);
 
         panel.add(bannedUsersList, bannedUsersListGbc);
 
@@ -106,20 +107,18 @@ public class ServerAdministrationUIBean extends ScreenBase {
 
         for (ChatUserEntity chatUserEntity : database.getChatUserDao()) {
 
-            switch (chatUserEntity.getBanState()) {
-                case "NOT_BANNED":
-                    usersList.addPanel(
-                            new UserItem(
-                                    chatUserEntity.getUsername(),
-                                    currentlyConnectedUserNames.contains(chatUserEntity.getUsername())
-                            )
-                    );
-                    break;
-                default:
-                    bannedUsersList.addPanel(
-                            new BannedUserItem(chatUserEntity.getUsername())
-                    );
-                    break;
+            if (chatUserEntity.isBanned()) {
+                bannedUsersList.addPanel(
+                        new BannedUserItem(chatUserEntity.getUsername(), chatUserEntity.getId())
+                );
+            } else {
+                usersList.addPanel(
+                        new UserItem(
+                                chatUserEntity.getUsername(),
+                                chatUserEntity.getId(),
+                                chatServer.clientByUserId(chatUserEntity.getId()).isPresent()
+                        )
+                );
             }
 
         }
@@ -138,14 +137,6 @@ public class ServerAdministrationUIBean extends ScreenBase {
 
     }
 
-    public void handleUserBannedEvent(@Observes UserBannedEvent userBannedEvent) {
-
-        if (guiEnabled()) {
-            reloadData();
-        }
-
-    }
-
     public void handleUserDisconnectedEvent(@Observes UserDisconnectedEvent userDisconnectedEvent) {
 
         if (guiEnabled()) {
@@ -154,7 +145,7 @@ public class ServerAdministrationUIBean extends ScreenBase {
 
     }
 
-    public void handleUserUnbannedEvent(@Observes UserUnbannedEvent userUnbannedEvent) {
+    public void handleAdminEvent (@Observes UserAdministrationEvent evt) {
 
         if (guiEnabled()) {
             reloadData();

@@ -22,6 +22,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * This utility class can be used to execute small tasks in an async manner (in a different {@link Thread} than the
+ * caller's)
+ */
 public final class AsyncHelper {
 
     private static final ExecutorService EXECUTOR_SERVICE = Executors.newCachedThreadPool();

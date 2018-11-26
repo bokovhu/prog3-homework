@@ -20,12 +20,26 @@ package me.bokov.prog3.command.endpoint;
 
 import me.bokov.prog3.command.PingCommand;
 
+/**
+ * Base interface of both the server's, and the client's endpoint service interface
+ */
 public interface Endpoint {
 
+    /**
+     * Closes this endpoint. This method will also cause the underlying implementations socket.
+     */
     void close();
 
+    /**
+     * Retrieve connection information of the endpoint
+     * @return the connection information of the endpoint
+     */
     ConnectionInformation getConnectionInformation();
 
+    /**
+     * Pings this endpoint (check availability)
+     * @return the created {@code PING} command
+     */
     PingCommand ping();
 
 }

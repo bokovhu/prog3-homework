@@ -18,6 +18,7 @@
 
 package me.bokov.prog3.client;
 
+import me.bokov.prog3.AsyncHelper;
 import me.bokov.prog3.command.Command;
 import me.bokov.prog3.command.CommandException;
 import me.bokov.prog3.command.CommandHandler;
@@ -29,10 +30,13 @@ import me.bokov.prog3.command.response.Response;
 import me.bokov.prog3.command.response.ResponseBuilder;
 import me.bokov.prog3.common.ClientBase;
 import me.bokov.prog3.common.CommandHandlerProviderBean;
+import me.bokov.prog3.event.ClientShouldStopEvent;
 import me.bokov.prog3.service.ChatClient;
 import me.bokov.prog3.service.client.ConnectionConfiguration;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Observes;
+import javax.enterprise.inject.spi.CDI;
 import java.net.Socket;
 
 @ApplicationScoped
@@ -130,6 +134,21 @@ public class ChatClientImpl extends ClientBase<ChatClientMessageHandlingContext>
     @Override
     public ChatServerEndpoint getServerEndpoint() {
         return chatServerEndpoint;
+    }
+
+    public void handleClientShouldStopEvent (@Observes ClientShouldStopEvent evt) {
+
+        if (evt.getClientId().equals(getId())) {
+
+            AsyncHelper.runAsync(
+                    () -> {
+                        CDI.current().select(ChatClient.class).get()
+                                .disconnect();
+                    }
+            );
+
+        }
+
     }
 
 }

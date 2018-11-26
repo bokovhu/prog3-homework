@@ -20,12 +20,22 @@ package me.bokov.prog3.command.client;
 
 import me.bokov.prog3.command.Command;
 
+/**
+ * Represents a {@code DOWNLOAD} command.
+ *
+ * This command can be used to download a file or image from the server, identified via its {@code file_id}.
+ */
 public interface DownloadCommand extends Command {
 
     int SUCCESS = 200;
     int FILE_ID_REQUIRED = 400;
     int INVALID_FILE_ID = 401;
 
+    /**
+     * Sets the file ID in the command.
+     * @param fileId the file ID to download
+     * @return this command instance
+     */
     DownloadCommand fileId (String fileId);
 
 }

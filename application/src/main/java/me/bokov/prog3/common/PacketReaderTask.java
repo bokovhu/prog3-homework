@@ -24,6 +24,7 @@ import me.bokov.prog3.command.request.RequestBuilder;
 import me.bokov.prog3.command.response.Response;
 import me.bokov.prog3.command.response.ResponseBuilder;
 import me.bokov.prog3.event.ClientShouldStopEvent;
+import me.bokov.prog3.service.ChatClient;
 import me.bokov.prog3.service.server.ServerChatClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,7 +87,7 @@ public class PacketReaderTask<CTX> implements Runnable {
 
                     String message = line.trim();
 
-                    logger.info("New packet arrived, length: {}, content: {}", message.length(), message);
+                    logger.info("[ ID = {} ] New packet arrived, length: {}", client.getId(), message.length(), message);
 
                     if (message.startsWith("Q")) {
 
@@ -95,9 +96,14 @@ public class PacketReaderTask<CTX> implements Runnable {
                         this.client.addOutgoingResponse(response);
 
                         if (client instanceof ServerChatClient && request.getCommand().equals("DISCONNECT")) {
-                            // Refactor to some kind of AsyncTasks helper class
-                            // The event must be fired from a different thread, as it causes a deadlock if fired from
-                            // this thread.
+                            AsyncHelper.runAsync( () -> {
+                                CDI.current().getBeanManager().fireEvent(
+                                        new ClientShouldStopEvent(client.getId())
+                                );
+                            } );
+                        }
+
+                        if (client instanceof ChatClient && request.getCommand().equals("YOU-ARE-BANNED")) {
                             AsyncHelper.runAsync( () -> {
                                 CDI.current().getBeanManager().fireEvent(
                                         new ClientShouldStopEvent(client.getId())
@@ -143,7 +149,7 @@ public class PacketReaderTask<CTX> implements Runnable {
 
         }
 
-        logger.info("Canceling packet reading");
+        logger.info("[ ID = {} ] Canceling packet reading", client.getId());
 
         if (!singleLineFuture.isDone() && !singleLineFuture.isCancelled()) {
             singleLineFuture.cancel(true);
@@ -160,12 +166,12 @@ public class PacketReaderTask<CTX> implements Runnable {
     @Override
     public void run() {
 
-        logger.info("Packet reader started");
+        logger.info("[ ID = {} ] Packet reader started", client.getId());
 
         setUp();
         performReadLoop();
 
-        logger.info("Packet reader finished");
+        logger.info("[ ID = {} ] Packet reader finished", client.getId());
 
     }
 

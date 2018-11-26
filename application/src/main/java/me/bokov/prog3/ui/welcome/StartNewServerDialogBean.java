@@ -18,6 +18,7 @@
 
 package me.bokov.prog3.ui.welcome;
 
+import me.bokov.prog3.Application;
 import me.bokov.prog3.service.ChatServer;
 import me.bokov.prog3.service.server.ServerConfiguration;
 import me.bokov.prog3.ui.ServerAdministrationUIBean;
@@ -62,6 +63,7 @@ public class StartNewServerDialogBean {
                         ServerConfiguration serverConfiguration = new ServerConfiguration();
 
                         serverConfiguration.setPort(((Number) serverPortTextField.getValue()).intValue());
+                        serverConfiguration.setAdminPassword(Application.getInstance().randomPassword ());
 
                         chatServer.start(serverConfiguration);
 

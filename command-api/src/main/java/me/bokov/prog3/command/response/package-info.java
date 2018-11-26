@@ -16,32 +16,7 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.bokov.prog3.service;
-
-import me.bokov.prog3.command.endpoint.ChatClientEndpoint;
-import me.bokov.prog3.command.request.Request;
-import me.bokov.prog3.service.common.ChatUserVO;
-import me.bokov.prog3.service.server.ServerConfiguration;
-
-import java.util.List;
-import java.util.Optional;
-
-public interface ChatServer {
-
-    void start(ServerConfiguration configuration);
-
-    boolean isRunning();
-
-    ServerConfiguration getServerConfiguration();
-
-    void stop();
-
-    List<ChatUserVO> getConnectedUsers();
-
-    List <ChatClientEndpoint> clientsInRoom (Long roomId);
-    Optional <ChatClientEndpoint> clientByUserId (Long userId);
-
-    void banUser (Long userId);
-    void unbanUser (Long userId);
-
-}
+/**
+ * This package contains classes and interfaces required to describe the response part of each communication message
+ */
+package me.bokov.prog3.command.response;

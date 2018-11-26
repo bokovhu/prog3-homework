@@ -75,7 +75,7 @@ public class RegisterCommandHandlerProviderBean implements ServerChatClientComma
             ChatUserEntity user = new ChatUserEntity();
 
             user.setUsername(context.getChatClient().getSessionValue("username").toString());
-            user.setBanState("NOT_BANNED");
+            user.setBanned(false);
             // TODO: 999 handling of data
             user.setPassword(request.getData().asJsonObject().getString("password"));
 

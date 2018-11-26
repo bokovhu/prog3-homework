@@ -20,11 +20,21 @@ package me.bokov.prog3.command.client;
 
 import me.bokov.prog3.command.Command;
 
+/**
+ * Represents a {@code LOGIN} command.
+ *
+ * This command is used to authenticate an <b>existing</b> user against his/her password.
+ */
 public interface LoginCommand extends Command {
 
     int SUCCESS = 200;
     int INVALID_PASSWORD = 400;
 
+    /**
+     * Sets the password to authenticate against in the command
+     * @param password the user's password guess
+     * @return this command instance
+     */
     LoginCommand password(String password);
 
 }

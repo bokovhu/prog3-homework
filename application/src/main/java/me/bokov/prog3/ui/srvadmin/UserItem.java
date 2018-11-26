@@ -18,24 +18,24 @@
 
 package me.bokov.prog3.ui.srvadmin;
 
-import com.j256.ormlite.dao.Dao;
-import me.bokov.prog3.event.UserBannedEvent;
-import me.bokov.prog3.service.Database;
-import me.bokov.prog3.service.db.entity.ChatUserEntity;
+import me.bokov.prog3.AsyncHelper;
+import me.bokov.prog3.service.ChatServer;
 import me.bokov.prog3.ui.ErrorUIBean;
+import me.bokov.prog3.ui.ServerAdministrationUIBean;
 
 import javax.enterprise.inject.spi.CDI;
 import javax.swing.*;
 import java.awt.*;
-import java.util.Date;
 
 public class UserItem extends JPanel {
 
     private final String username;
+    private final Long userId;
     private final boolean isConnected;
 
-    public UserItem(String username, boolean isConnected) {
+    public UserItem(String username, Long userId, boolean isConnected) {
         this.username = username;
+        this.userId = userId;
         this.isConnected = isConnected;
         initPanel();
     }
@@ -61,21 +61,14 @@ public class UserItem extends JPanel {
 
                     try {
 
-                        Dao<ChatUserEntity, Long> chatUserDao = CDI.current().select(Database.class).get().getChatUserDao();
+                        CDI.current().select(ChatServer.class).get()
+                                .banUser(userId);
 
-                        ChatUserEntity chatUserEntity = chatUserDao.queryForEq("username", username).get(0);
-                        chatUserEntity.setBanState("BANNED_BY_IP");
-
-                        chatUserDao.update(chatUserEntity);
-
-                        CDI.current().getBeanManager().fireEvent(
-                                new UserBannedEvent(
-                                        new Date(),
-                                        "USER_BANNED",
-                                        username,
-                                        true,
-                                        false
-                                )
+                        AsyncHelper.runAsync(
+                                () -> {
+                                    CDI.current().select(ServerAdministrationUIBean.class)
+                                            .get().reloadData();
+                                }
                         );
 
                     } catch (Exception e) {

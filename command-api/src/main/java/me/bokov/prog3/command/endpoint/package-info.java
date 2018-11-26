@@ -16,20 +16,8 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.bokov.prog3.event;
-
-import java.util.Date;
-
-public class UserUnbannedEvent extends BaseEvent {
-
-    private final String username;
-
-    public UserUnbannedEvent(Date eventTimestamp, String eventType, String username) {
-        super(eventTimestamp, eventType);
-        this.username = username;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-}
+/**
+ * Contains the base classes for the endpoint-pattern design. Endpoints are those services, which provide the commands
+ * that are callable from both server and client side.
+ */
+package me.bokov.prog3.command.endpoint;

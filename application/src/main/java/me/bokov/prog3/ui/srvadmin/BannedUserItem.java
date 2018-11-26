@@ -18,23 +18,23 @@
 
 package me.bokov.prog3.ui.srvadmin;
 
-import com.j256.ormlite.dao.Dao;
-import me.bokov.prog3.event.UserUnbannedEvent;
-import me.bokov.prog3.service.Database;
-import me.bokov.prog3.service.db.entity.ChatUserEntity;
+import me.bokov.prog3.AsyncHelper;
+import me.bokov.prog3.service.ChatServer;
 import me.bokov.prog3.ui.ErrorUIBean;
+import me.bokov.prog3.ui.ServerAdministrationUIBean;
 
 import javax.enterprise.inject.spi.CDI;
 import javax.swing.*;
 import java.awt.*;
-import java.util.Date;
 
 public class BannedUserItem extends JPanel {
 
     private final String username;
+    private final Long userId;
 
-    public BannedUserItem(String username) {
+    public BannedUserItem(String username, Long userId) {
         this.username = username;
+        this.userId = userId;
         initPanel();
     }
 
@@ -56,20 +56,14 @@ public class BannedUserItem extends JPanel {
 
                     try {
 
-                        Dao<ChatUserEntity, Long> chatUserDao = CDI.current().select(Database.class).get().getChatUserDao();
+                        CDI.current().select(ChatServer.class).get()
+                                .unbanUser(userId);
 
-                        ChatUserEntity chatUserEntity = chatUserDao.queryForEq("username", username).get(0);
-
-                        chatUserEntity.setBanState("NOT_BANNED");
-
-                        chatUserDao.update(chatUserEntity);
-
-                        CDI.current().getBeanManager().fireEvent(
-                                new UserUnbannedEvent(
-                                        new Date(),
-                                        "USER_UNBANNED",
-                                        username
-                                )
+                        AsyncHelper.runAsync(
+                                () -> {
+                                    CDI.current().select(ServerAdministrationUIBean.class)
+                                            .get().reloadData();
+                                }
                         );
 
                     } catch (Exception exc) {

@@ -16,12 +16,27 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.bokov.prog3.command.server;
+package me.bokov.prog3.server.command;
 
-import me.bokov.prog3.command.Command;
+import me.bokov.prog3.command.server.YouAreBannedCommand;
+import me.bokov.prog3.common.ClientBase;
+import me.bokov.prog3.common.CommandBase;
 
-public interface RoomDeletedCommand extends Command {
+import javax.json.JsonValue;
 
-    RoomDeletedCommand roomId(String roomId);
+public class YouAreBannedCommandImpl extends CommandBase implements YouAreBannedCommand {
 
+    public YouAreBannedCommandImpl(ClientBase chatClient) {
+        super(chatClient);
+    }
+
+    @Override
+    protected String getCommand() {
+        return "YOU-ARE-BANNED";
+    }
+
+    @Override
+    protected JsonValue getData() {
+        return null;
+    }
 }

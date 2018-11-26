@@ -62,11 +62,6 @@ public class ChatServerEndpointImpl extends EndpointBase implements ChatServerEn
     }
 
     @Override
-    public GetUserCommand getUser() {
-        return new GetUserCommandImpl(client);
-    }
-
-    @Override
     public AcceptInvitationCommand acceptInvitation() {
         return new AcceptInvitationCommandImpl(client);
     }
@@ -109,5 +104,10 @@ public class ChatServerEndpointImpl extends EndpointBase implements ChatServerEn
     @Override
     public GetMessagesCommand getMessages() {
         return new GetMessagesCommandImpl(client);
+    }
+
+    @Override
+    public AdminCommand admin() {
+        return new AdminCommandImpl(client);
     }
 }

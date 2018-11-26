@@ -19,6 +19,7 @@
 package me.bokov.prog3.ui.chat;
 
 import me.bokov.prog3.command.CommandException;
+import me.bokov.prog3.command.client.DeleteRoomCommand;
 import me.bokov.prog3.command.client.InviteUserCommand;
 import me.bokov.prog3.command.response.Response;
 import me.bokov.prog3.service.ChatClient;
@@ -88,6 +89,38 @@ public class ChatRoomControlsPanel extends JPanel {
 
     }
 
+    private void doDeleteRoom () {
+
+        ChatClient chatClient = CDI.current().select(ChatClient.class).get();
+
+        try {
+
+            Response response = chatClient.getServerEndpoint().deleteRoom()
+                    .roomId(roomId)
+                    .execute();
+
+            ChatUIBean chatUIBean = CDI.current().select(ChatUIBean.class).get();
+
+            chatUIBean.removeRoomTab(roomId);
+
+        } catch (CommandException ce) {
+
+            ErrorUIBean errorUIBean = CDI.current().select(ErrorUIBean.class).get();
+            I18N i18n = CDI.current().select(I18N.class).get();
+
+            switch (ce.getErrorCode()) {
+                case DeleteRoomCommand
+                        .NOT_EMPTY:
+                    errorUIBean.showErrorMessage(
+                            i18n.getText("chat.chat-room-controls.cannot-delete-not-empty")
+                    );
+                    break;
+            }
+
+        }
+
+    }
+
     private void initButtons () {
 
         inviteUserButton = new JButton(i18n.getText("chat.chat-room-controls.invite-user"));
@@ -104,7 +137,9 @@ public class ChatRoomControlsPanel extends JPanel {
 
         deleteRoomButton = new JButton(i18n.getText("chat.chat-room-controls.delete-room"));
         deleteRoomButton.setBackground(Color.RED);
-        deleteRoomButton.addActionListener(e -> JOptionPane.showMessageDialog(null, "Delete room"));
+        deleteRoomButton.addActionListener(
+                d -> doDeleteRoom()
+        );
 
     }
 

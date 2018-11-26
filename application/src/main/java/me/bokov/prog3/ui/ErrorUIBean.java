@@ -18,7 +18,10 @@
 
 package me.bokov.prog3.ui;
 
+import me.bokov.prog3.util.I18N;
+
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import javax.swing.*;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -26,12 +29,15 @@ import java.io.StringWriter;
 @ApplicationScoped
 public class ErrorUIBean {
 
+    @Inject
+    private I18N i18n;
+
     public void showErrorMessage(String errorMessage) {
 
         JOptionPane.showMessageDialog(
                 null,
                 errorMessage,
-                "Error",
+                i18n.getText("error"),
                 JOptionPane.ERROR_MESSAGE
         );
 
@@ -49,10 +55,10 @@ public class ErrorUIBean {
         JOptionPane.showMessageDialog(
                 null,
                 new JComponent[]{
-                        new JLabel("An error has occured. Below you can find the exact stacktrace of the problem"),
+                        new JLabel(i18n.getText("error-stacktrace")),
                         stackTraceTextArea
                 },
-                "Error",
+                i18n.getText("error"),
                 JOptionPane.ERROR_MESSAGE
         );
 

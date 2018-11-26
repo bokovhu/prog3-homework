@@ -20,13 +20,32 @@ package me.bokov.prog3.command;
 
 import me.bokov.prog3.command.response.Response;
 
+/**
+ * The base interface for all commands
+ */
 public interface Command {
 
+    /**
+     * The user was banned
+     */
     int BANNED = 998;
+
+    /**
+     * The request was invalid
+     */
     int INVALID = 999;
 
+    /**
+     * Executes this command and waits for the response, blocking the caller's thread if necessary.
+     * @return the response of the command execution
+     * @throws CommandException if the status code in the response in an error
+     */
     Response execute() throws CommandException;
 
+    /**
+     * Executes this command and discards its response. This method returns immediately after the method call
+     * @throws CommandException
+     */
     void executeWithoutAnswer() throws CommandException;
 
 }

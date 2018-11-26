@@ -18,5 +18,8 @@
 
 package me.bokov.prog3.command;
 
+/**
+ * Represents a {@code PING} command
+ */
 public interface PingCommand extends Command {
 }

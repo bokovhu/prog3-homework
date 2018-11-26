@@ -20,11 +20,21 @@ package me.bokov.prog3.command.client;
 
 import me.bokov.prog3.command.Command;
 
+/**
+ * Represents a {@code GET-MESSAGES} command.
+ *
+ * This command can be used to retrieve the list of messages in a given chat room.
+ */
 public interface GetMessagesCommand extends Command {
 
     int SUCCESS = 200;
     int INVALID_ROOM_ID = 400;
 
+    /**
+     * Sets the ID of the room whose messages are to be retrieved.
+     * @param roomId the ID of the room
+     * @return this command instance
+     */
     GetMessagesCommand roomId (Long roomId);
 
 }

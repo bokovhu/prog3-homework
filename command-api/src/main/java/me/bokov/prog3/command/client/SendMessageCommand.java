@@ -20,13 +20,29 @@ package me.bokov.prog3.command.client;
 
 import me.bokov.prog3.command.Command;
 
+/**
+ * Represents a {@code SEND-MESSAGE} command.
+ *
+ * This command is used to send simple text messages to chat rooms.
+ */
 public interface SendMessageCommand extends Command {
 
     int SUCCESS = 200;
     int INVALID_ROOM_ID = 400;
     int MESSAGE_TEXT_REQUIRED = 401;
 
+    /**
+     * Sets the text of the message in the command
+     * @param messageText the text of the message
+     * @return this command instance
+     */
     SendMessageCommand messageText (String messageText);
+
+    /**
+     * Sets the ID of the room to which this message is to be sent to in the command
+     * @param roomId the ID of the room to which this message is to be sent to
+     * @return this command instance
+     */
     SendMessageCommand roomId (Long roomId);
 
 }

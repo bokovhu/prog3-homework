@@ -20,12 +20,22 @@ package me.bokov.prog3.command.client;
 
 import me.bokov.prog3.command.Command;
 
+/**
+ * Represents a {@code CREATE-ROOM} command.
+ *
+ * This command can be used to create a new chat room
+ */
 public interface CreateRoomCommand extends Command {
 
     // TODO: Errors
     int SUCCESS = 200;
     int ROOM_NAME_REQUIRED = 400;
 
+    /**
+     * Sets the name of the room to be created
+     * @param roomName the coom name
+     * @return this command instance
+     */
     CreateRoomCommand roomName(String roomName);
 
 }

@@ -20,6 +20,11 @@ package me.bokov.prog3.command.client;
 
 import me.bokov.prog3.command.Command;
 
+/**
+ * Represents a {@code SEND-IMAGE} command.
+ *
+ * This command is used to send an image message to a chat room
+ */
 public interface SendImageCommand extends Command {
 
     int SUCCESS = 200;
@@ -28,8 +33,25 @@ public interface SendImageCommand extends Command {
     int INVALID_EXTENSION = 402;
     int IMAGE_CONTENT_REQUIRED = 403;
 
+    /**
+     * Sets the file extension of the image (eg. PNG, JPG, etc.) in the command
+     * @param extension the file extension of the image
+     * @return this command instance
+     */
     SendImageCommand extension (String extension);
+
+    /**
+     * Sets the ID of the room to which this message is to be sent in the command
+     * @param roomId the ID of the room to which this message is to be sent
+     * @return this command instance
+     */
     SendImageCommand roomId (Long roomId);
+
+    /**
+     * Sets the binary image content, encoded in Base64 in the command
+     * @param contentBase64 the binary image content, encoded in Base64
+     * @return this command instance
+     */
     SendImageCommand imageContent (String contentBase64);
 
 }

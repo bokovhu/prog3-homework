@@ -23,6 +23,9 @@ import javax.json.JsonValue;
 import java.io.StringReader;
 import java.io.StringWriter;
 
+/**
+ *
+ */
 public final class ResponseBuilder {
 
     private String messageId = null;

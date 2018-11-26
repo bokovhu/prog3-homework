@@ -22,10 +22,20 @@ import me.bokov.prog3.command.Command;
 
 import javax.json.JsonObject;
 
+/**
+ * Represents a {@code NEW-INVITATION} command.
+ *
+ * This command is sent by the server to the client to notify it about a new invitation
+ */
 public interface NewInvitationCommand extends Command {
 
     int SUCCESS = 200;
 
+    /**
+     * Sets the invitation data in the command
+     * @param invitationObject the invitation data
+     * @return this command instance
+     */
     NewInvitationCommand invitation (JsonObject invitationObject);
 
 }

@@ -18,14 +18,33 @@
 
 package me.bokov.prog3.command.endpoint;
 
+/**
+ * This interface is used to describe TCP connections
+ */
 public interface ConnectionInformation {
 
+    /**
+     * Get the local port of the connection
+     * @return the local port of the connection
+     */
     int getLocalPort();
 
+    /**
+     * Get the remote port of the connection
+     * @return the remote port of the connection
+     */
     int getRemotePort();
 
+    /**
+     * Get the local address of the connection
+     * @return the local address of the connection
+     */
     String getLocalAddress();
 
+    /**
+     * Get the remote address of the connection
+     * @return the remote address of the connection
+     */
     String getRemoteAddress();
 
 }

@@ -251,7 +251,7 @@ public class Application {
      * Generates a random password
      * @return the random password text
      */
-    private String randomPassword() {
+    public String randomPassword() {
 
         StringBuilder sb = new StringBuilder();
 

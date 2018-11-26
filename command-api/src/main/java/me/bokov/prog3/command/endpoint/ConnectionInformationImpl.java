@@ -18,6 +18,9 @@
 
 package me.bokov.prog3.command.endpoint;
 
+/**
+ * Default implementation of the {@link ConnectionInformation} interface
+ */
 public class ConnectionInformationImpl implements ConnectionInformation {
 
     private final int localPort;

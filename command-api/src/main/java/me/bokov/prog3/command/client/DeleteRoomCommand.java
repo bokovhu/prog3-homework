@@ -20,12 +20,23 @@ package me.bokov.prog3.command.client;
 
 import me.bokov.prog3.command.Command;
 
+/**
+ * Represents a {@code DELETE-ROOM} command.
+ *
+ * This command can be used to delete a chat room
+ */
 public interface DeleteRoomCommand extends Command {
 
     int SUCCESS = 200;
     int INVALID_ROOM_ID = 400;
     int NOT_OWNER = 401;
+    int NOT_EMPTY = 402;
 
+    /**
+     * Sets the ID of the room to be deleted
+     * @param roomId the ID of the room to be deleted
+     * @return this command instance
+     */
     DeleteRoomCommand roomId (Long roomId);
 
 }

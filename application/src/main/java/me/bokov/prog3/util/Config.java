@@ -91,12 +91,12 @@ public class Config {
 
         Properties properties = new Properties();
 
+        configurationMap.forEach(properties::setProperty);
+
         properties.setProperty("user-locale", userLocale.getLanguage());
         properties.setProperty("last-connection-hostname", Objects.toString(lastConnectionHostname));
         properties.setProperty("last-connection-port", Objects.toString(lastConnectionPort));
         properties.setProperty("last-connection-username", Objects.toString(lastConnectionUsername));
-
-        configurationMap.forEach(properties::setProperty);
 
         return properties;
 
@@ -300,5 +300,9 @@ public class Config {
 
     public void setLastConnectionUsername(String lastConnectionUsername) {
         this.lastConnectionUsername = lastConnectionUsername;
+    }
+
+    public void setUserLocale(Locale userLocale) {
+        this.userLocale = userLocale;
     }
 }

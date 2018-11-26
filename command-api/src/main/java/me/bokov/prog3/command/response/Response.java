@@ -20,12 +20,34 @@ package me.bokov.prog3.command.response;
 
 import javax.json.JsonValue;
 
+/**
+ * Represents a single response that is sent through the network.
+ *
+ * In its string representation, responses take the form <code>Q &lt;MESSAGE-ID&gt; &lt;CODE&gt; [DATA]</code>,
+ * with the <code>DATA</code> part being optional.
+ *
+ * The message ID is equal to the message ID of the request that is object is the response of.
+ * The code is the status / error code of the response.
+ */
 public interface Response {
 
+    /**
+     * Get the message ID of the response. This message ID is equal to the message ID of the request whose response this
+     * object is.
+     * @return the message ID
+     */
     String getMessageId();
 
+    /**
+     * Gets the status / error code of the response
+     * @return the status / error code
+     */
     int getCode();
 
+    /**
+     * Gets the JSON data of the response. As JSON data is optional, this method may return {@code null}
+     * @return the JSON data of the response, or {@code null}
+     */
     JsonValue getData();
 
 }

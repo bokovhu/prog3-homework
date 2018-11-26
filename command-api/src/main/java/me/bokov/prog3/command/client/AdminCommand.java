@@ -16,33 +16,46 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.bokov.prog3.command.server;
+package me.bokov.prog3.command.client;
 
 import me.bokov.prog3.command.Command;
 
-import javax.json.JsonObject;
-
 /**
- * Represents a {@code NEW-MESSAGE} command.
+ * Represents a single {@code ADMIN} command.
  *
- * This command is sent by the server to the client to notify it about a new message in a chat room
+ * The {@code ADMIN} command may be used to handle remote administration tasks, such as banning / unbanning users.
  */
-public interface NewMessageCommand extends Command {
+public interface AdminCommand extends Command {
 
     int SUCCESS = 200;
+    int NOT_AUTHENTICATED = 400;
+    int INVALID_PASSWORD = 401;
 
     /**
-     * Sets the ID of the room to which the message arrived in the command
-     * @param roomId the ID of the room to which the message arrived
+     * Sets this admin command to handle authentication
+     * @param password the admin password
      * @return this command instance
      */
-    NewMessageCommand roomId(String roomId);
+    AdminCommand authenticate (String password);
 
     /**
-     * Sets the JSON data of the message in the command
-     * @param message the JSON data of the message
+     * Sets this admin command to be a banning operation
+     * @param userId the ID of the user to ban
      * @return this command instance
      */
-    NewMessageCommand message(JsonObject message);
+    AdminCommand banUser (Long userId);
+
+    /**
+     * Sets this admin command to be an unbanning operation
+     * @param userId the ID of the user to unban
+     * @return this command instance
+     */
+    AdminCommand unbanUser (Long userId);
+
+    /**
+     * Sets this admin command to be a query of all known users in the server
+     * @return this command instance
+     */
+    AdminCommand getAllUsers ();
 
 }

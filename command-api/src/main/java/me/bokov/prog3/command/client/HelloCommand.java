@@ -20,6 +20,13 @@ package me.bokov.prog3.command.client;
 
 import me.bokov.prog3.command.Command;
 
+/**
+ * Represents a {@code HELLO} command.
+ *
+ * As part of the authentication flow, the first message of the clients is always a {@code HELLO} message. In this
+ * message the client specifies its username. If the user is banned, a status code of {@code 998} is returned in the
+ * response of this command.
+ */
 public interface HelloCommand extends Command {
 
     int CONTINUE = 200;
@@ -27,6 +34,11 @@ public interface HelloCommand extends Command {
     int USERNAME_REQUIRED = 400;
     int ALREADY_SAID_HELLO = 401;
 
+    /**
+     * Sets the username of the client in the command
+     * @param username the username of the client
+     * @return this command instance
+     */
     HelloCommand username(String username);
 
 }

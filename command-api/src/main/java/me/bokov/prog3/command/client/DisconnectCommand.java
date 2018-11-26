@@ -20,6 +20,12 @@ package me.bokov.prog3.command.client;
 
 import me.bokov.prog3.command.Command;
 
+/**
+ * Represents a {@code DISCONNECT} command.
+ *
+ * The {@code DISCONNECT} command should be sent when the client wants to disconnect from the server, so that it can
+ * gracefully handle disconnection
+ */
 public interface DisconnectCommand extends Command {
 
     int SUCCESS = 200;

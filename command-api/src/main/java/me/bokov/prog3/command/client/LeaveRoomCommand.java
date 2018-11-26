@@ -20,12 +20,22 @@ package me.bokov.prog3.command.client;
 
 import me.bokov.prog3.command.Command;
 
+/**
+ * Represents a {@code LEAVE-ROOM} command.
+ *
+ * This command is used to tell the server, that the client will leave a given chat room.
+ */
 public interface LeaveRoomCommand extends Command {
 
     int SUCCESS = 200;
     int INVALID_ROOM_ID = 400;
     int NOT_MEMBER = 401;
 
+    /**
+     * Sets the ID of the room to be left by the user in the command
+     * @param roomId the ID of the room to be left by the user
+     * @return this command instance
+     */
     LeaveRoomCommand roomId (Long roomId);
 
 }

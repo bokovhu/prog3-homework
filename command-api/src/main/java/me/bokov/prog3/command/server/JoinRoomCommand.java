@@ -22,10 +22,20 @@ import me.bokov.prog3.command.Command;
 
 import javax.json.JsonObject;
 
+/**
+ * Represents a {@code JOIN-ROOM} command.
+ *
+ * This command is sent by the server to indicate to the client that it should join a given chat room
+ */
 public interface JoinRoomCommand extends Command {
 
     int SUCCESS = 200;
 
+    /**
+     * Sets the room ID to join into in the command
+     * @param roomId the ID of the room to join
+     * @return this command instance
+     */
     JoinRoomCommand roomId (Long roomId);
 
 }

@@ -18,8 +18,14 @@
 
 package me.bokov.prog3.command;
 
+/**
+ * An exception, thrown if an error is returned after the command execution
+ */
 public class CommandException extends RuntimeException {
 
+    /**
+     * The error code returned by the remote client
+     */
     private final int errorCode;
 
     public CommandException(int errorCode) {
@@ -41,6 +47,10 @@ public class CommandException extends RuntimeException {
         this.errorCode = errorCode;
     }
 
+    /**
+     * Gets the error code returned by the remote client
+     * @return the error code in the command's response
+     */
     public int getErrorCode() {
         return errorCode;
     }

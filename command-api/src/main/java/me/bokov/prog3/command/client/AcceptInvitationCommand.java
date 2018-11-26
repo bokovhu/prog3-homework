@@ -20,13 +20,22 @@ package me.bokov.prog3.command.client;
 
 import me.bokov.prog3.command.Command;
 
+/**
+ * Represents a single {@code ACCEPT-INVITATION} command.
+ *
+ * This command is used to accept an invitation, and join a chat room
+ */
 public interface AcceptInvitationCommand extends Command {
 
-    // TODO: Errors
     int SUCCESS = 200;
     int INVALID_INVITATION_ID = 400;
     int ALREADY_MEMBER = 401;
 
+    /**
+     * Set the invitation ID to accept
+     * @param invitationId the ID of the invitation to accept
+     * @return this command instance
+     */
     AcceptInvitationCommand invitationId(String invitationId);
 
 }

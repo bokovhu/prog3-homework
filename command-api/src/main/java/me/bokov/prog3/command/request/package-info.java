@@ -16,16 +16,7 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.bokov.prog3.command.client;
-
-import me.bokov.prog3.command.Command;
-
-public interface GetUserCommand extends Command {
-
-    // TODO: Errors
-    int SUCCESS = 200;
-    int INVALID_USER_ID = 400;
-
-    GetUserCommand userId (Long userId);
-
-}
+/**
+ * This package contains classes and interfaces required to describe the request part of each communication message
+ */
+package me.bokov.prog3.command.request;

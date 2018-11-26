@@ -33,8 +33,8 @@ public class ChatUserEntity extends BaseEntity {
     @DatabaseField (columnName = "password", canBeNull = false)
     private String password;
 
-    @DatabaseField(columnName = "ban_state", canBeNull = false, defaultValue = "NOT_BANNED")
-    private String banState;
+    @DatabaseField(columnName = "is_banned", canBeNull = false)
+    private boolean isBanned;
 
     @DatabaseField(columnName = "banned_ip")
     private String bannedIp;
@@ -47,12 +47,12 @@ public class ChatUserEntity extends BaseEntity {
         this.username = username;
     }
 
-    public String getBanState() {
-        return banState;
+    public boolean isBanned() {
+        return isBanned;
     }
 
-    public void setBanState(String banState) {
-        this.banState = banState;
+    public void setBanned(boolean banned) {
+        isBanned = banned;
     }
 
     public String getBannedIp() {
@@ -77,7 +77,7 @@ public class ChatUserEntity extends BaseEntity {
 
         vo.setUsername(getUsername());
         vo.setId(getId());
-        vo.setBanState(getBanState());
+        vo.setBanned(isBanned());
 
         return vo;
 

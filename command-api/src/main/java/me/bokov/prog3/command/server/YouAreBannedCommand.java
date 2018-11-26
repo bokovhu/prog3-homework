@@ -20,5 +20,10 @@ package me.bokov.prog3.command.server;
 
 import me.bokov.prog3.command.Command;
 
+/**
+ * Represents a {@code YOU-ARE-BANNED} command.
+ *
+ * This command indicates to the client that it got banned.
+ */
 public interface YouAreBannedCommand extends Command {
 }

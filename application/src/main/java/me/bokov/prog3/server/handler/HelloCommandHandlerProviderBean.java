@@ -88,7 +88,7 @@ public class HelloCommandHandlerProviderBean implements ServerChatClientCommandH
                     .where()
                     .eq("username", username)
                     .and()
-                    .ne("ban_state", "NOT_BANNED")
+                    .eq("is_banned", true)
                     .countOf() > 0L;
 
             if (isUserBanned) {

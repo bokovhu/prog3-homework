@@ -20,6 +20,11 @@ package me.bokov.prog3.command.client;
 
 import me.bokov.prog3.command.Command;
 
+/**
+ * Represents an {@code INVITE-USER} command.
+ *
+ * This command can be used to send invitations to other users
+ */
 public interface InviteUserCommand extends Command {
 
     int SUCCESS = 200;
@@ -28,7 +33,18 @@ public interface InviteUserCommand extends Command {
     int INVITED_USERNAME_REQUIRED = 402;
     int ROOM_ID_REQUIRED = 403;
 
+    /**
+     * Sets the username of the user to be invited in the command
+     * @param username the username of the user to be invited
+     * @return this command instance
+     */
     InviteUserCommand invitedUsername (String username);
+
+    /**
+     * Sets the ID of the room to which the user is invited in the command
+     * @param roomId the ID of the room
+     * @return this command instance
+     */
     InviteUserCommand roomId (Long roomId);
 
 }

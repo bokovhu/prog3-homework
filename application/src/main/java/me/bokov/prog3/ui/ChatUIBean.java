@@ -23,11 +23,14 @@ import me.bokov.prog3.command.CommandException;
 import me.bokov.prog3.command.client.AcceptInvitationCommand;
 import me.bokov.prog3.command.client.CreateRoomCommand;
 import me.bokov.prog3.command.response.Response;
+import me.bokov.prog3.event.ClientShouldStopEvent;
 import me.bokov.prog3.service.ChatClient;
 import me.bokov.prog3.ui.chat.ChatRoomTab;
+import me.bokov.prog3.ui.chat.MenuBean;
 import me.bokov.prog3.ui.chat.MessageComposerPanel;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.CDI;
 import javax.inject.Inject;
 import javax.json.JsonObject;
@@ -49,10 +52,20 @@ public class ChatUIBean extends ScreenBase {
     @Inject
     private ErrorUIBean errorUIBean;
 
+    @Inject
+    private WelcomeUIBean welcomeUIBean;
+
+    @Inject
+    private ApplicationUIBean applicationUIBean;
+
+    @Inject
+    private MenuBean menuBean;
+
     JButton createRoomButton;
     JTabbedPane chatRoomsTabbedPane;
     private List<ChatRoomTab> chatRoomTabs = new ArrayList<>();
     MessageComposerPanel messageComposerPanel;
+
 
     private void initChatRoomTabs() {
 
@@ -154,6 +167,8 @@ public class ChatUIBean extends ScreenBase {
         composerGbc.fill = GridBagConstraints.HORIZONTAL;
 
         panel.add(messageComposerPanel, composerGbc);
+
+        menuBean.init();
 
     }
 
@@ -315,6 +330,20 @@ public class ChatUIBean extends ScreenBase {
 
         if (!(chatRoomsTabbedPane.getSelectedComponent() instanceof ChatRoomTab)) return null;
         return (ChatRoomTab) chatRoomsTabbedPane.getSelectedComponent();
+
+    }
+
+    public void handleClientShouldStopEvent (@Observes ClientShouldStopEvent evt) {
+
+        if (evt.getClientId().equals(chatClient.getId())) {
+
+            if (guiEnabled()) {
+                JOptionPane.showMessageDialog(null, i18n.getText("client-disconnected"));
+
+                welcomeUIBean.activate();
+            }
+
+        }
 
     }
 

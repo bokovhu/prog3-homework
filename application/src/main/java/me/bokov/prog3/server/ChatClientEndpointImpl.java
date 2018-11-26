@@ -23,10 +23,7 @@ import me.bokov.prog3.command.endpoint.ConnectionInformation;
 import me.bokov.prog3.command.server.*;
 import me.bokov.prog3.common.ClientBase;
 import me.bokov.prog3.common.EndpointBase;
-import me.bokov.prog3.server.command.JoinRoomCommandImpl;
-import me.bokov.prog3.server.command.NewInvitationCommandImpl;
-import me.bokov.prog3.server.command.NewMessageCommandImpl;
-import me.bokov.prog3.server.command.RoomChangedCommandImpl;
+import me.bokov.prog3.server.command.*;
 
 public class ChatClientEndpointImpl extends EndpointBase implements ChatClientEndpoint {
 
@@ -36,12 +33,7 @@ public class ChatClientEndpointImpl extends EndpointBase implements ChatClientEn
 
     @Override
     public YouAreBannedCommand youAreBanned() {
-        throw new UnsupportedOperationException("Not yet supported!");
-    }
-
-    @Override
-    public RoomDeletedCommand roomDeleted() {
-        throw new UnsupportedOperationException("Not yet supported!");
+        return new YouAreBannedCommandImpl(client);
     }
 
     @Override

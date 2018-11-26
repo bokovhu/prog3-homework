@@ -95,7 +95,7 @@ public abstract class ClientBase<CTX> implements CommunicationCapableService, Se
     @Override
     public void start(Socket socket) {
 
-        logger.info("Booting client for socket {}", socket);
+        logger.info("Booting client for socket {}, ID = {}", socket, id);
 
         preStart();
 
@@ -107,14 +107,14 @@ public abstract class ClientBase<CTX> implements CommunicationCapableService, Se
 
         postStart();
 
-        logger.info("Client booting complete");
+        logger.info("Client booting complete ( ID = {} )", id);
 
     }
 
     @Override
     public void stop() {
 
-        logger.info("Shutting client for socket {} down", socket);
+        logger.info("Shutting client for socket {} down, ID = {}", socket, id);
 
         preStop();
 
@@ -178,7 +178,7 @@ public abstract class ClientBase<CTX> implements CommunicationCapableService, Se
                                     Response r = responseIterator.next();
                                     if (r.getMessageId().equals(messageId)) {
 
-                                        logger.info("Found the required response with message ID {}: {}", messageId, r);
+                                        logger.info("[ ID = {} ] Found the required response with message ID {}", id, messageId);
 
                                         responseIterator.remove();
                                         return r;

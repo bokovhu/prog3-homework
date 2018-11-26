@@ -25,6 +25,7 @@ import me.bokov.prog3.service.Database;
 import me.bokov.prog3.service.common.ChatUserVO;
 import me.bokov.prog3.service.db.BaseEntity;
 import me.bokov.prog3.service.db.entity.ChatRoomMembershipEntity;
+import me.bokov.prog3.service.db.entity.ChatUserEntity;
 import me.bokov.prog3.service.server.ServerChatClient;
 import me.bokov.prog3.service.server.ServerConfiguration;
 import org.slf4j.Logger;
@@ -223,6 +224,48 @@ public class ChatServerImpl implements ChatServer {
                     .findFirst()
                     .map(ServerChatClient::getClientEndpoint);
 
+        }
+
+    }
+
+    @Override
+    public void banUser(Long userId) {
+
+        try {
+
+            ChatUserEntity user = database.getChatUserDao().queryForId(userId);
+
+            user.setBanned(true);
+
+            database.getChatUserDao().update(user);
+
+            clientByUserId(user.getId())
+                    .ifPresent(
+                            c -> {
+                                c.youAreBanned().executeWithoutAnswer();
+                                c.close();
+                            }
+                    );
+
+        } catch (Exception exc) {
+            exc.printStackTrace();
+        }
+
+    }
+
+    @Override
+    public void unbanUser(Long userId) {
+
+        try {
+
+            ChatUserEntity user = database.getChatUserDao().queryForId(userId);
+
+            user.setBanned(false);
+
+            database.getChatUserDao().update(user);
+
+        } catch (Exception exc) {
+            exc.printStackTrace();
         }
 
     }
